@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernhilfen FiSi</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--line:#2a3444;--tx:#e6eaf0;--mut:#93a1b8;--amber:#e3a458;--green:#7fae70;--mono:ui-monospace,"JetBrains Mono",Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 16px 40px}
+main{max-width:860px;margin:0 auto}
+.bar{margin:22px 0 0;font-family:var(--mono);font-size:12.5px;color:var(--mut)}
+h1{font-family:var(--mono);font-size:clamp(22px,4vw,30px);margin:10px 0 6px}
+h1 span{color:var(--green)}
+p.sub{color:var(--mut);margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+a.card{display:block;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:9px;padding:14px 16px;color:var(--tx);text-decoration:none}
+a.card:hover{border-color:var(--amber)}
+a.card b{font-family:var(--mono);color:var(--amber);display:block;margin-bottom:4px}
+a.card small{color:var(--mut)}
+footer{margin-top:28px;color:var(--mut);font-family:var(--mono);font-size:11.5px;line-height:1.7}
+footer a{color:var(--amber)}
+</style>
+</head>
+<body>
+<main>
+<div class="bar">nicandro@debian:~$ ls lernhilfen-fisi/</div>
+<h1><span>$</span> lernhilfen --fisi</h1>
+<p class="sub">Interaktive Lernhilfen für die Umschulung Fachinformatiker Systemintegration: suchen, nachlesen, mit Lernkarten und Quiz üben. Jede Seite ist eine einzelne HTML-Datei und läuft im Browser, auch offline.</p>
+<div class="grid">
+  <a class="card" href="linux-auf-einem-blatt.html"><b>linux --auf-einem-blatt</b><small>232 Befehle und Pfade mit Beispielen und Tipps, Lernmodus, Filter für LPI Linux Essentials 010</small></a>
+  <a class="card" href="subnetting-vlsm-auf-einem-blatt.html"><b>subnetting --vlsm</b><small>IPv4, klassisches Subnetting, VLSM mit Rechenrezepten, Glossar und Lernkarten</small></a>
+  <a class="card" href="routing-auf-einem-blatt.html"><b>routing --auf-einem-blatt</b><small>ANDing, Default Route, statisch vs. dynamisch, Fehlerbilder, Quiz mit 15 Fragen</small></a>
+  <a class="card" href="switching-auf-einem-blatt.html"><b>switching --auf-einem-blatt</b><small>VLANs, Trunks, STP, LAG, LACP, MLAG mit Lernkarten und Selbsteinschätzung</small></a>
+</div>
+<footer>
+© 2026 <a href="https://github.com/nicandr0">Nicandro Marziale</a> · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de">CC BY-NC-SA 4.0</a> (teilen und bearbeiten erlaubt, mit Namensnennung, nicht kommerziell, unter gleicher Lizenz)<br>
+Quellen und Hinweise je Seite: siehe README im <a href="https://github.com/nicandr0/lernhilfen-fisi">Repository</a>. Kein Ersatz für die Original-Unterrichtsunterlagen.
+</footer>
+</main>
+</body>
+</html>

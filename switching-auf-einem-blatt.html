@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de" data-fach="Netzwerktechnik" data-thema="Switching" data-kapitel="Vorbereitung VIII">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Switching auf einem Blatt</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--tx:#e6edf3;--mut:#8b949e;--blue:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--purple:#bc8cff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="dark"]){}
+@media print{:root{--bg:#fff;--card:#fff;--line:#bbb;--tx:#000;--mut:#444}.bar{display:none}details{break-inside:avoid}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 14px 40px}
+main{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin:22px 0 4px}
+.sub{color:var(--mut);margin:0 0 14px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:8px 0;display:flex;gap:8px;z-index:5}
+input{flex:1;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:6px;padding:9px 12px;font:inherit}
+button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+details{background:var(--card);border:1px solid var(--line);border-radius:8px;margin:10px 0}
+summary{cursor:pointer;padding:11px 14px;font-weight:600;color:var(--blue)}
+.in{padding:2px 14px 12px}
+ul{margin:6px 0;padding-left:20px}
+li{margin:3px 0}
+.q{color:var(--mut);font-size:.9em}
+.box{border-left:4px solid;border-radius:4px;padding:8px 12px;margin:10px 0;background:rgba(255,255,255,.03)}
+.wichtig{border-color:var(--yellow)}.merk{border-color:var(--green)}.fehler{border-color:var(--red)}
+.box b{display:block;margin-bottom:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{border-radius:999px;padding:6px 12px}
+.chip[data-s="0"]{color:var(--mut)}
+.chip[data-s="1"]{border-color:var(--green);color:var(--green)}
+.chip[data-s="2"]{border-color:var(--yellow);color:var(--yellow)}
+.chip[data-s="3"]{border-color:var(--red);color:var(--red)}
+.hide{display:none}
+.bar{flex-wrap:wrap}
+.bar button.on{border-color:var(--blue);color:var(--blue)}
+#cards{display:none}
+body.lernen #cards{display:block}
+body.lernen details{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:26px 18px;min-height:160px;cursor:pointer;text-align:center;font-size:1.1rem;display:flex;flex-direction:column;justify-content:center}
+.card small{color:var(--mut);margin-bottom:10px}
+.card.a{border-color:var(--green)}
+.nav{display:flex;justify-content:space-between;align-items:center;margin:10px 0;color:var(--mut)}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{color:var(--blue)}
+</style>
+</head>
+<body>
+<main>
+<h1>Switching auf einem Blatt</h1>
+<p class="sub">Netzwerktechnik Vorbereitung VIII: VLANs, STP, LAG, MLAG</p>
+<div class="bar">
+<input id="s" type="search" placeholder="Suchen (z. B. Trunk, Root, LACP)" aria-label="Suche">
+<button id="lesen" class="on">Lesen</button><button id="lernen">Lernen</button><button id="open">Alle auf</button><button id="close">Alle zu</button>
+</div>
+<div id="cards"><div class="card" id="card" tabindex="0" role="button"></div><div class="nav"><button id="prev">Zurück</button><span id="cnt"></span><button id="next">Weiter</button></div></div>
+
+<details><summary>1. Grundlagen</summary><div class="in">
+<ul>
+<li>Aufgabe: Geräte im LAN verbinden, Frames gezielt anhand der Ziel-MAC an den richtigen Port weiterleiten</li>
+<li>Hub vs. Switch: Hub (Layer 1) gibt alles an alle Ports weiter, Switch lernt MACs und leitet gezielt weiter</li>
+<li>Ebene: Layer 2 (Data Link)</li>
+<li>Wichtig für LANs: weniger unnötiger Traffic, mehr Performance, Full Duplex, skalierbar</li>
+<li>MAC + Port: Switch lernt die Quell-MAC am Eingangsport, schlägt die Ziel-MAC nach, unbekannt oder Broadcast > Flooding</li>
+</ul>
+<ul>
+<li>MAC-Adresse: 48 Bit, eindeutige Hardware-Adresse der Netzwerkkarte</li>
+<li>Port: Anschluss am Switch</li>
+<li>Frame: Datenpaket auf Layer 2</li>
+<li>Forwarding: Weiterleitung an den Zielport</li>
+<li>MAC-Address-Table: Zuordnung MAC > Port, Einträge altern ab</li>
+</ul>
+<div class="box wichtig"><b>Wichtig</b>Ein Switch führt nicht nur Kabel zusammen, er leitet gezielt anhand gelernter Informationen weiter.</div>
+</div></details>
+
+<details><summary>2. VLANs: Grundidee</summary><div class="in">
+<ul>
+<li>VLAN = Virtual LAN, logisches Netz auf gemeinsamer physischer Hardware (IEEE 802.1Q, ID 1-4094)</li>
+<li>1 VLAN = 1 Broadcast-Domain (meist 1 IP-Subnetz)</li>
+<li>Logische Trennung: gleiche Switches, aber Frames bleiben im eigenen VLAN</li>
+<li>Alles in einem L2-Bereich: viel Broadcast, keine Trennung, Fehler betreffen alle, unübersichtlich</li>
+<li>Struktur: Bereiche sauber getrennt</li>
+<li>Sicherheit: Geräte nicht im selben Netz</li>
+<li>Verwaltung: Umzug per Konfiguration statt Umverkabeln</li>
+</ul>
+<div class="box wichtig"><b>Ziel</b>Ein physisch gemeinsames Netz wird logisch in getrennte Bereiche aufgeteilt.</div>
+</div></details>
+
+<details><summary>3. Access Port und Trunk Port</summary><div class="in">
+<ul>
+<li>Access Port: gehört zu genau 1 VLAN, Frames untagged, für Endgeräte (PC, Drucker, Server)</li>
+<li>Trunk Port: transportiert mehrere VLANs, Frames tagged, zwischen Switches oder zu Router/Firewall</li>
+<li>Trunk zwischen Switches nötig, damit ein VLAN über mehrere Switches durchgängig funktioniert</li>
+<li>Mehrere VLANs gleichzeitig möglich, weil der 802.1Q-Tag (4 Byte) die VLAN-ID mitgibt</li>
+<li>Untagged: ohne Tag, VLAN ergibt sich aus dem Port. Tagged: VLAN-ID im Frame</li>
+<li>Native VLAN: das eine untagged VLAN am Trunk, muss auf beiden Seiten passen</li>
+</ul>
+<div class="box wichtig"><b>Wichtig</b>VLAN muss auf beiden Switches existieren und im Trunk erlaubt sein, sonst kommt es nicht durch.</div>
+</div></details>
+
+<details><summary>4. VLANs in der Praxis</summary><div class="in">
+<ul>
+<li>Strukturierung: Netz in Bereiche gegliedert, Subnetze planbar</li>
+<li>Benutzer: getrennt von Servern und Verwaltung</li>
+<li>Server: strengere Zugriffsregeln</li>
+<li>Verwaltung: Zugriff auf Management nur für Admins</li>
+<li>Gäste: nur Internet, kein Zugriff aufs interne Netz</li>
+<li>VoIP: eigenes VLAN, Priorisierung (QoS) möglich</li>
+<li>Broadcast bleibt im eigenen VLAN, dadurch kleinere Broadcast-Domains</li>
+<li>Keine vollständige Sicherheit: trennt nur Layer 2, Regeln erst durch Firewall/ACL, Fehlkonfiguration möglich. Trotzdem ein wichtiger Baustein</li>
+</ul>
+<div class="box wichtig"><b>Ziel</b>VLANs sind ein Struktur- und Planungsthema, nicht nur Konfiguration.</div>
+</div></details>
+
+<details><summary>5. Kommunikation zwischen VLANs</summary><div class="in">
+<ul>
+<li>Direkt nicht möglich: eigene Broadcast-Domain und eigenes Subnetz</li>
+<li>Nötig: Layer-3-Instanz (Router, L3-Switch mit SVI, Router-on-a-Stick, Firewall)</li>
+<li>Jedes VLAN braucht ein Gateway, Endgeräte nutzen es als Standardgateway</li>
+<li>Am Übergang lassen sich Regeln setzen (ACL/Firewall)</li>
+</ul>
+<div class="box wichtig"><b>Wichtig</b>VLANs trennen Layer-2-Bereiche, Kommunikation dazwischen funktioniert nicht automatisch.</div>
+</div></details>
+
+<details><summary>6. STP: Grundidee</summary><div class="in">
+<ul>
+<li>Redundante Wege sind sinnvoll, erzeugen aber Schleifen</li>
+<li>Layer-2-Loop: Frames kreisen im Kreis, Ethernet hat kein TTL, sie laufen nie von selbst aus</li>
+<li>Besonders problematisch: Broadcasts und unbekannte Ziele werden immer weiter geflutet</li>
+<li>Broadcast Storm: Frames vervielfachen sich, Links und CPU laufen voll, Netz steht</li>
+<li>MAC-Table Instability: dieselbe MAC wechselt ständig zwischen Ports</li>
+<li>Ohne Schutzmechanismus wird aus Redundanz ein Ausfall</li>
+</ul>
+<div class="box wichtig"><b>Ziel</b>STP blockiert nicht unnötig, sondern hält ein redundantes L2-Netz betriebsfähig und stabil.</div>
+</div></details>
+
+<details><summary>7. STP: Funktionsprinzip</summary><div class="in">
+<ul>
+<li>Bei mehreren Wegen wählt STP einen aktiven Weg und blockiert die übrigen</li>
+<li>Nicht jeder Pfad aktiv, sonst Loop</li>
+<li>Root Bridge: Switch mit der niedrigsten Bridge-ID (Priorität + MAC), Ausgangspunkt des Baums</li>
+<li>Pfadwahl: jeder Switch nimmt den günstigsten Pfad zur Root (Kosten nach Bandbreite)</li>
+<li>Loopfreier logischer Baum: von der Root verzweigt, keine Schleifen</li>
+<li>Blocking: Port leitet keine Nutzdaten weiter. Forwarding: Port leitet normal weiter</li>
+<li>Ausfall: Topologie wird neu berechnet, geblockter Port geht in Forwarding (RSTP deutlich schneller)</li>
+</ul>
+<div class="box merk"><b>Merke</b>Geblockte Links sind Reserve für den Ausfall.</div>
+</div></details>
+
+<details><summary>8. LAG: Link Aggregation</summary><div class="in">
+<ul>
+<li>LAG: mehrere physische Links werden zu einem logischen Bündel-Link zusammengefasst (Port-Channel)</li>
+<li>Bandbreite: Kapazität summiert sich</li>
+<li>Redundanz: fällt ein Link aus, läuft das Bündel mit den übrigen weiter</li>
+<li>Lastverteilung: Verteilung über Hash (z. B. MAC/IP/Port)</li>
+<li>STP sieht 1 Link, daher kein Loop und kein Blocking</li>
+<li>Nicht einfach mehr Kabel = schneller: ein einzelner Datenstrom bleibt auf einem Link, Verteilung hängt vom Hash ab, Einstellungen (Speed, Duplex, VLANs) müssen passen</li>
+</ul>
+</div></details>
+
+<details><summary>9. Statisches LAG und LACP</summary><div class="in">
+<ul>
+<li>Statisch möglich: fest konfiguriert, keine Aushandlung, keine Prüfung</li>
+<li>LACP (IEEE 802.3ad): Bündel wird ausgehandelt und überwacht, Fehlkonfiguration fällt auf</li>
+<li>Beide Seiten müssen zusammenpassen (Modus, Ports, Speed, VLANs)</li>
+<li>Bei falscher Einrichtung: Paketverlust, Ports fallen raus, MAC-Flapping, im schlimmsten Fall Loop</li>
+</ul>
+<div class="box wichtig"><b>Wichtig</b>Link-Bündelung muss koordiniert werden.</div>
+</div></details>
+
+<details><summary>10. MLAG</summary><div class="in">
+<ul>
+<li>MLAG = Multi-Chassis Link Aggregation: LAG, das auf zwei getrennten Switches endet</li>
+<li>Normales LAG endet auf einem Gerät, MLAG auf zwei, die für die Gegenseite wie ein Gerät wirken</li>
+<li>Interessant in redundanten Designs: Ausfall eines ganzen Switches bleibt ohne Unterbrechung</li>
+<li>Alle Verbindungen aktiv, kein STP-Blocking</li>
+<li>Verfügbarkeit: Switch-Ausfall oder Wartung wird abgefangen</li>
+<li>Die zwei Switches stimmen sich über einen Peer-Link ab (herstellerspezifisch, z. B. vPC)</li>
+</ul>
+<div class="box wichtig"><b>Ziel</b>Redundanz erreichen, ohne einen klassischen Layer-2-Loop zu erzeugen.</div>
+</div></details>
+
+<details><summary>11. STP, LAG und MLAG im Vergleich</summary><div class="in">
+<ul>
+<li>STP löst: Schleifen bei redundanten Wegen</li>
+<li>LAG löst: mehr Kapazität und Ausfallschutz auf Linkebene zwischen zwei Geräten</li>
+<li>MLAG löst: Ausfallschutz auch bei Ausfall eines Switches, mit allen Links aktiv</li>
+<li>Ergänzung: MLAG im Design, STP bleibt als Sicherheitsnetz gegen Fehlverkabelung</li>
+<li>Nicht austauschbar: unterschiedliche Probleme, obwohl alle mit Redundanz zu tun haben</li>
+</ul>
+<div class="box merk"><b>Merke</b>STP schützt vor Schleifen, LAG bündelt Verbindungen, MLAG erweitert diese Idee auf mehrere Geräte.</div>
+</div></details>
+
+<details><summary>12. Typische Fehlerbilder</summary><div class="in">
+<div class="box fehler"><b>Falsche VLAN-Zuordnung / Gerät im falschen VLAN</b>Falsche IP-Adresse, Netz nicht erreichbar, Gerät landet im falschen Bereich.</div>
+<div class="box fehler"><b>Trunk transportiert nicht die erwarteten VLANs</b>VLAN nicht erlaubt oder nicht angelegt, Native VLAN unterschiedlich.</div>
+<div class="box fehler"><b>Kommunikation zwischen VLANs geht nicht</b>Kein Gateway/Routing, falsches Standardgateway, Firewall-Regel.</div>
+<div class="box fehler"><b>Loop im Layer-2-Netz</b>Broadcast Storm, MAC-Flapping, Netz extrem langsam oder down.</div>
+<div class="box fehler"><b>Falsche oder unvollständige LAG-Konfiguration</b>Nur eine Seite gebündelt, Parameter passen nicht, Ports suspended, Paketverlust.</div>
+<div class="box fehler"><b>Unklare Redundanz / Fehlverhalten bei mehrfachem Pfad</b>Unklar, welcher Pfad aktiv ist, STP-Root ungeplant, Umschaltung dauert.</div>
+</div></details>
+
+<details><summary>13. Switching in der Praxis</summary><div class="in">
+<ul>
+<li>Nur verbinden reicht nicht: Segmentierung, Loop-Schutz, Ausfallsicherheit und Bandbreite müssen geplant sein</li>
+<li>VLANs: Struktur und Segmentierung</li>
+<li>Redundanz ohne Schleifenschutz führt zu Loops</li>
+<li>LAG und MLAG: Leistung und Hochverfügbarkeit</li>
+<li>Viele Fehler in Firmennetzen sind VLAN-, Trunk-, STP- oder LAG-Fehler</li>
+</ul>
+<div class="box wichtig"><b>Ziel</b>Switching ist deutlich mehr als das Weiterleiten von Frames.</div>
+</div></details>
+
+<details><summary>Glossar</summary><div class="in wrap"><table>
+<tr><th>Begriff</th><th>Kurz erklärt</th></tr>
+<tr><td>MAC-Address-Table</td><td>Zuordnung MAC > Port, vom Switch gelernt</td></tr>
+<tr><td>Frame</td><td>Datenpaket auf Layer 2</td></tr>
+<tr><td>VLAN</td><td>Logisches Netz auf gemeinsamer Hardware, eigene Broadcast-Domain</td></tr>
+<tr><td>Access Port</td><td>1 VLAN, untagged, für Endgeräte</td></tr>
+<tr><td>Trunk</td><td>Mehrere VLANs, tagged (802.1Q)</td></tr>
+<tr><td>Native VLAN</td><td>Untagged VLAN am Trunk</td></tr>
+<tr><td>SVI / Router-on-a-Stick</td><td>Gateway für ein VLAN auf L3-Switch bzw. Router</td></tr>
+<tr><td>Loop / Broadcast Storm</td><td>Frames kreisen, Netz läuft voll</td></tr>
+<tr><td>Root Bridge</td><td>Wurzel des STP-Baums, niedrigste Bridge-ID</td></tr>
+<tr><td>Blocking / Forwarding</td><td>Port leitet nicht / normal weiter</td></tr>
+<tr><td>LAG / Port-Channel</td><td>Mehrere Links als 1 logischer Link</td></tr>
+<tr><td>LACP</td><td>Protokoll zum Aushandeln eines LAG (802.3ad)</td></tr>
+<tr><td>MLAG</td><td>LAG über zwei Switches, Gegenseite sieht ein Gerät</td></tr>
+<tr><td>Peer-Link</td><td>Verbindung zwischen den MLAG-Switches zum Abgleich</td></tr>
+</table></div></details>
+
+<details><summary>Hilfe bei Bearbeitungsstillstand</summary><div class="in">
+<ul>
+<li>Bei VLAN-Problemen: Weg des Frames Port für Port verfolgen (Access, Trunk, Access) und je Station das VLAN prüfen</li>
+<li>Bei fehlender Verbindung zwischen VLANs: erst prüfen, ob Layer 2 im VLAN funktioniert, dann Gateway und Routing</li>
+<li>Bei Loop-Verdacht: Symptome prüfen (Storm, MAC-Flapping), Verkabelung kontrollieren, Root Bridge feststellen</li>
+<li>Bei LAG: beide Seiten vergleichen (Modus, Ports, Speed, VLANs)</li>
+<li>Bei Begriffschaos: Merksatz nutzen. STP schützt vor Schleifen, LAG bündelt Links, MLAG erweitert das auf mehrere Geräte</li>
+</ul></div></details>
+
+<details open><summary>14. Eigene Einschätzung</summary><div class="in">
+<p class="q">Chip antippen: sicher, unsicher, bitte wiederholen, zurück auf neutral.</p>
+<div class="chips" id="chips"></div>
+</div></details>
+</main>
+<script>
+var T=["Switch/MAC/Forwarding","VLAN Grundidee","Access vs. Trunk","Tagged/Untagged","Inter-VLAN-Routing","STP/Loops","Root Bridge/Blocking","LAG","LACP vs. statisch","MLAG","STP vs. LAG vs. MLAG","Fehlerbilder"];
+var L=["","sicher","unsicher","bitte wiederholen"];
+var c=document.getElementById("chips");
+T.forEach(function(t){var b=document.createElement("button");b.className="chip";b.dataset.s=0;b.textContent=t;
+b.onclick=function(){var s=(+b.dataset.s+1)%4;b.dataset.s=s;b.textContent=t+(s?": "+L[s]:"")};c.appendChild(b)});
+var ds=[].slice.call(document.querySelectorAll("details"));
+document.getElementById("s").oninput=function(e){var q=e.target.value.toLowerCase();
+ds.forEach(function(d){var m=!q||d.textContent.toLowerCase().indexOf(q)>-1;d.classList.toggle("hide",!m);if(q&&m)d.open=true})};
+document.getElementById("open").onclick=function(){ds.forEach(function(d){d.open=true})};
+document.getElementById("close").onclick=function(){ds.forEach(function(d){d.open=false})};
+var C=[["Was macht ein Switch?","Leitet Frames gezielt anhand der Ziel-MAC an den passenden Port weiter (Layer 2)."],["Hub vs. Switch?","Hub gibt alles an alle Ports, Switch lernt MACs und leitet gezielt."],["Was ist ein VLAN?","Logisches Netz auf gemeinsamer Hardware, 1 VLAN = 1 Broadcast-Domain."],["Access vs. Trunk?","Access: 1 VLAN, untagged, Endgeräte. Trunk: mehrere VLANs, tagged, zwischen Switches."],["Warum kein Verkehr zwischen VLANs?","Eigene Broadcast-Domain, Layer-3 (Router, SVI, Firewall) nötig."],["Was ist ein Layer-2-Loop?","Frames kreisen, kein TTL: Broadcast Storm, MAC-Table Instability."],["Was macht STP?","Wählt Root Bridge, baut loopfreien Baum, blockiert redundante Ports als Reserve."],["Was macht LAG?","Mehrere Links als 1 logischer Link: Bandbreite, Redundanz, Lastverteilung per Hash."],["Statisch vs. LACP?","Statisch: keine Aushandlung. LACP: Bündel wird ausgehandelt und geprüft."],["Was ist MLAG?","LAG über zwei Switches: alle Links aktiv, Switch-Ausfall abgefangen, kein Loop."],["STP, LAG, MLAG in einem Satz?","STP schützt vor Schleifen, LAG bündelt Verbindungen, MLAG erweitert das auf mehrere Geräte."]];
+var ci=0,fl=false,cd=document.getElementById("card");
+function show(){cd.className="card"+(fl?" a":"");cd.innerHTML="<small>"+(fl?"Antwort":"Frage")+"</small>"+C[ci][fl?1:0];document.getElementById("cnt").textContent=(ci+1)+" / "+C.length}
+cd.onclick=function(){fl=!fl;show()};
+cd.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();cd.click()}};
+document.getElementById("prev").onclick=function(){ci=(ci+C.length-1)%C.length;fl=false;show()};
+document.getElementById("next").onclick=function(){ci=(ci+1)%C.length;fl=false;show()};
+function mode(l){document.body.classList.toggle("lernen",l);document.getElementById("lesen").classList.toggle("on",!l);document.getElementById("lernen").classList.toggle("on",l)}
+document.getElementById("lesen").onclick=function(){mode(false)};
+document.getElementById("lernen").onclick=function(){mode(true)};
+show();
+</script>
+
+<div style="text-align:center;font:11px/1.6 ui-monospace,Consolas,monospace;color:#8b949e;padding:14px 16px 24px;">© 2026 <a href="https://github.com/nicandr0" style="color:inherit;">Nicandro Marziale</a> – Design, Entwicklung und Formulierung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener" style="color:inherit;">CC BY-NC-SA 4.0</a></div>
+</body>
+</html>
