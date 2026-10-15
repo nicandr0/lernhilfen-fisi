@@ -1,0 +1,512 @@
+<!--@meta-->
+{
+  "untertitel": "Interaktives Nachschlagewerk & Lernhilfe für Linux-Kommandos. Beschreib, was du vorhast — die passenden Befehle und ein Beispiel dazu findest du sofort. Befehlsauswahl angelehnt an \"Linux auf einem Blatt\" von Christian Helmbold. Mit dem Knopf <b>LPI 010</b> siehst und übst du nur den Prüfungsstoff von LPI Linux Essentials.",
+  "suche": "Was hast du vor? z. B. 'Datei suchen', 'entpacken', 'Rechte ändern' …",
+  "nav_titel": "Kategorien",
+  "lernen": "karten"
+}
+<!--@style-->
+/* Befehlskarten (nur Linux) */
+.card.befehl{border-left:1px solid var(--border-soft);padding:14px 15px;}
+.card.befehl .desc{font-size:13.5px;color:var(--text-primary);line-height:1.45;margin-bottom:9px;min-height:19px;}
+.card.befehl .cmdrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.cmd-chip{
+  font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--green);
+  background:var(--green-soft);border:1px solid rgba(127,174,112,0.3);
+  padding:3px 9px;border-radius:6px;
+}
+.card.befehl .example{
+  font-family:var(--mono);font-size:12px;color:var(--text-secondary);
+  background:var(--bg-elevated);border:1px solid var(--border-soft);border-radius:6px;
+  padding:8px 10px;display:flex;align-items:center;gap:8px;
+}
+.card.befehl .example .p{color:var(--amber);flex-shrink:0;}
+.card.befehl .example code{color:var(--text-primary);background:none;padding:0;font-size:inherit;}
+.card.befehl .tip{font-size:11.5px;color:var(--text-secondary);margin-top:7px;line-height:1.5;padding-top:7px;border-top:1px solid var(--border-soft);}
+
+.badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.04em;vertical-align:middle;}
+.badge-deb{background:rgba(192,112,48,0.15);color:#c07030;border:1px solid rgba(192,112,48,0.3);}
+.badge-ubuntudeb{background:rgba(100,150,220,0.13);color:#7aabdd;border:1px solid rgba(100,150,220,0.28);}
+.badge-lpi{background:rgba(204,159,63,0.13);color:var(--gold);border:1px solid rgba(204,159,63,0.35);margin-left:4px;}
+.badge-modern{background:rgba(127,174,112,0.13);color:var(--green);border:1px solid rgba(127,174,112,0.28);}
+<!--@meta-zeile-->
+      <span><b id="statTotal">0</b> Befehle</span>
+      <span><b id="statCat">0</b> Kategorien</span>
+      <span id="statVisible" class="hidden"><b id="statVisibleNum">0</b> Treffer</span>
+<!--@knoepfe-->
+      <button class="btn" id="lpiBtn" type="button" aria-pressed="false" title="Nur Prüfungsstoff LPI Linux Essentials 010-160 anzeigen">LPI 010</button>
+<!--@inhalt-->
+<!--@skript-->
+const DATA = [
+{id:'hilfe', title:'Hilfe', groups:[
+  {items:[
+    {cmd:'man', lpi:'2.2', desc:'Klassische Hilfe zu einem Kommando aufrufen', ex:'man ls', note:'verlassen mit Q', tip:'Zeigt die komplette Dokumentation zu ls. Mit den Pfeiltasten scrollen, Q zum Beenden. Funktioniert für fast jeden Befehl: einfach man + Befehlsname.'},
+    {cmd:'info', lpi:'2.2', desc:'Online-Hilfe von GNU aufrufen', ex:'info coreutils', note:'verlassen mit Q', tip:'Ähnlich wie man, aber ausführlicher und mit verlinkten Seiten. Für GNU-Tools oft detaillierter als man.'},
+    {cmd:'apropos', lpi:'2.2', desc:'Schlüsselwörter in man-Seiten suchen', ex:'apropos copy', tip:'Du weißt nicht wie der Befehl heißt, aber was er tun soll? apropos sucht in allen man-Seitentiteln nach dem Begriff.'},
+    {cmd:'whatis', lpi:'2.2', desc:'Einzeiler-Erklärung zu einem Befehl aus der Handbuch-Datenbank', ex:'whatis ls', tip:'Gibt nur eine einzeilige Erklärung zurück – schneller Überblick, was ein Befehl grundsätzlich macht.'},
+  ]}
+]},
+{id:'dateien', title:'Dateien', groups:[
+  {name:'Dateiinhalte anzeigen', items:[
+    {cmd:'cat', lpi:'3.2', desc:'Dateien nacheinander ausgeben', ex:'cat datei.txt', tip:'Gibt den gesamten Inhalt von datei.txt direkt im Terminal aus. Bei langen Dateien besser less verwenden.'},
+    {cmd:'more · less', lpi:'3.2', desc:'Lange Texte Bildschirm für Bildschirm durchblättern', ex:'less datei.txt', tip:'Öffnet datei.txt seitenweise – mit Leertaste vorblättern, Q beenden. less ist moderner und kann auch rückwärts scrollen.'},
+    {cmd:'head', lpi:'3.2', desc:'Nur den Anfang einer Datei zeigen (Standard: 10 Zeilen)', ex:'head -n 20 datei.txt', tip:'Zeigt die ersten 20 Zeilen. Ohne -n werden standardmäßig 10 Zeilen angezeigt. Praktisch für einen schnellen Blick in eine Datei.'},
+    {cmd:'tail', lpi:'3.2', desc:'Letzte Zeilen einer Datei ausgeben / live mitlesen', ex:'tail -f logfile.log', tip:'-f bedeutet "follow" – das Terminal zeigt neue Zeilen live an, sobald sie ins Log geschrieben werden. Ideal zum Beobachten von Logs in Echtzeit.'},
+    {cmd:'nl', desc:'Zeilen einer Datei durchnummeriert anzeigen', ex:'nl datei.txt', tip:'Wie cat, aber jede Zeile bekommt eine Nummer davor. Hilfreich wenn man über Zeilennummern sprechen oder navigieren muss.'},
+    {cmd:'od · hd', desc:'Dateiinhalt Byte für Byte als Oktal- oder Hexwerte zeigen', ex:'od -c datei.bin', tip:'Zeigt den rohen Inhalt einer Binärdatei als lesbare Zeichen an. Nützlich um zu sehen was wirklich in einer Datei steckt.'},
+  ]},
+  {name:'Dateien untersuchen', items:[
+    {cmd:'ls', lpi:'2.3 · 5.3', desc:'Dateien auflisten', ex:'ls -la', tip:'-l zeigt Details (Rechte, Größe, Datum), -a zeigt auch versteckte Dateien (die mit Punkt anfangen). Kombination -la ist der Standard für einen vollständigen Überblick.'},
+    {cmd:'lsattr', desc:'Erweiterte ext-Attribute einer Datei anzeigen (z. B. unveränderlich)', ex:'lsattr datei.txt', tip:'Zeigt spezielle Linux-Attribute (z. B. ob eine Datei unveränderlich ist). Nicht zu verwechseln mit Zugriffsrechten (chmod).'},
+    {cmd:'file', desc:'Erkennen, was für eine Art Datei vorliegt (Text, Bild, Programm …)', ex:'file datei.bin', tip:'Linux erkennt Dateitypen am Inhalt, nicht an der Endung. file verrät was wirklich drin steckt – auch bei umbenannten Dateien.'},
+    {cmd:'type', lpi:'2.1', desc:'Herausfinden, ob ein Befehl Programm, Alias oder Shell-Funktion ist', ex:'type ls', tip:'Zeigt ob ls ein echtes Programm, ein Alias oder eine Shell-Funktion ist. Hilfreich wenn ein Befehl sich anders verhält als erwartet.'},
+    {cmd:'wc', lpi:'3.2', desc:'Zeichen, Wörter und Zeilen zählen', ex:'wc -l datei.txt', tip:'-l zählt nur Zeilen. Ohne Option kommen alle drei Werte. Klassisch kombiniert mit Pipe: cat datei.txt | wc -l'},
+    {cmd:'sum · md5sum · sha1sum', desc:'Prüfsumme berechnen, um Dateien auf Veränderungen zu kontrollieren', ex:'sha1sum datei.iso', tip:'Gibt einen eindeutigen "Fingerabdruck" der Datei aus. Damit prüft man ob ein Download vollständig und unverändert angekommen ist.'},
+    {cmd:'fuser', desc:'Herausfinden, welcher Prozess eine Datei oder einen Port belegt', ex:'fuser -v /mnt/usb', tip:'Wenn ein USB-Stick sich nicht auswerfen lässt, verrät fuser welches Programm ihn noch blockiert.'},
+    {cmd:'lsof', desc:'Alle gerade geöffneten Dateien samt zugehörigem Prozess auflisten', ex:'lsof -i :80', tip:'-i :80 zeigt alle Prozesse die Port 80 nutzen. lsof steht für "list open files" – in Linux ist fast alles eine Datei, auch Netzwerkverbindungen.'},
+  ]},
+  {name:'Dateien verwalten', items:[
+    {cmd:'cp', lpi:'2.4', desc:'Dateien kopieren', ex:'cp /home/user/dokumente/bericht.txt /home/user/backup/', tip:'Man muss nicht im selben Ordner sein – einfach vollständige Pfade angeben: Quelle zuerst, Ziel danach. Mit -r werden ganze Ordner kopiert.'},
+    {cmd:'mv', lpi:'2.4', desc:'Dateien umbenennen oder verschieben', ex:'mv alt.txt neu.txt', tip:'Wenn Quelle und Ziel im selben Ordner liegen, wird die Datei umbenannt. Sonst wird sie verschoben. mv kann beides gleichzeitig.'},
+    {cmd:'ln', lpi:'5.4', desc:'Link (Verknüpfung) auf eine Datei setzen', ex:'ln -s /pfad/zum/original linkname', tip:'-s erstellt einen symbolischen Link (wie eine Windows-Verknüpfung). Der Link zeigt auf das Original – Änderungen wirken sich auf das Original aus.'},
+    {cmd:'rm', lpi:'2.4', desc:'Dateien entfernen – mit -r auch ganze Ordner samt Inhalt', ex:'rm -rf verzeichnis/', tip:'Achtung: kein Papierkorb! -r löscht rekursiv (auch Unterordner), -f erzwingt ohne Rückfrage. Kombination -rf ist mächtig – Pfad genau prüfen bevor Enter gedrückt wird.'},
+  ]},
+  {name:'Dateien finden', items:[
+    {cmd:'find', desc:'Nach Dateien suchen', ex:"find / -name '*.log'", tip:'Sucht ab dem Wurzelverzeichnis / alle Dateien die auf .log enden. find . durchsucht nur das aktuelle Verzeichnis. Sehr flexibel mit vielen Filteroptionen.'},
+    {cmd:'locate · slocate', lpi:'2.2', desc:'Dateinamen blitzschnell über eine Index-Datenbank finden', ex:'locate passwd', tip:'Sucht in einer vorberechneten Datenbank – viel schneller als find, aber kennt keine Dateien die nach dem letzten updatedb erstellt wurden.'},
+    {cmd:'updatedb', desc:'Index-Datenbank für locate neu aufbauen', ex:'sudo updatedb', tip:'Aktualisiert die Dateiliste für locate. Braucht sudo, läuft eine Weile. Danach findet locate auch neu erstellte Dateien.'},
+    {cmd:'grep · fgrep · egrep', lpi:'3.2', desc:'In Dateien suchen', ex:"grep -r 'fehler' /var/log", tip:'-r durchsucht rekursiv alle Dateien in /var/log nach dem Wort "fehler". Groß-/Kleinschreibung ignorieren mit -i. Eines der meistgenutzten Linux-Werkzeuge.'},
+    {cmd:'which', desc:'Vollständigen Pfad eines Kommandos anzeigen', ex:'which python3', tip:'Zeigt wo python3 auf dem System liegt, z. B. /usr/bin/python3. Gut um zu prüfen welche Version gerade aktiv ist.'},
+    {cmd:'whereis', desc:'Pfad zu Programm-, Quell- und man-Datei anzeigen', ex:'whereis grep', tip:'Zeigt mehr als which: Programmdatei, Quelldateien und man-Seiten auf einmal. Praktisch für einen vollständigen Überblick.'},
+  ]},
+  {name:'Vergleichen und sortieren', items:[
+    {cmd:'diff', desc:'Zwei Textdateien vergleichen', ex:'diff datei1.txt datei2.txt', tip:'Zeigt genau welche Zeilen sich unterscheiden. Zeilen mit < kommen aus datei1, Zeilen mit > aus datei2. Klassisch für Vergleiche von Konfigurationsdateien.'},
+    {cmd:'comm', desc:'Sortierte Textdateien vergleichen', ex:'comm sortiert1.txt sortiert2.txt', tip:'Beide Dateien müssen vorher sortiert sein. Gibt drei Spalten aus: nur in Datei1, nur in Datei2, in beiden. Gut für Listenvergleiche.'},
+    {cmd:'cmp', desc:'Zwei Dateien byteweise vergleichen', ex:'cmp datei1 datei2', tip:'Gibt nur aus ob und wo sich Dateien unterscheiden – kein detaillierter Inhalt. Schnell für binäre Dateien geeignet.'},
+    {cmd:'join', desc:'Dateien anhand eines gemeinsamen Feldes zusammenführen', ex:'join datei1.csv datei2.csv', tip:'Wie ein einfaches SQL-JOIN: verknüpft Zeilen aus zwei Dateien die in der ersten Spalte übereinstimmen. Dateien müssen sortiert vorliegen.'},
+    {cmd:'sort', lpi:'3.2', desc:'Dateien sortieren', ex:'sort -n zahlen.txt', tip:'-n sortiert numerisch (10 kommt nach 9, nicht nach 1). Ohne -n wird alphabetisch sortiert. Ergebnis direkt speichern mit sort -n datei.txt -o datei.txt'},
+  ]},
+  {name:'Packen und entpacken', items:[
+    {cmd:'gzip · gunzip', lpi:'3.1', desc:'Dateien komprimieren / entpacken', ex:'gzip datei.txt', tip:'Erstellt datei.txt.gz und löscht das Original. Entpacken mit gunzip datei.txt.gz. Für Archiv ohne Löschen: gzip -k datei.txt'},
+    {cmd:'bzip2 · bunzip2 · bzcat', lpi:'3.1', desc:'Dateien mit bzip2 komprimieren / entpacken', ex:'bzip2 -k datei.txt', tip:'-k behält das Original (keep). bzip2 komprimiert meist besser als gzip, braucht aber länger. Entpacken mit bunzip2 datei.txt.bz2'},
+    {cmd:'zcat · zless · zmore', desc:'Inhalt von gzip-Archiven anzeigen ohne zu entpacken', ex:'zcat archiv.gz', tip:'Man kann direkt in komprimierte Dateien reinschauen ohne sie vorher zu entpacken – spart Zeit und Speicherplatz.'},
+    {cmd:'tar · cpio', lpi:'3.1', desc:'Dateien und Verzeichnisbäume archivieren', ex:'tar -xzvf archiv.tar.gz', tip:'-x entpacken, -z gzip-Komprimierung, -v Fortschritt anzeigen, -f Dateiname folgt. Zum Packen stattdessen -czf verwenden: tar -czf archiv.tar.gz ordner/. -j steht für bzip2, -J für xz. Mit -C ziel/ landet der Inhalt in einem anderen Ordner, tar -tf archiv.tar.gz zeigt nur, was drin ist.'},
+    {cmd:'xz · unxz', lpi:'3.1', desc:'Dateien besonders stark komprimieren / entpacken', ex:'xz -k bericht.log', tip:'Erzeugt bericht.log.xz, -k behält das Original. Packt meist kleiner als gzip und bzip2, braucht dafür mehr Zeit. Mit tar kombiniert: tar -cJf archiv.tar.xz ordner/ (großes J steht für xz).'},
+    {cmd:'zip · unzip', lpi:'3.1', desc:'ZIP-Archive erstellen und auspacken (auch unter Windows lesbar)', ex:'zip -r projekt.zip projekt/', tip:'-r nimmt Ordner samt Inhalt mit. unzip projekt.zip packt aus, unzip -l projekt.zip zeigt nur, was drin ist. Anders als bei tar.gz passiert Archivieren und Packen in einem Schritt.'},
+  ]},
+  {name:'Rechte und Besitz', items:[
+    {cmd:'chmod', lpi:'5.3', desc:'Zugriffsrechte einer Datei ändern', ex:'chmod 755 script.sh', tip:'755 bedeutet: Eigentümer darf alles (7), Gruppe und andere dürfen lesen+ausführen (5). Skripte brauchen das x-Recht um ausführbar zu sein.'},
+    {cmd:'chown', lpi:'5.3', desc:'Besitzer (und optional Gruppe) einer Datei festlegen', ex:'chown user:gruppe datei.txt', tip:'Ändert Eigentümer und Gruppe gleichzeitig. Braucht sudo wenn man nicht selbst Eigentümer ist. Mit -R für ganze Ordner.'},
+    {cmd:'chgrp', desc:'Zugehörige Gruppe einer Datei festlegen', ex:'chgrp entwickler datei.txt', tip:'Ändert nur die Gruppe, nicht den Eigentümer. Kurzform von chown :gruppe datei.txt'},
+    {cmd:'chattr', desc:'Spezielle Dateiattribute ändern', ex:'chattr +i datei.txt', tip:'+i macht eine Datei unveränderlich (immutable) – selbst root kann sie dann nicht mehr löschen oder ändern. -i hebt das wieder auf.'},
+    {cmd:'umask', desc:'Standard-Zugriffsrechte für neue Dateien setzen', ex:'umask 022', tip:'022 bedeutet: neue Dateien bekommen 644, neue Ordner 755. Die umask "zieht" Rechte ab – 022 sperrt Schreibrecht für Gruppe und andere.'},
+    {cmd:'touch', lpi:'2.4', desc:'Zeitstempel ändern oder leere Datei erstellen', ex:'touch neue-datei.txt', tip:'Existiert neue-datei.txt noch nicht, wird sie leer angelegt. Existiert sie schon, wird nur der Zeitstempel auf jetzt gesetzt.'},
+  ]},
+  {name:'Text bearbeiten und filtern', items:[
+    {cmd:'tr', desc:'Einzelne Zeichen ersetzen oder löschen', ex:"tr 'a-z' 'A-Z' < datei.txt", tip:'Liest datei.txt und wandelt alle Kleinbuchstaben in Großbuchstaben um. tr arbeitet immer mit Zeichenbereich, nicht mit ganzen Wörtern.'},
+    {cmd:'sed', desc:'Text per Muster suchen und ersetzen', ex:"sed 's/alt/neu/g' datei.txt", tip:'s steht für substitute, g für global (alle Vorkommen). Ohne g nur das erste pro Zeile. Die Datei selbst bleibt unverändert – mit -i wird sie direkt bearbeitet.'},
+    {cmd:'awk', desc:'Zeilen in Felder zerlegen und gezielt Spalten ausgeben oder auswerten', ex:"awk -F: '{print $1, $7}' /etc/passwd", tip:'-F: setzt den Doppelpunkt als Trennzeichen, $1 ist das erste Feld (Benutzername), $7 das siebte (Login-Shell). Ohne -F trennt awk an Leerzeichen. Kann auch rechnen: df | awk \'NR>1 {print $5, $6}\' zeigt Füllstand und Einhängepunkt jedes Laufwerks.'},
+    {cmd:'expand', desc:'Tabulatoren in Leerzeichen umwandeln', ex:'expand -t 4 datei.txt', tip:'-t 4 ersetzt jeden Tab durch 4 Leerzeichen. Nützlich wenn Dateien in verschiedenen Editoren unterschiedlich aussehen.'},
+    {cmd:'recode · iconv', desc:'Zeichensatz einer Datei konvertieren', ex:'iconv -f ISO-8859-1 -t UTF-8 datei.txt', tip:'Wandelt eine Datei von altem Windows-Zeichensatz (ISO-8859-1) nach modernem UTF-8 um. Löst viele Probleme mit Umlauten.'},
+    {cmd:'uniq', desc:'Doppelte aufeinanderfolgende Zeilen entfernen', ex:'sort datei.txt | uniq', tip:'uniq entfernt nur direkt aufeinanderfolgende Duplikate – deshalb vorher immer sort. Kombination sort | uniq ist der Standard.'},
+    {cmd:'cut', lpi:'3.2', desc:'Bestimmte Spalten oder Felder aus Zeilen ausschneiden', ex:"cut -d':' -f1 /etc/passwd", tip:'-d gibt das Trennzeichen an (hier Doppelpunkt), -f1 das erste Feld. /etc/passwd enthält alle Benutzernamen im ersten Feld.'},
+    {cmd:'split · csplit', desc:'Große Dateien zerteilen', ex:'split -b 500M datei.iso teil_', tip:'Teilt datei.iso in 500-MB-Stücke auf, die teil_aa, teil_ab usw. heißen. Praktisch um große Dateien auf mehrere Datenträger zu verteilen.'},
+  ]},
+  {name:'Druckaufträge', items:[
+    {cmd:'lp · lpr', desc:'Druckauftrag an einen Drucker schicken', ex:'lpr dokument.pdf', tip:'Schickt dokument.pdf an den Standarddrucker. Mit -P druckername kann ein bestimmter Drucker gewählt werden.'},
+    {cmd:'lpstat · lpq', desc:'Status von Druckaufträgen erfragen', ex:'lpstat -p', tip:'Zeigt alle verfügbaren Drucker und deren Status. lpq zeigt die Warteschlange des Standarddruckers.'},
+    {cmd:'cancel', desc:'Wartenden Druckauftrag stornieren', ex:'cancel druckjob-123', tip:'Die Job-ID bekommt man vorher mit lpstat. cancel ohne ID bricht den aktuellen Job ab.'},
+    {cmd:'lpc', desc:'Druckerwarteschlangen steuern und abfragen', ex:'lpc status', tip:'Zeigt Status aller Drucker. Kann Drucker anhalten, fortsetzen oder Warteschlangen verwalten – meist braucht man dafür root-Rechte.'},
+    {cmd:'lprm', desc:'Druckauftrag aus der Warteschlange löschen', ex:'lprm 123', tip:'Löscht den Druckauftrag mit der ID 123 aus der Warteschlange bevor er gedruckt wird. Job-ID vorher mit lpq ermitteln.'},
+  ]},
+  {name:'Gerätedateien und Pipes', items:[
+    {cmd:'mknod', desc:'Gerätedatei oder Named Pipe anlegen', ex:'mknod /dev/pipe p', tip:'p steht für Pipe. Gerätedateien sind spezielle Dateien die Hardware repräsentieren – normalerweise legt Linux diese automatisch an.'},
+    {cmd:'mkfifo', desc:'FIFO-Datei (Named Pipe) anlegen', ex:'mkfifo meine_pipe', tip:'Eine FIFO-Pipe verbindet zwei Programme miteinander ohne eine echte Datei zu schreiben. Ein Programm schreibt rein, ein anderes liest raus.'},
+  ]},
+  {name:'Ordner und Pfade', items:[
+    {cmd:'pwd', desc:'Aktuelles Verzeichnis anzeigen', ex:'pwd', tip:'Zeigt den vollständigen Pfad wo man sich gerade befindet, z. B. /home/nicandro/projekte. pwd steht für "print working directory".'},
+    {cmd:'cd', lpi:'2.3', desc:'In ein anderes Verzeichnis wechseln', ex:'cd /var/log', tip:'cd .. geht eine Ebene nach oben, cd ~ geht ins Home-Verzeichnis, cd - springt ins zuletzt besuchte Verzeichnis zurück.'},
+    {cmd:'mkdir', lpi:'2.4', desc:'Verzeichnis anlegen', ex:'mkdir -p projekt/src', tip:'-p legt auch alle fehlenden Zwischenordner automatisch an. Ohne -p würde mkdir scheitern wenn projekt/ noch nicht existiert.'},
+    {cmd:'rmdir · rm', lpi:'2.4', desc:'Verzeichnis löschen', ex:'rmdir leeres_verzeichnis', tip:'rmdir funktioniert nur bei leeren Ordnern. Für nicht-leere Ordner: rm -rf ordnername/ – aber Vorsicht, das ist unwiderruflich.'},
+    {cmd:'diff', desc:'Zwei Verzeichnisse vergleichen', ex:'diff -r ordner1 ordner2', tip:'-r steht für rekursiv – vergleicht alle Dateien in beiden Ordnern. Zeigt welche Dateien fehlen oder unterschiedlich sind.'},
+    {cmd:'basename', desc:'Nur den Dateinamen aus einem Pfad ausgeben', ex:'basename /pfad/zu/datei.txt', tip:'Gibt datei.txt zurück, also nur den letzten Teil des Pfades ohne Verzeichnisse. Nützlich in Skripten.'},
+    {cmd:'dirname', desc:'Nur den Verzeichnisteil eines Pfades ausgeben', ex:'dirname /pfad/zu/datei.txt', tip:'Gibt /pfad/zu zurück – also alles außer dem Dateinamen. Gegenstück zu basename.'},
+  ]},
+  {name:'Speicherplatz', items:[
+    {cmd:'df', desc:'Freien Speicherplatz aller Laufwerke anzeigen', ex:'df -h', tip:'-h steht für "human readable" – zeigt Größen in MB/GB statt Bytes. Zeigt alle eingehängten Dateisysteme und wie voll sie sind.'},
+    {cmd:'du', desc:'Ermitteln, wie viel Platz Dateien und Ordner belegen', ex:'du -sh *', tip:'-s fasst pro Eintrag zusammen, -h lesbare Größen. du -sh * zeigt für jeden Eintrag im aktuellen Ordner die Gesamtgröße.'},
+    {cmd:'free', lpi:'4.3', desc:'Freien Arbeitsspeicher und Swap anzeigen', ex:'free -h', tip:'-h für lesbare Einheiten. Zeigt RAM-Gesamt, belegt, frei und Swap. Linux nutzt freien RAM als Cache – das ist normal und kein Problem.'},
+  ]},
+]},
+{id:'dateisysteme', title:'Dateisysteme', groups:[
+  {name:'Laufwerke und Partitionen', items:[
+    {cmd:'lsblk', desc:'Alle Laufwerke und Partitionen als Baum anzeigen', ex:'lsblk -f', tip:'Zeigt Platten (sda, nvme0n1) mit ihren Partitionen, Größe und Einhängepunkt. -f ergänzt Dateisystem, Label und UUID. Der sicherste erste Blick, bevor man mit fdisk, mkfs oder dd auf ein Laufwerk losgeht, denn die Nummerierung kann sich zwischen zwei Starts ändern.'},
+    {cmd:'mount', desc:'Dateisystem einhängen (mounten)', ex:'mount /dev/sdb1 /mnt/usb', tip:'/dev/sdb1 ist die erste Partition des zweiten Laufwerks. /mnt/usb ist der Ordner wo sie erscheint. Ohne Argumente zeigt mount alle aktuell gemounteten Systeme.'},
+    {cmd:'umount', desc:'Dateisystem aushängen (unmounten)', ex:'umount /mnt/usb', tip:'Erst auswerfen, dann Stecker ziehen. Wenn umount "device is busy" sagt, ist noch ein Programm oder Terminal in diesem Ordner offen.'},
+    {cmd:'fdisk · cfdisk', desc:'Festplatte partitionieren', ex:'fdisk -l', tip:'fdisk -l listet alle Laufwerke und Partitionen auf. cfdisk bietet eine einfachere Menüoberfläche. Vorsicht: falsche Partitionierung zerstört Daten.'},
+    {cmd:'parted', desc:'Partitionen anlegen, verkleinern, vergrößern, verschieben', ex:'parted /dev/sda print', tip:'print zeigt die aktuelle Partitionstabelle. parted kann auch mit GPT-Partitionen umgehen, fdisk hat damit manchmal Probleme.'},
+    {cmd:'fdformat', desc:'Diskette auf unterster Ebene formatieren (historisch)', ex:'fdformat /dev/fd0', tip:'Formatiert eine Diskette auf niedrigstem Level. Heute kaum noch relevant – historischer Befehl aus der Disketten-Ära.'},
+    {cmd:'dd', desc:'Laufwerke, Partitionen oder Dateien bytegenau kopieren/konvertieren', ex:'dd if=image.iso of=/dev/sdb bs=4M', tip:'if=Quelle, of=Ziel, bs=Blockgröße (4M ist schnell). Schreibt ein ISO-Image direkt auf einen USB-Stick. Achtung: of=/dev/sdb überschreibt den gesamten Stick ohne Rückfrage.'},
+  ]},
+  {name:'Dateisysteme anlegen und prüfen', items:[
+    {cmd:'mkfs', desc:'Dateisystem auf einer Partition erstellen', ex:'mkfs.ext4 /dev/sdb1', tip:'Formatiert /dev/sdb1 mit dem ext4-Dateisystem. Das löscht alle Daten auf der Partition. mkfs.vfat für FAT32 (USB-Sticks), mkfs.ntfs für NTFS.'},
+    {cmd:'mke2fs', desc:'ext2- oder ext3-Dateisystem erstellen', ex:'mke2fs -j /dev/sdb1', tip:'-j aktiviert das Journal (macht es zu ext3). Heute meist mkfs.ext4 bevorzugen, das ist der modernere Nachfolger.'},
+    {cmd:'mkreiserfs', desc:'ReiserFS-Dateisystem erstellen', ex:'mkreiserfs /dev/sdb1', tip:'Älteres Linux-Dateisystem, heute kaum noch verwendet. ext4 oder XFS sind die modernen Alternativen.'},
+    {cmd:'mkswap · swapon · swapoff', desc:'Swap-Partition oder -Datei einrichten und aktivieren', ex:'mkswap /dev/sda2', tip:'Swap ist virtueller RAM auf der Festplatte. mkswap richtet ein, swapon aktiviert, swapoff deaktiviert. swapon -s zeigt aktive Swaps.'},
+    {cmd:'fsck', desc:'Dateisystem prüfen und reparieren', ex:'fsck /dev/sda1', tip:'Nur auf nicht-gemounteten Partitionen ausführen! Findet und behebt Fehler im Dateisystem. Läuft beim Booten automatisch wenn die Partition als fehlerhaft markiert ist.'},
+    {cmd:'badblocks', desc:'Datenträger auf defekte Sektoren prüfen', ex:'badblocks -v /dev/sda', tip:'-v zeigt Fortschritt. Prüft ob physikalische Sektoren auf der Festplatte defekt sind. Bei vielen Fehlern deutet das auf einen sterbenden Datenträger hin.'},
+  ]},
+  {name:'Dateisystem-Werkzeuge', items:[
+    {cmd:'dumpe2fs', desc:'Informationen zu ext2-/ext3-Dateisystem anzeigen', ex:'dumpe2fs /dev/sda1', tip:'Zeigt technische Details wie Block-Größe, Anzahl Inodes, letzter Mount-Zeitpunkt. Für Diagnose und Fehlerbehebung.'},
+    {cmd:'tune2fs', desc:'Einstellungen eines ext2/3/4-Dateisystems nachträglich anpassen', ex:'tune2fs -l /dev/sda1', tip:'-l listet alle aktuellen Parameter. Mit anderen Optionen können z. B. Mount-Intervalle oder Labels geändert werden.'},
+    {cmd:'sync', desc:'Gepufferte Schreibvorgänge sofort auf die Festplatte schreiben', ex:'sync', tip:'Linux puffert Schreibvorgänge im RAM für mehr Geschwindigkeit. sync schreibt alles sofort auf die Platte – sinnvoll bevor man einen Datenträger abzieht.'},
+    {cmd:'mtools', desc:'Zugriff auf MS-DOS/FAT-Dateisysteme ohne mount', ex:'mcopy datei.txt a:', tip:'mtools-Befehle fangen alle mit m an: mdir, mcopy, mdel. Ermöglicht Zugriff auf FAT-Disketten/Sticks direkt ohne vorheriges mounten.'},
+  ]},
+]},
+{id:'benutzer', title:'Benutzer und Gruppen', groups:[
+  {items:[
+    {cmd:'useradd · adduser', lpi:'5.2', desc:'Neuen Benutzer anlegen', ex:'useradd -m nicandro', tip:'-m erstellt automatisch ein Home-Verzeichnis. adduser ist auf Debian/Ubuntu interaktiver und benutzerfreundlicher. Danach Passwort setzen mit passwd nicandro.'},
+    {cmd:'usermod', desc:'Eigenschaften eines bestehenden Benutzers ändern', ex:'usermod -aG sudo nicandro', tip:'-aG fügt nicandro zur Gruppe sudo hinzu (append to Group). Ohne -a würde er aus allen anderen Gruppen entfernt werden – immer -a mit -G kombinieren!'},
+    {cmd:'chage', desc:'Passwort-Ablaufdatum festlegen oder anzeigen', ex:'chage -l nicandro', tip:'-l listet alle Passwort-Ablaufinfos. Kann z. B. erzwingen dass ein Nutzer sein Passwort beim nächsten Login ändern muss.'},
+    {cmd:'passwd', lpi:'5.2', desc:'Passwort eines Benutzers ändern', ex:'passwd nicandro', tip:'Als root kann man das Passwort jedes Benutzers ändern. Als normaler Nutzer nur das eigene – dann einfach passwd ohne Benutzernamen. sudo passwd -l nicandro sperrt die Anmeldung per Passwort, -u hebt die Sperre wieder auf (SSH-Schlüssel funktionieren trotz Sperre weiter).'},
+    {cmd:'userdel · deluser', desc:'Benutzerkonto entfernen (mit -r inklusive Home-Ordner)', ex:'userdel -r nicandro', tip:'-r löscht auch das Home-Verzeichnis und die Mailbox. Ohne -r bleibt /home/nicandro erhalten. deluser ist die Debian/Ubuntu-Variante, dort heißt die Option --remove-home.'},
+    {cmd:'logname · whoami', desc:'Eigenen Benutzernamen anzeigen', ex:'whoami', tip:'whoami zeigt den aktuell aktiven Benutzer. logname zeigt den ursprünglichen Login-Namen – hilfreich wenn man per su gewechselt hat.'},
+    {cmd:'id', lpi:'5.1', desc:'Benutzer-ID, Gruppen-ID und Gruppenzugehörigkeiten anzeigen', ex:'id nicandro', tip:'Zeigt uid (Benutzer-ID), gid (primäre Gruppe) und groups (alle Gruppen). Gut um zu prüfen ob ein Benutzer wirklich in der richtigen Gruppe ist.'},
+    {cmd:'groupadd · addgroup', lpi:'5.2', desc:'Neue Gruppe anlegen', ex:'groupadd entwickler', tip:'Erstellt eine neue Gruppe namens entwickler. Danach Benutzer mit usermod -aG entwickler username hinzufügen. addgroup ist die freundlichere Debian/Ubuntu-Variante, in der Prüfung ist groupadd gefragt.'},
+    {cmd:'groupmod', desc:'Gruppe umbenennen oder ihre GID ändern', ex:'groupmod -n neuername altname', tip:'-n setzt einen neuen Namen. Alle Mitglieder bleiben in der Gruppe – nur der Name ändert sich.'},
+    {cmd:'groupdel · delgroup', desc:'Gruppe entfernen', ex:'groupdel entwickler', tip:'delgroup ist die Debian/Ubuntu-Variante. Die Gruppe darf keine primäre Gruppe eines Benutzers mehr sein. Mitglieder werden aus der Gruppe entfernt, aber nicht gelöscht.'},
+    {cmd:'groups', desc:'Gruppenzugehörigkeiten eines Benutzers anzeigen', ex:'groups nicandro', tip:'Zeigt alle Gruppen denen nicandro angehört. Ohne Benutzernamen werden die Gruppen des aktuellen Nutzers angezeigt.'},
+    {cmd:'newgrp', desc:'Aktive primäre Gruppe wechseln', ex:'newgrp entwickler', tip:'Wechselt die aktive Gruppe für neue Dateien. Neue Dateien gehören dann der Gruppe entwickler. Öffnet eine neue Shell-Session.'},
+    {cmd:'who · w', lpi:'5.1', desc:'Zeigen, wer gerade am System angemeldet ist', ex:'who', tip:'who zeigt Name, Terminal und Login-Zeit. w zeigt zusätzlich was jeder gerade macht. Nützlich auf Servern mit mehreren Nutzern.'},
+    {cmd:'wall', desc:'Nachricht an alle angemeldeten Benutzer senden', ex:"wall 'Server geht in 5 Min offline'", tip:'Schickt die Nachricht an alle aktiven Terminals. Praktisch für Ankündigungen auf Mehrbenutzersystemen.'},
+    {cmd:'last · lastlog', lpi:'5.1', desc:'Letzte Login-Vorgänge anzeigen', ex:'last -n 10', tip:'-n 10 zeigt die letzten 10 Logins. lastlog zeigt den letzten Login jedes Benutzers. Hilfreich zur Sicherheitsüberprüfung.'},
+    {cmd:'logout · exit', desc:'Aktuelle Sitzung beenden', ex:'exit', tip:'exit beendet die aktuelle Shell. logout beendet eine Login-Shell. Bei SSH-Verbindungen trennt das die Verbindung zum Server.'},
+  ]},
+]},
+{id:'prozesse', title:'Prozessverwaltung', groups:[
+  {name:'Prozesse beobachten und beenden', items:[
+    {cmd:'ps', lpi:'4.3', desc:'Laufende Prozesse anzeigen', ex:'ps aux', tip:'a zeigt alle Prozesse aller Benutzer, u mit Benutzerinfo, x auch Prozesse ohne Terminal. Kombiniert mit grep: ps aux | grep firefox'},
+    {cmd:'pstree', desc:'Prozesse als Baumstruktur anzeigen', ex:'pstree -p', tip:'-p zeigt die Prozess-IDs (PIDs). Man sieht welche Prozesse von welchem Elternprozess gestartet wurden – nützlich zum Verstehen von Prozesshierarchien.'},
+    {cmd:'top', lpi:'4.3', desc:'Prozesse nach CPU-Auslastung live anzeigen', ex:'top', tip:'Aktualisiert sich automatisch. q zum Beenden, k zum Killen eines Prozesses (dann PID eingeben), M sortiert nach Speicherverbrauch.'},
+    {cmd:'htop', desc:'Interaktiver Prozess-Monitor mit Farben (modernes top)', ex:'htop', distro:'debian/ubuntu', tip:'Übersichtlicher als top mit Farbbalken für CPU/RAM. F9 zum Killen, F6 zum Sortieren, mit Pfeiltasten navigieren. Muss ggf. erst installiert werden: apt install htop'},
+    {cmd:'time', desc:'Ausführungsdauer eines Befehls messen', ex:'time ./script.sh', tip:'Gibt nach Ausführung real (Wanduhrzeit), user (CPU-Zeit im Programm) und sys (CPU-Zeit im Kernel) aus. Gut um Skripte zu optimieren.'},
+    {cmd:'kill · killall', desc:'Prozess beenden (Signal senden)', ex:'kill -9 1234', tip:'-9 ist SIGKILL – sofortiger Abbruch, kann nicht ignoriert werden. kill 1234 ohne -9 sendet zuerst SIGTERM (sauber beenden). killall firefox beendet alle Prozesse mit diesem Namen.'},
+    {cmd:'xkill', desc:'Grafisches Fenster durch Anklicken beenden', ex:'xkill', tip:'Cursor wird zum Totenkopf – das nächste Fenster das angeklickt wird, wird sofort beendet. Nützlich wenn ein Programm eingefroren ist.'},
+  ]},
+  {name:'Zeitgesteuert und im Hintergrund', items:[
+    {cmd:'&', desc:'Befehl im Hintergrund starten', ex:'./backup.sh &', tip:'Das & am Ende startet den Prozess im Hintergrund – das Terminal bleibt sofort wieder frei. Die PID des Hintergrundprozesses wird ausgegeben.'},
+    {cmd:'jobs', desc:'Hintergrund- und angehaltene Prozesse der aktuellen Shell auflisten', ex:'jobs -l', tip:'-l zeigt auch die PIDs. Zeigt nur Prozesse der aktuellen Shell-Sitzung, nicht alle Hintergrundprozesse des Systems.'},
+    {cmd:'Strg + C', desc:'Laufenden Vordergrundprozess abbrechen', ex:'Strg + C', tip:'Sendet SIGINT an den aktuellen Prozess – dieser kann das Signal abfangen. Für erzwungenes Beenden: erst Strg+Z dann kill -9 %1'},
+    {cmd:'Strg + Z', desc:'Laufenden Vordergrundprozess anhalten (pausieren)', ex:'Strg + Z', tip:'Der Prozess wird pausiert und landet in der jobs-Liste. Mit fg wieder in den Vordergrund holen oder mit bg im Hintergrund weiterlaufen lassen.'},
+    {cmd:'bg', desc:'Angehaltenen Prozess im Hintergrund weiterlaufen lassen', ex:'bg %1', tip:'%1 steht für Job Nummer 1 aus der jobs-Liste. Nach Strg+Z einen Prozess mit bg weiterlaufen lassen ohne das Terminal zu blockieren.'},
+    {cmd:'fg', desc:'Hintergrundprozess wieder in den Vordergrund holen', ex:'fg %1', tip:'%1 ist Job Nummer 1. fg ohne Nummer holt den zuletzt gestoppten Job. Der Prozess übernimmt wieder das Terminal.'},
+    {cmd:'cron · crontab', desc:'Befehle zeitgesteuert automatisch ausführen', ex:'crontab -e', tip:'-e öffnet die persönliche crontab zum Bearbeiten. Format: Minute Stunde Tag Monat Wochentag Befehl. Beispiel: 0 3 * * * /backup.sh läuft täglich um 3 Uhr. crontab -l zeigt die eingetragenen Aufträge, ohne etwas zu ändern.'},
+    {cmd:'watch', desc:'Befehl regelmäßig wiederholen und Ausgabe anzeigen', ex:'watch -n 5 df -h', tip:'-n 5 führt df -h alle 5 Sekunden aus. Gut um z. B. Speicherfüllstand oder Netzwerktraffic live zu beobachten.'},
+    {cmd:'at', desc:'Befehl einmalig zu einem bestimmten Zeitpunkt ausführen', ex:'at 22:00', tip:'Danach den Befehl eingeben und mit Strg+D abschließen. Für wiederkehrende Aufgaben lieber cron nutzen.'},
+    {cmd:'batch', desc:'Befehl ausführen sobald die Systemlast niedrig genug ist', ex:'batch', tip:'Wie at, aber der Zeitpunkt wird automatisch gewählt wenn das System nicht ausgelastet ist. Gut für ressourcenintensive Aufgaben.'},
+    {cmd:'nohup', desc:'Prozess nach dem Abmelden weiterlaufen lassen', ex:'nohup ./server.sh &', tip:'Normalerweise werden Prozesse beim Logout beendet. nohup verhindert das – der Prozess läuft auch ohne aktive Session weiter. Ausgabe geht nach nohup.out.'},
+    {cmd:'sleep', desc:'Shell für eine bestimmte Zeit pausieren', ex:'sleep 30', tip:'Wartet 30 Sekunden. In Skripten nützlich: sleep 5 zwischen zwei Befehlen macht eine Pause. Einheiten: s (Sekunden), m (Minuten), h (Stunden).'},
+  ]},
+  {name:'Mit anderen Rechten arbeiten', items:[
+    {cmd:'su', lpi:'5.1', desc:'Zu einem anderen Benutzer wechseln', ex:'su - root', tip:'Das - lädt die komplette Umgebung des Zielbenutzers (wichtig!). Ohne - bleibt die aktuelle Umgebung. su ohne Benutzername wechselt zu root.'},
+    {cmd:'sudo', lpi:'5.1', desc:'Einzelnen Befehl mit erhöhten Rechten ausführen', ex:'sudo apt update', tip:'Führt apt update als root aus, ohne dauerhaft root zu werden. Sicherer als su. sudo -i öffnet eine dauerhafte Root-Shell.'},
+  ]},
+  {name:'Prozess-Priorität', items:[
+    {cmd:'nice', desc:'Prozess mit niedrigerer CPU-Priorität starten', ex:'nice -n 10 ./backup.sh', tip:'Werte von -20 (höchste Priorität) bis 19 (niedrigste). Normale Prozesse starten bei 0. Mit nice -n 10 läuft das Backup im Hintergrund ohne das System auszubremsen.'},
+    {cmd:'renice', desc:'Priorität eines bereits laufenden Prozesses ändern', ex:'renice 5 -p 1234', tip:'Ändert die Priorität von Prozess 1234 auf 5. PID vorher mit ps aux oder top ermitteln. Nur root kann Prioritäten erhöhen (negativere Werte).'},
+  ]},
+]},
+{id:'system', title:'System', groups:[
+  {items:[
+    {cmd:'shutdown', desc:'System sicher herunterfahren', ex:'shutdown -h now', tip:'-h now sofort herunterfahren. shutdown -h +10 in 10 Minuten. shutdown -r now sofort neu starten. Fährt alle Dienste geordnet herunter.'},
+    {cmd:'reboot', desc:'System neu starten', ex:'reboot', tip:'Kurzform für shutdown -r now. Startet alle Dienste neu. Auf Servern vorher prüfen ob andere Nutzer angemeldet sind (who).'},
+    {cmd:'halt', desc:'System anhalten (alle Prozesse beenden)', ex:'halt', tip:'Beendet alle Prozesse, schreibt Daten auf die Platte und hält das System an – aber schaltet es nicht unbedingt aus. Heute meist durch shutdown ersetzt.'},
+    {cmd:'runlevel', desc:'Aktuellen Runlevel anzeigen', ex:'runlevel', tip:'Zeigt vorherigen und aktuellen Runlevel. Auf systemd-Systemen aussagekräftiger: systemctl get-default'},
+    {cmd:'init', desc:'Runlevel umschalten (SysV-Init; heute meist systemctl)', ex:'init 3', tip:'Runlevel 3 = Mehrbenutzermodus ohne GUI, 5 = mit GUI, 0 = herunterfahren, 6 = neustart. Auf modernen Systemen systemctl isolate multi-user.target bevorzugen.'},
+    {cmd:'systemctl', desc:'Systemdienste verwalten und Systemzustand steuern', ex:'systemctl status ssh', distro:'debian/ubuntu', tip:'status zeigt ob der Dienst läuft. start/stop/restart starten/stoppen/neustarten. enable/disable legt fest ob er beim Boot startet. reload liest nur die Konfiguration neu, ohne laufende Verbindungen zu kappen (kann nicht jeder Dienst). systemctl --failed zeigt alle Dienste mit Fehler. Ersetzt service auf modernen Systemen.'},
+    {cmd:'journalctl', lpi:'4.3', desc:'Systemd-Protokoll (Logs) anzeigen', ex:'journalctl -u ssh -f', distro:'debian/ubuntu', tip:'-u ssh filtert auf den SSH-Dienst, -f zeigt neue Einträge live. journalctl -xe zeigt die letzten Fehler mit Kontext. Ersetzt /var/log für systemd-Dienste.'},
+    {cmd:'dmesg', lpi:'4.3', desc:'Kernel-Nachrichten und Bootmeldungen anzeigen', ex:'dmesg | tail', tip:'Zeigt Meldungen des Linux-Kernels. tail zeigt nur die letzten Einträge. Hilfreich wenn Hardware nicht erkannt wird oder beim Einstecken von USB-Geräten.'},
+    {cmd:'uname', desc:'Informationen über das Betriebssystem anzeigen', ex:'uname -a', tip:'-a zeigt alles: Kernel-Version, Hostname, Architektur usw. uname -r gibt nur die Kernel-Version aus – wichtig wenn man Kernel-Module installiert.'},
+    {cmd:'hostnamectl', desc:'Hostname, Betriebssystem, Kernel und Hardware-Modell auf einen Blick', ex:'sudo hostnamectl set-hostname webserver01', distro:'modern', tip:'Ohne Argumente zeigt hostnamectl Rechnername, Distribution, Kernel, Architektur und ob es eine VM ist. set-hostname ändert den Namen dauerhaft (schreibt /etc/hostname). Danach /etc/hosts anpassen, sonst meckert sudo über einen unbekannten Host.'},
+    {cmd:'cat /etc/os-release', desc:'Genaue Distribution und Version anzeigen', ex:'cat /etc/os-release', tip:'Zeigt z. B. NAME="Linux Mint" und VERSION="22.3". Funktioniert auf praktisch jeder aktuellen Distribution, auch ohne systemd. lsb_release -a liefert Ähnliches, ist aber nicht überall installiert.'},
+    {cmd:'uptime', desc:'Laufzeit des Systems und Systemlast anzeigen', ex:'uptime', tip:'Zeigt wie lange das System läuft und die Load Average der letzten 1, 5 und 15 Minuten. Load 1.0 auf einem Kern-System bedeutet 100% ausgelastet.'},
+  ]},
+  {name:'Hardware erkennen', items:[
+    {cmd:'lscpu', desc:'Prozessor anzeigen: Modell, Kerne, Threads, Virtualisierung', ex:'lscpu', tip:'Zeigt CPU-Modell, Anzahl Kerne und Threads pro Kern, Caches und unter "Virtualization" ob AMD-V bzw. VT-x vorhanden ist (wichtig für VMs). Die Rohdaten stehen in /proc/cpuinfo.'},
+    {cmd:'lsusb', desc:'Angeschlossene USB-Geräte anzeigen', ex:'lsusb', tip:'Listet jedes USB-Gerät mit Hersteller- und Produkt-ID. Taucht ein Stick hier auf, aber nicht in lsblk, liegt das Problem beim Treiber oder Dateisystem, nicht beim Kabel.'},
+    {cmd:'lspci', desc:'PCI-Geräte anzeigen', ex:'lspci -v', tip:'-v zeigt Details. Listet alle angeschlossenen PCI-Geräte auf (Grafikkarte, Netzwerkkarte usw.). Hilfreich wenn ein Gerät nicht erkannt wird.'},
+    {cmd:'hdparm', desc:'Festplattenparameter anzeigen oder setzen', ex:'hdparm -I /dev/sda', tip:'-I zeigt detaillierte Infos zur Festplatte (Modell, Größe, Fähigkeiten). Andere Optionen können die Übertragungsgeschwindigkeit beeinflussen – mit Vorsicht nutzen.'},
+  ]},
+  {name:'Zeit und Kalender', items:[
+    {cmd:'date', desc:'Datum und Uhrzeit anzeigen oder setzen', ex:"date '+%Y-%m-%d %H:%M'", tip:'Format selbst definieren mit +. %Y=Jahr, %m=Monat, %d=Tag, %H=Stunde, %M=Minute. Ohne Formatangabe wird Standard-Ausgabe gezeigt.'},
+    {cmd:'timedatectl', desc:'Uhrzeit, Zeitzone und Zeitsynchronisation anzeigen und einstellen', ex:'sudo timedatectl set-timezone Europe/Berlin', distro:'modern', tip:'Ohne Argumente zeigt timedatectl Ortszeit, UTC, Zeitzone, ob NTP synchronisiert und ob die Hardware-Uhr in Ortszeit läuft. timedatectl list-timezones listet alle Zonen. Bei Dual-Boot mit Windows: sudo timedatectl set-local-rtc 0 lässt Linux die BIOS-Uhr als UTC behandeln.'},
+    {cmd:'hwclock', desc:'Hardware-Uhr des Systems lesen oder stellen', ex:'hwclock --show', tip:'--show liest die BIOS/Hardware-Uhr. --systohc schreibt die Systemzeit in die Hardware-Uhr. Wichtig nach Zeitzonenänderungen.'},
+    {cmd:'cal', desc:'Kalender anzeigen', ex:'cal 2026', tip:'Zeigt den Jahreskalender für 2026. cal ohne Argument zeigt den aktuellen Monat. cal 7 2026 zeigt nur Juli 2026.'},
+  ]},
+]},
+{id:'netzwerk', title:'Netzwerk', groups:[
+  {name:'Nützliches für jeden Tag', items:[
+    {cmd:'ping', lpi:'4.4', desc:'Erreichbarkeit eines Hosts testen', ex:'ping 8.8.8.8', tip:'Schickt Pakete an 8.8.8.8 (Google DNS) und misst die Antwortzeit. Strg+C stoppt ping. ping -c 4 sendet nur 4 Pakete. Keine Antwort = Host nicht erreichbar oder blockiert.'},
+    {cmd:'hostname', desc:'Eigenen Hostnamen anzeigen oder ändern', ex:'hostname', tip:'Ohne Argument zeigt es den aktuellen Namen. hostname neuer-name ändert ihn temporär. Dauerhaft in /etc/hostname ändern.'},
+    {cmd:'host', lpi:'4.4', desc:'Hostname zu IP auflösen oder umgekehrt', ex:'host github.com', tip:'Gibt die IP-Adresse von github.com zurück. host 8.8.8.8 gibt den Hostnamen zur IP zurück. Schneller DNS-Check ohne nslookup.'},
+    {cmd:'ifconfig', lpi:'4.4', desc:'Netzwerk-Interface konfigurieren und anzeigen', ex:'ifconfig eth0', tip:'Zeigt Konfiguration von eth0 (IP, MAC, Übertragungsstatistiken). ifconfig ohne Argument zeigt alle aktiven Interfaces. Auf modernen Systemen durch ip ersetzt.'},
+    {cmd:'ip', lpi:'4.4', desc:'Netzwerk-Interfaces und Routen verwalten (moderner ifconfig-Ersatz)', ex:'ip addr show', distro:'modern', tip:'ip addr show zeigt alle Interfaces mit IP. ip link show zeigt nur Layer-2-Info. ip route show zeigt die Routingtabelle. ip -s link zeigt pro Interface empfangene und gesendete Pakete samt Fehlern und Drops. ip -br addr gibt eine kompakte Übersicht in einer Zeile pro Interface. Moderner Standard auf allen aktuellen Linux-Systemen.'},
+    {cmd:'route', lpi:'4.4', desc:'Routing-Tabelle anzeigen (veraltet, heute: ip route)', ex:'route -n', tip:'-n zeigt IP-Adressen statt Namen. Die Zeile mit dem Ziel 0.0.0.0 ist das Standardgateway. Moderner Weg mit derselben Information: ip route show.'},
+    {cmd:'ifup · ifdown', desc:'Netzwerkverbindung aktivieren oder deaktivieren', ex:'ifup eth0', tip:'ifup liest die Konfiguration aus /etc/network/interfaces und bringt das Interface hoch. ifdown trennt die Verbindung sauber.'},
+    {cmd:'netstat', lpi:'4.4', desc:'Offene Verbindungen und lauschende Ports zeigen (Nachfolger: ss)', ex:'netstat -tulpn', tip:'-t TCP, -u UDP, -l nur lauschende Ports, -p zugehöriger Prozess, -n numerische Ausgabe. Zeigt welche Dienste auf welchen Ports laufen.'},
+    {cmd:'ss', lpi:'4.4', desc:'Socket-Statistiken anzeigen (moderner netstat-Ersatz)', ex:'ss -tulpn', distro:'modern', tip:'Gleiche Optionen wie netstat, aber schneller und auf modernen Systemen vorinstalliert. ss -tulpn zeigt alle lauschenden TCP/UDP-Ports mit dem zugehörigen Prozess.'},
+    {cmd:'traceroute', desc:'Route eines Pakets durch das Netzwerk verfolgen', ex:'traceroute github.com', tip:'Zeigt jeden Router-Hop auf dem Weg zum Ziel mit Antwortzeiten. Hilft beim Eingrenzen wo eine Verbindung abbricht oder langsam wird.'},
+  ]},
+  {name:'Fernzugriff und Dateiübertragung', items:[
+    {cmd:'ftp', desc:'Dateien per FTP übertragen', ex:'ftp server.example.com', tip:'Verbindet mit dem FTP-Server. Dann get datei zum Herunterladen, put datei zum Hochladen. FTP überträgt Passwörter unverschlüsselt – lieber sftp/scp nutzen.'},
+    {cmd:'wget', desc:'Dateien aus dem Internet herunterladen', ex:'wget https://example.com/datei.iso', tip:'Lädt die Datei herunter und speichert sie im aktuellen Ordner. wget -c setzt einen unterbrochenen Download fort. wget -r lädt eine ganze Website herunter.'},
+    {cmd:'ssh', desc:'Sicher auf einem anderen Rechner anmelden', ex:'ssh nicandro@server.example.com', tip:'Baut eine verschlüsselte Verbindung auf. Nach dem @ kommt Hostname oder IP. Mit -p 2222 einen anderen Port angeben. Verbindung mit exit oder logout trennen.'},
+    {cmd:'scp', desc:'Dateien verschlüsselt über das Netzwerk kopieren', ex:'scp datei.txt user@server:/pfad/', tip:'Syntax wie cp, aber mit user@host: als Präfix. scp -r kopiert ganze Ordner. Sicherer als FTP, nutzt SSH im Hintergrund.'},
+  ]},
+  {name:'Firewall mit ufw (Ubuntu, Mint)', items:[
+    {cmd:'ufw status', desc:'Zustand der Firewall und alle Regeln anzeigen', ex:'sudo ufw status verbose', distro:'ubuntu', tip:'Zeigt ob die Firewall aktiv ist und welche Regeln gelten. verbose ergänzt die Standardrichtlinien (z. B. eingehend ablehnen, ausgehend erlauben). ufw status numbered nummeriert die Regeln für ufw delete.'},
+    {cmd:'ufw allow · ufw deny', desc:'Port oder Dienst in der Firewall freigeben bzw. sperren', ex:'sudo ufw allow from 192.168.178.0/24 to any port 22', distro:'ubuntu', tip:'Das Beispiel erlaubt SSH nur aus dem eigenen Heimnetz. Kurzformen: ufw allow 22/tcp oder ufw allow ssh. deny verwirft Pakete still, reject schickt eine Ablehnung zurück.'},
+    {cmd:'ufw enable · ufw disable', desc:'Firewall einschalten oder ausschalten', ex:'sudo ufw enable', distro:'ubuntu', tip:'Bleibt auch nach einem Neustart aktiv. Achtung, wenn du per SSH verbunden bist: erst ufw allow ssh, dann enable, sonst sperrst du dich selbst aus.'},
+    {cmd:'ufw delete', desc:'Bestehende Firewall-Regel entfernen', ex:'sudo ufw delete 3', distro:'ubuntu', tip:'Die Nummer kommt aus ufw status numbered. Alternativ die Regel noch einmal mit delete davor wiederholen: sudo ufw delete allow 80/tcp.'},
+  ]},
+  {name:'Netzwerk einrichten mit Netplan (Ubuntu)', items:[
+    {cmd:'netplan try', desc:'Neue Netzwerkkonfiguration testen, mit automatischem Rückweg', ex:'sudo netplan try', distro:'ubuntu', tip:'Übernimmt die YAML-Dateien aus /etc/netplan/ und wartet 120 Sekunden auf eine Bestätigung mit Enter. Kommt keine (z. B. weil die SSH-Verbindung abgerissen ist), stellt Netplan die alte Konfiguration wieder her. Auf entfernten Servern immer zuerst try.'},
+    {cmd:'netplan apply', desc:'Netzwerkkonfiguration dauerhaft übernehmen', ex:'sudo netplan apply', distro:'ubuntu', tip:'Übernimmt die Konfiguration sofort und ohne Rückweg. netplan get zeigt die zusammengeführte aktuelle Konfiguration. Tippfehler in der YAML-Datei (Einrückung mit Leerzeichen, keine Tabs!) meldet netplan beim Einlesen.'},
+  ]},
+]},
+{id:'terminal', title:'Bildschirm und Terminal', groups:[
+  {items:[
+    {cmd:'stty', desc:'Terminaleinstellungen anzeigen oder ändern', ex:'stty -a', tip:'-a zeigt alle aktuellen Einstellungen. stty speed zeigt die Baudrate. Wichtig für serielle Verbindungen und wenn das Terminal sich seltsam verhält.'},
+    {cmd:'setterm', desc:'Terminaldarstellung verändern', ex:'setterm -cursor off', tip:'Schaltet den blinkenden Cursor aus. setterm -reset setzt das Terminal zurück. Nützlich für Kiosk-Systeme oder Präsentationen.'},
+    {cmd:'reset', desc:'Terminal auf Standardzustand zurücksetzen', ex:'reset', tip:'Wenn das Terminal nach einem abgestürzten Programm komische Zeichen zeigt oder Eingaben nicht sichtbar sind, hilft reset zuverlässig.'},
+    {cmd:'clear', desc:'Terminalinhalt löschen', ex:'clear', tip:'Schiebt den Inhalt nach oben – man kann noch hoch scrollen. Strg+L macht dasselbe schneller. Für echtes Löschen: reset'},
+    {cmd:'tty', desc:'Namen des aktuellen Terminals anzeigen', ex:'tty', tip:'Gibt z. B. /dev/pts/0 aus. Jede SSH-Sitzung oder Terminalfenster bekommt ein eigenes pts-Device. Nützlich in Skripten um das Terminal zu identifizieren.'},
+    {cmd:'Alt + F1…Fn', desc:'Zwischen virtuellen Konsolen wechseln', ex:'Alt + F2', tip:'Linux hat standardmäßig 6 virtuelle Konsolen (F1–F6). Praktisch wenn die grafische Oberfläche eingefroren ist – einfach auf eine andere Konsole wechseln.'},
+    {cmd:'Strg + Alt + F1…Fn', desc:'Aus der grafischen Oberfläche zu einer Konsole wechseln', ex:'Strg + Alt + F2', tip:'Aus dem Desktop-Modus heraus zur Textkonsole wechseln. Strg+Alt+F7 (oder F1) bringt meist zurück zur grafischen Oberfläche.'},
+  ]},
+]},
+{id:'shell', title:'Shell', groups:[
+  {items:[
+    {cmd:'chsh', desc:'Standard-Shell für den Login ändern', ex:'chsh -s /bin/zsh', tip:'Ändert die Login-Shell dauerhaft. Die neue Shell muss in /etc/shells eingetragen sein. Wirkt erst beim nächsten Login.'},
+    {cmd:'printenv · set', lpi:'2.1', desc:'Umgebungsvariablen anzeigen', ex:'printenv PATH', tip:'printenv PATH zeigt nur PATH. printenv ohne Argument oder set zeigt alle Variablen. Umgebungsvariablen beeinflussen das Verhalten von Programmen.'},
+    {cmd:'export', lpi:'2.1', desc:'Variable für alle Kindprozesse verfügbar machen', ex:'export PATH=$PATH:/opt/bin', tip:'Ohne export kennt nur die aktuelle Shell die Variable. Mit export erben alle gestarteten Programme den neuen Wert. Dauerhaft in .bashrc oder .profile eintragen.'},
+    {cmd:'history', lpi:'2.1', desc:'Zuletzt eingegebene Befehle anzeigen und wiederholen', ex:'history | tail -20', tip:'Jeder Eintrag hat eine Nummer: !42 führt Befehl 42 erneut aus, !! den letzten. Gespeichert wird in ~/.bash_history. Mit Strg+R suchst du rückwärts im Verlauf.'},
+    {cmd:'Strg+R', lpi:'2.1', desc:'Im Befehlsverlauf rückwärts suchen', ex:'Strg+R, dann "ssh" tippen', tip:'Zeigt den letzten Befehl, der den getippten Text enthält. Nochmal Strg+R springt zum vorherigen Treffer, Enter führt aus, Pfeil rechts übernimmt zum Bearbeiten, Strg+G bricht ab.'},
+    {cmd:'Strg+X Strg+E', desc:'Aktuelle Eingabezeile in einem Editor bearbeiten', ex:'langen Befehl tippen, dann Strg+X Strg+E', tip:'Öffnet die Zeile im Editor aus $EDITOR (meist nano). Dort in Ruhe schreiben, auch über mehrere Zeilen. Speichern und schließen, dann wird der Inhalt ausgeführt. Ideal für lange Befehle.'},
+    {cmd:'fc', desc:'Den zuletzt ausgeführten Befehl im Editor korrigieren und erneut starten', ex:'fc', tip:'Praktisch bei Tippfehlern in langen Befehlen. fc -l zeigt die letzten Befehle mit Nummer. Welcher Editor aufgeht, bestimmt die Variable EDITOR, z. B. export EDITOR=nano in der ~/.bashrc.'},
+    {cmd:'Strg+C · Strg+Umschalt+C/V', desc:'Im Terminal: Strg+C bricht ab, kopiert wird mit Umschalt', ex:'sleep 100, dann Strg+C', tip:'Strg+C schickt dem laufenden Programm das Signal SIGINT und beendet es, eine halb getippte Zeile wird verworfen. Kopieren und Einfügen geht im Terminal mit Strg+Umschalt+C und Strg+Umschalt+V. Klassische Falle für Windows-Umsteiger.'},
+    {cmd:'Markieren · Mittelklick', desc:'Markierten Text ohne Tastenkürzel einfügen (Primary Selection)', ex:'Text markieren, Mittelklick ins Ziel', tip:'Unter X11 landet alles, was du nur markierst, in einer zweiten Zwischenablage. Ein Klick mit dem Mausrad fügt es ein. Strg+C/Strg+V bleiben davon unberührt, beide Ablagen existieren nebeneinander.'},
+    {cmd:'bash', lpi:'2.1 · 3.3', desc:'Die Standard-Shell starten oder ein Skript damit ausführen', ex:'bash backup.sh', tip:'bash ist auf fast allen Distributionen die Standard-Shell. echo $SHELL zeigt, welche gerade läuft. bash skript.sh führt ein Skript auch ohne Ausführungsrecht aus.'},
+    {cmd:'alias', desc:'Kurzbefehl für einen langen Befehl definieren', ex:"alias ll='ls -la'", tip:'Nach diesem Befehl reicht ll statt ls -la. Aliasse gelten nur für die aktuelle Session – für dauerhafte Aliasse in .bashrc eintragen.'},
+    {cmd:'unalias', desc:'Definierten Alias wieder löschen', ex:'unalias ll', tip:'Entfernt den Alias ll. unalias -a löscht alle Aliasse auf einmal. Nützlich wenn ein Alias stört oder falsch definiert wurde.'},
+  ]},
+  {name:'Skripte schreiben', items:[
+    {cmd:'#!/bin/bash', lpi:'3.3', desc:'Shebang: die erste Zeile legt fest, welcher Interpreter das Skript ausführt', ex:'chmod +x backup.sh && ./backup.sh', tip:'Steht ganz oben im Skript, ohne Leerzeichen davor. Damit ./backup.sh direkt startet, braucht die Datei zusätzlich das Ausführungsrecht (chmod +x).'},
+    {cmd:'$1 · $# · $@', lpi:'3.3', desc:'Argumente auslesen, die einem Skript übergeben wurden', ex:'./gruss.sh Welt', tip:'$1 ist das erste Argument, $2 das zweite usw., $# die Anzahl, $@ alle zusammen. $0 ist der Name des Skripts selbst.'},
+    {cmd:'VAR=wert · $VAR', lpi:'3.3', desc:'Variable anlegen und ihren Inhalt verwenden', ex:'NAME="Welt"; echo "Hallo $NAME"', tip:'Beim Zuweisen keine Leerzeichen um das =. Beim Lesen ein $ davor. In doppelten Anführungszeichen wird $NAME ersetzt, in einfachen nicht.'},
+    {cmd:'for … in … do … done', lpi:'3.3', desc:'Schleife: Befehle für jedes Element einer Liste wiederholen', ex:'for f in *.log; do gzip "$f"; done', tip:'Packt jede .log-Datei im Ordner einzeln. Die Variable f nimmt nacheinander jeden Dateinamen an.'},
+    {cmd:'$? · exit', lpi:'3.3', desc:'Rückgabewert des letzten Befehls prüfen bzw. Skript mit Wert beenden', ex:'ls /gibtsnicht; echo $?', tip:'0 bedeutet Erfolg, alles andere einen Fehler (hier 2). Im Skript beendet exit 1 mit Fehlercode, den der Aufrufer danach über $? sieht.'},
+  ]},
+  {name:'Umleiten und verketten', items:[
+    {cmd:'|', lpi:'3.2', desc:'Ausgabe eines Befehls als Eingabe für den nächsten nutzen (Pipe)', ex:"ls -l | grep '.txt'", tip:'ls -l listet Dateien, grep filtert nur die Zeilen mit .txt heraus. Pipes können beliebig verkettet werden: befehl1 | befehl2 | befehl3'},
+    {cmd:'tee', desc:'Ausgabe gleichzeitig anzeigen und in Datei speichern', ex:'ls -l | tee ausgabe.txt', tip:'tee zeigt die Ausgabe im Terminal und schreibt sie gleichzeitig in ausgabe.txt. tee -a hängt an eine bestehende Datei an statt sie zu überschreiben.'},
+    {cmd:'xargs', desc:'Ausgabe eines Befehls als Argumente für einen anderen nutzen', ex:"find . -name '*.tmp' | xargs rm", tip:'find liefert Dateinamen, xargs gibt sie als Argumente an rm weiter. Ohne xargs würde rm die Dateinamen nicht über eine Pipe empfangen können.'},
+    {cmd:'> · >>', lpi:'3.2', desc:'Ausgabe in eine Datei schreiben oder anhängen', ex:"echo 'Hallo' > datei.txt", tip:'> überschreibt die Datei (oder erstellt sie). >> hängt an. Achtung: > löscht den bisherigen Inhalt sofort, auch wenn der folgende Befehl fehlschlägt.'},
+    {cmd:'2>', lpi:'3.2', desc:'Fehlermeldungen in eine Datei umleiten', ex:'befehl 2> fehler.log', tip:'Normale Ausgabe und Fehler sind getrennte Kanäle. 2>&1 leitet Fehler zur normalen Ausgabe um. befehl > alles.log 2>&1 schreibt beides in eine Datei.'},
+    {cmd:'<', lpi:'3.2', desc:'Dateiinhalt als Eingabe für einen Befehl nutzen', ex:'sort < unsortiert.txt', tip:'Statt sort unsortiert.txt zu schreiben, liest < den Inhalt von unsortiert.txt als Eingabe. In Skripten nützlich für komplexere Eingabesteuerung.'},
+    {cmd:'. · source', desc:'Skript in der aktuellen Shell ausführen (nicht als Kindprozess)', ex:'source .bashrc', tip:'Führt .bashrc in der aktuellen Shell aus – Änderungen wie neue Aliasse oder Variablen wirken sofort. Ohne source würden sie nur in einem Kindprozess gelten.'},
+  ]},
+]},
+{id:'editoren', title:'Editoren', groups:[
+  {items:[
+    {cmd:'nano', lpi:'3.3', desc:'Einfacher Texteditor im Terminal, Bedienung über Strg-Kürzel', ex:'nano ~/.bashrc', note:'speichern mit Strg+O (dann Enter), beenden mit Strg+X', tip:'Die Leiste unten zeigt die wichtigsten Kürzel, ^ steht für Strg, M- für Alt. Strg+W sucht, Strg+K schneidet die Zeile aus, Strg+U fügt sie wieder ein. Auf Ubuntu und Mint der Standard-Editor, z. B. bei crontab -e oder sudo visudo.'},
+    {cmd:'vi · vim', lpi:'3.3', desc:'Leistungsfähiger Editor mit Modi, auf praktisch jedem Linux vorhanden', ex:'vi datei.txt', note:"vi verlassen mit ':wq' (speichern+beenden) oder ':q!' (beenden ohne Speichern)", tip:'vi startet im Befehlsmodus. i wechselt in den Einfügemodus, Esc zurück, dann :wq zum Speichern. /wort sucht, dd löscht eine Zeile, u macht rückgängig. Auch auf Minimalsystemen und Rettungskonsolen da, wo nano fehlt.'},
+    {cmd:'pico · joe · emacs', desc:'Weitere Terminal-Editoren', ex:'emacs datei.txt', tip:'pico ist der Vorgänger von nano, joe ein schlanker Editor mit WordStar-Kürzeln, emacs ein sehr mächtiger, erweiterbarer Editor (verlassen mit Strg+X Strg+C). Für die Prüfung reichen vi und nano.'},
+  ]},
+]},
+{id:'postscript', title:'PostScript', groups:[
+  {items:[
+    {cmd:'gs', desc:'PostScript- und PDF-Dateien konvertieren (Ghostscript)', ex:'gs -o ausgabe.pdf datei.ps', tip:'gs steht für Ghostscript. Kann PS zu PDF konvertieren und umgekehrt. Auch zum Anzeigen von PS-Dateien nutzbar.'},
+    {cmd:'a2pdf · enscript · mpage', desc:'Text in PostScript oder PDF umwandeln', ex:'enscript datei.txt -p ausgabe.ps', tip:'Wandelt einfache Textdateien in druckbares PostScript um. mpage kann mehrere Seiten auf ein Blatt legen.'},
+    {cmd:'pdf2ps · ps2pdf', desc:'Zwischen PDF und PostScript konvertieren', ex:'ps2pdf datei.ps datei.pdf', tip:'ps2pdf wandelt PostScript in PDF um – praktisch um PS-Dateien modern weiterzugeben. pdf2ps macht das Umgekehrte.'},
+    {cmd:'html2ps', desc:'HTML-Datei in PostScript umwandeln', ex:'html2ps seite.html > seite.ps', tip:'Konvertiert eine lokale HTML-Seite in PostScript zum Drucken. Für moderne Nutzung gibt es bessere Alternativen wie wkhtmltopdf.'},
+    {cmd:'dvips', desc:'TeX-Ausgabe (DVI) in PostScript übersetzen', ex:'dvips datei.dvi -o datei.ps', tip:'DVI ist das Ausgabeformat von LaTeX. dvips konvertiert es in PostScript für den Druck oder zur weiteren Verarbeitung mit ps2pdf.'},
+    {cmd:'psutils', desc:'PostScript-Dateien manipulieren', ex:'psnup -2 datei.ps', tip:'psnup -2 legt zwei Seiten nebeneinander auf ein Blatt (2-up). psutils enthält viele Werkzeuge für PS-Manipulation: drehen, skalieren, zusammenfügen.'},
+  ]},
+]},
+{id:'pakete', title:'Paketverwaltung', groups:[
+  {name:'apt – Debian / Ubuntu', items:[
+    {cmd:'apt update', lpi:'1.2', desc:'Paketlisten vom Server aktualisieren', ex:'sudo apt update', distro:'debian/ubuntu', tip:'Holt aktuelle Paketinformationen vom Server – installiert noch nichts. Sollte immer vor apt upgrade oder apt install ausgeführt werden.'},
+    {cmd:'apt upgrade', lpi:'1.2', desc:'Alle installierten Pakete auf neueste Version aktualisieren', ex:'sudo apt upgrade', distro:'debian/ubuntu', tip:'Aktualisiert alle Pakete für die neuere Versionen verfügbar sind. apt full-upgrade darf auch Pakete entfernen wenn nötig.'},
+    {cmd:'apt install', lpi:'1.2', desc:'Paket installieren', ex:'sudo apt install htop', distro:'debian/ubuntu', tip:'Installiert htop samt aller Abhängigkeiten automatisch. Mehrere Pakete auf einmal: sudo apt install htop curl vim. --reinstall spielt ein bereits installiertes Paket neu ein, sudo apt install -f (--fix-broken) repariert fehlende Abhängigkeiten.'},
+    {cmd:'apt remove', lpi:'1.2', desc:'Paket entfernen (Konfigurationsdateien bleiben)', ex:'sudo apt remove htop', distro:'debian/ubuntu', tip:'Entfernt das Programm, lässt aber Konfigurationsdateien auf dem System. Für komplette Entfernung apt purge nutzen.'},
+    {cmd:'apt purge', lpi:'1.2', desc:'Paket inkl. Konfigurationsdateien vollständig entfernen', ex:'sudo apt purge htop', distro:'debian/ubuntu', tip:'Entfernt Programm und alle zugehörigen Konfigurationsdateien. Sinnvoll wenn man ein Paket sauber neu installieren möchte.'},
+    {cmd:'apt autoremove', lpi:'1.2', desc:'Nicht mehr benötigte Pakete automatisch entfernen', ex:'sudo apt autoremove', distro:'debian/ubuntu', tip:'Entfernt Pakete die nur als Abhängigkeiten installiert wurden und jetzt nicht mehr gebraucht werden. Regelmäßig ausführen um Speicherplatz freizugeben.'},
+    {cmd:'apt search', lpi:'1.2', desc:'Paket in den Paketquellen suchen', ex:'apt search nmap', distro:'debian/ubuntu', tip:'Sucht nach Paketen die nmap im Namen oder der Beschreibung haben. apt-cache search nmap macht dasselbe auf älteren Systemen.'},
+    {cmd:'apt show', lpi:'1.2', desc:'Detailinformationen zu einem Paket anzeigen', ex:'apt show nginx', distro:'debian/ubuntu', tip:'Zeigt Version, Größe, Beschreibung und Abhängigkeiten. Gut um vor der Installation zu prüfen was ein Paket macht und was es mitbringt.'},
+    {cmd:'apt list --installed', lpi:'1.2', desc:'Alle installierten Pakete auflisten', ex:'apt list --installed', distro:'debian/ubuntu', tip:'Gibt eine lange Liste aller installierten Pakete aus. Mit grep filtern: apt list --installed | grep python'},
+    {cmd:'apt-cache policy', desc:'Verfügbare Versionen und Paketquellen anzeigen', ex:'apt-cache policy nginx', distro:'debian/ubuntu', tip:'Zeigt welche Version installiert ist, welche verfügbar wäre und aus welcher Quelle (Repository). Hilfreich bei Versionsproblemen.'},
+    {cmd:'add-apt-repository', desc:'Zusätzliche Paketquelle (PPA) hinzufügen', ex:'sudo add-apt-repository ppa:name/ppa', distro:'ubuntu', tip:'PPAs (Personal Package Archives) sind externe Paketquellen auf Ubuntu. Danach sudo apt update ausführen damit die neuen Pakete gefunden werden.'},
+  ]},
+  {name:'dpkg – Low-Level Paketverwaltung', items:[
+    {cmd:'dpkg -i', lpi:'1.2', desc:'Lokales .deb-Paket installieren', ex:'sudo dpkg -i paket.deb', distro:'debian/ubuntu', tip:'Installiert eine heruntergeladene .deb-Datei direkt. Abhängigkeiten werden nicht automatisch aufgelöst – danach ggf. sudo apt install -f ausführen.'},
+    {cmd:'dpkg -r', lpi:'1.2', desc:'Paket entfernen', ex:'sudo dpkg -r paketname', distro:'debian/ubuntu', tip:'Entfernt das Paket, lässt Konfigurationsdateien. Für vollständige Entfernung dpkg -P (purge) nutzen.'},
+    {cmd:'dpkg -l', lpi:'1.2', desc:'Alle installierten Pakete auflisten', ex:'dpkg -l', distro:'debian/ubuntu', tip:'Zeigt Status, Name und Beschreibung jedes Pakets. ii am Anfang bedeutet korrekt installiert. Mit grep filtern: dpkg -l | grep nginx'},
+    {cmd:'dpkg -L', lpi:'1.2', desc:'Alle Dateien eines installierten Pakets auflisten', ex:'dpkg -L nginx', distro:'debian/ubuntu', tip:'Zeigt wohin alle Dateien des Pakets installiert wurden – praktisch um Konfigurationsdateien oder Binaries zu finden.'},
+    {cmd:'dpkg -S', lpi:'1.2', desc:'Herausfinden zu welchem Paket eine Datei gehört', ex:'dpkg -S /usr/bin/ls', distro:'debian/ubuntu', tip:'Gibt aus welches Paket die Datei /usr/bin/ls enthält. Nützlich wenn man wissen will woher eine Datei stammt.'},
+    {cmd:'dpkg --configure -a', lpi:'1.2', desc:'Unterbrochene Paketinstallationen abschließen', ex:'sudo dpkg --configure -a', distro:'debian/ubuntu', tip:'-a konfiguriert alle Pakete die sich in einem halb-installierten Zustand befinden. Oft der erste Fix wenn apt Fehler meldet.'},
+  ]},
+  {name:'snap – Universal Packages (Ubuntu)', items:[
+    {cmd:'snap find', desc:'Im Snap Store nach Paketen suchen', ex:'snap find "media player"', distro:'ubuntu', tip:'Zeigt Name, Version, Herausgeber und Kurzbeschreibung. Ein Haken hinter dem Herausgeber bedeutet verifiziert. Braucht kein sudo.'},
+    {cmd:'snap info', desc:'Details und verfügbare Kanäle eines Snaps anzeigen', ex:'snap info firefox', distro:'ubuntu', tip:'Zeigt Beschreibung, installierte Version und die Kanäle stable, candidate, beta und edge mit ihren Versionen. Mit snap install --channel=beta firefox wählt man einen anderen Kanal.'},
+    {cmd:'snap install', desc:'Snap-Paket installieren', ex:'sudo snap install code --classic', distro:'ubuntu', tip:'--classic gibt dem Snap vollen Systemzugriff (wie normale Programme). Snaps laufen isoliert in einer Sandbox und aktualisieren sich automatisch.'},
+    {cmd:'snap remove', desc:'Snap-Paket entfernen', ex:'sudo snap remove code', distro:'ubuntu', tip:'Entfernt das Snap-Paket. snap remove --purge code entfernt auch gespeicherte Daten des Snaps.'},
+    {cmd:'snap list', desc:'Installierte Snaps auflisten', ex:'snap list', distro:'ubuntu', tip:'Zeigt alle installierten Snaps mit Version und Kanal (stable/beta/edge). snap list --all zeigt auch ältere Versionen.'},
+    {cmd:'snap refresh', desc:'Installierte Snaps aktualisieren', ex:'sudo snap refresh', distro:'ubuntu', tip:'Aktualisiert alle Snaps auf die neueste Version ihres Kanals. snap refresh code aktualisiert nur einen bestimmten Snap.'},
+  ]},
+]},
+{id:'pfade', title:'Wichtige Pfade und Dateien', groups:[
+  {name:'Benutzer und Anmeldung', items:[
+    {cmd:'/etc/passwd', lpi:'5.1 · 5.2', desc:'Liste aller Benutzerkonten (für alle lesbar)', ex:'grep root /etc/passwd', tip:'Eine Zeile pro Konto, Felder durch : getrennt: Name, x, UID, GID, Kommentar, Home-Ordner, Shell. Das x heißt: Das Passwort steht in /etc/shadow.'},
+    {cmd:'/etc/shadow', lpi:'5.1 · 5.2', desc:'Passwort-Hashes und Ablaufdaten (nur für root lesbar)', ex:'sudo cat /etc/shadow', tip:'Getrennt von /etc/passwd, damit normale Benutzer die Hashes nicht sehen. Ein ! oder * im Passwortfeld bedeutet: Anmeldung per Passwort gesperrt.'},
+    {cmd:'/etc/group', lpi:'5.1 · 5.2', desc:'Liste aller Gruppen und ihrer Mitglieder', ex:'grep sudo /etc/group', tip:'Format: Gruppenname:x:GID:Mitglieder. Wer hier in der Gruppe sudo steht, darf Befehle als root ausführen.'},
+    {cmd:'/etc/skel/', lpi:'5.2', desc:'Vorlage für den Home-Ordner neuer Benutzer', ex:'ls -a /etc/skel', tip:'Alles, was hier liegt (z. B. .bashrc), wird beim Anlegen eines Benutzers mit useradd -m in dessen neuen Home-Ordner kopiert.'},
+  ]},
+  {name:'System und Protokolle', items:[
+    {cmd:'/etc/', lpi:'4.3', desc:'Zentrale Konfigurationsdateien des Systems', ex:'ls /etc', tip:'Fast jede systemweite Einstellung liegt hier als Textdatei. Persönliche Einstellungen stehen dagegen in versteckten Dateien im eigenen Home-Ordner.'},
+    {cmd:'/var/log/', lpi:'4.3', desc:'Protokolldateien von System und Diensten', ex:'sudo tail -f /var/log/syslog', tip:'syslog (bei manchen Distributionen messages) sammelt allgemeine Meldungen, auth.log die Anmeldungen. -f zeigt neue Zeilen live. Auf systemd-Systemen zusätzlich: journalctl.'},
+    {cmd:'/boot/', lpi:'4.3', desc:'Kernel, Initramfs und Bootloader-Dateien', ex:'ls /boot', tip:'Hier liegen vmlinuz (der Kernel) und initrd bzw. initramfs. Ist /boot voll, schlagen Kernel-Updates fehl.'},
+    {cmd:'/proc/', lpi:'4.3', desc:'Virtuelles Dateisystem mit Live-Infos zu Kernel und Prozessen', ex:'cat /proc/cpuinfo', tip:'Nichts davon liegt auf der Platte, der Kernel erzeugt die Inhalte beim Lesen. /proc/meminfo zeigt den Speicher, /proc/1234/ alles zu Prozess 1234.'},
+    {cmd:'/sys/', lpi:'4.3', desc:'Virtuelles Dateisystem mit Infos zu Geräten und Treibern', ex:'ls /sys/class/net', tip:'Das Beispiel listet die Netzwerkkarten. Wie /proc erzeugt der Kernel /sys selbst, es ist aber streng nach Geräten geordnet.'},
+    {cmd:'/dev/', lpi:'4.2 · 4.3', desc:'Gerätedateien für Festplatten, Terminals und mehr', ex:'ls /dev/sd*', tip:'/dev/sda ist die erste SATA- bzw. SCSI-Platte, /dev/sda1 ihre erste Partition. NVMe-SSDs heißen /dev/nvme0n1, ihre Partitionen /dev/nvme0n1p1 usw.'},
+    {cmd:'/usr/share/doc/', lpi:'2.2', desc:'Mitgelieferte Dokumentation installierter Pakete', ex:'ls /usr/share/doc/bash', tip:'Ergänzt man und info: oft README, Changelog und Beispiele. Gut, wenn ein Programm keine man-Seite hat.'},
+  ]},
+  {name:'Netzwerk-Konfiguration', items:[
+    {cmd:'/etc/hosts', lpi:'4.4', desc:'Feste Zuordnung von Namen zu IP-Adressen', ex:'cat /etc/hosts', tip:'Wird vor dem DNS befragt. Eine Zeile wie 192.168.1.10 server macht den Namen server auch ohne DNS-Server erreichbar.'},
+    {cmd:'/etc/resolv.conf', lpi:'4.4', desc:'Welche DNS-Server das System fragt', ex:'cat /etc/resolv.conf', tip:'Zeilen mit nameserver nennen die DNS-Server. Auf vielen Systemen wird die Datei automatisch erzeugt (z. B. von systemd-resolved), Handänderungen gehen dann verloren.'},
+    {cmd:'/etc/netplan/', desc:'Netzwerkkonfiguration als YAML-Dateien (Ubuntu)', ex:'cat /etc/netplan/*.yaml', distro:'ubuntu', tip:'Hier stehen feste IP-Adressen, Gateway und DNS für Ubuntu-Server und -Desktops. Änderungen mit sudo netplan try testen. Linux Mint nutzt stattdessen den NetworkManager (nmcli, nmtui).'},
+  ]},
+  {name:'Temporäre Dateien', items:[
+    {cmd:'/tmp/ · /var/tmp/', lpi:'5.4', desc:'Ordner für temporäre Dateien', ex:'ls -ld /tmp', tip:'/tmp wird oft beim Neustart geleert, /var/tmp bleibt erhalten. Beide sind für alle beschreibbar. Das t am Ende von drwxrwxrwt ist das Sticky Bit.'},
+    {cmd:'chmod +t', lpi:'5.4', desc:'Sticky Bit setzen: Dateien darf nur ihr Besitzer löschen', ex:'chmod +t /srv/austausch', tip:'In einem Ordner, in den alle schreiben dürfen, verhindert das Sticky Bit, dass jemand fremde Dateien löscht. Sichtbar als t in ls -ld.'},
+  ]},
+]},
+{id:'container', title:'Fortgeschritten: Container', groups:[
+  {name:'Docker – Container starten und bedienen', items:[
+    {cmd:'docker run', desc:'Container aus einem Image erstellen und starten', ex:'docker run -d --name web -p 8080:80 nginx', tip:'-d läuft im Hintergrund, --name vergibt einen festen Namen, -p 8080:80 leitet Port 8080 des Rechners auf Port 80 im Container. Danach ist der Webserver unter http://localhost:8080 erreichbar. --rm löscht den Container nach dem Beenden, -it ubuntu bash startet eine interaktive Shell.'},
+    {cmd:'docker ps', desc:'Container auflisten', ex:'docker ps -a', tip:'Ohne -a erscheinen nur laufende Container. Gestoppte oder abgestürzte sieht man erst mit -a, eine typische Falle bei der Fehlersuche. Die Spalte STATUS verrät z. B. "Exited (1)" mit Fehlercode.'},
+    {cmd:'docker logs', desc:'Ausgabe eines Containers anzeigen', ex:'docker logs -f --tail 50 web', tip:'--tail 50 zeigt die letzten 50 Zeilen, -f liest live mit (wie tail -f). Erster Blick, wenn ein Container sofort wieder beendet wird.'},
+    {cmd:'docker exec', desc:'Befehl in einem laufenden Container ausführen', ex:'docker exec -it web sh', tip:'-it öffnet eine interaktive Shell im Container. Viele schlanke Images haben kein bash, dann sh nehmen. Änderungen im Container gehen beim Neuerstellen verloren, dauerhafte Daten gehören in ein Volume.'},
+    {cmd:'docker stop · start · restart · rm', desc:'Container anhalten, starten, neu starten, löschen', ex:'docker stop web && docker rm web', tip:'stop schickt erst SIGTERM und nach 10 Sekunden SIGKILL. rm löscht nur gestoppte Container, rm -f auch laufende. Das Image bleibt dabei erhalten.'},
+    {cmd:'docker stats', desc:'CPU-, RAM- und Netzwerkverbrauch aller Container live anzeigen', ex:'docker stats --no-stream', tip:'Wie top, nur pro Container. --no-stream gibt eine einzelne Momentaufnahme aus statt laufend zu aktualisieren.'},
+    {cmd:'docker inspect', desc:'Alle Details eines Containers, Images oder Netzes als JSON', ex:"docker inspect -f '{{.State.Status}} {{.RestartCount}}' web", tip:'Ohne -f kommt ein langes JSON mit Mounts, Netzwerken, Umgebungsvariablen und Neustart-Regel. -f filtert gezielt einzelne Werte heraus.'},
+  ]},
+  {name:'Docker – Images, Daten, Netze, Compose', items:[
+    {cmd:'docker pull · docker images', desc:'Image herunterladen bzw. vorhandene Images auflisten', ex:'docker pull debian:13', tip:'Hinter dem Doppelpunkt steht das Tag (Version). Ohne Tag wird latest geladen, das kann sich jederzeit ändern. Für Server lieber eine feste Version angeben.'},
+    {cmd:'docker build', desc:'Eigenes Image aus einem Dockerfile bauen', ex:'docker build -t meinapp:1.0 .', tip:'Der Punkt am Ende ist der Build-Kontext (aktueller Ordner mit dem Dockerfile). -t gibt Name und Version. Jede Zeile im Dockerfile (FROM, RUN, COPY, CMD) erzeugt eine Schicht, die zwischengespeichert wird.'},
+    {cmd:'-v · docker volume', desc:'Daten außerhalb des Containers dauerhaft speichern', ex:'docker run -d -v /srv/web:/usr/share/nginx/html nginx', tip:'-v Rechnerpfad:Containerpfad bindet einen Ordner ein (Bind Mount). Mit benanntem Volume (-v webdaten:/data) verwaltet Docker den Speicherort selbst, docker volume ls listet sie. Ohne Volume sind die Daten beim Löschen des Containers weg.'},
+    {cmd:'docker network', desc:'Netze für Container anlegen und anzeigen', ex:'docker network create appnetz', tip:'Container im selben selbst angelegten Netz erreichen sich gegenseitig über ihren Namen (z. B. db statt einer IP). docker network ls listet alle Netze, docker network inspect appnetz zeigt die Mitglieder.'},
+    {cmd:'docker compose', desc:'Mehrere Container gemeinsam aus einer YAML-Datei starten', ex:'docker compose up -d', tip:'Liest compose.yaml im aktuellen Ordner (Dienste, Ports, Volumes, Netze). down stoppt und entfernt alles, logs -f zeigt die Ausgabe aller Dienste, pull holt neue Images. Das alte docker-compose mit Bindestrich ist der Vorgänger.'},
+    {cmd:'docker system prune', desc:'Aufräumen: gestoppte Container, ungenutzte Netze und Image-Reste entfernen', ex:'docker system df', tip:'docker system df zeigt zuerst, wie viel Platz wofür belegt ist. prune fragt vor dem Löschen nach. -a entfernt zusätzlich alle Images ohne Container, --volumes auch ungenutzte Volumes – damit können Daten verloren gehen.'},
+    {cmd:'Gruppe docker', desc:'Docker ohne sudo nutzen – und warum das heikel ist', ex:'sudo usermod -aG docker nicandro', tip:'Nach neuem Anmelden geht docker ohne sudo. Achtung: Wer in der Gruppe docker ist, kann über einen Container mit eingebundenem / praktisch alles auf dem Rechner tun. Die Gruppe ist also gleichbedeutend mit root-Rechten.'},
+  ]},
+  {name:'LXD / LXC – System-Container und VMs', items:[
+    {cmd:'lxd init', desc:'LXD einmalig einrichten (Speicher, Netz)', ex:'sudo lxd init --minimal', distro:'ubuntu', tip:'Fragt nach Speicher-Pool und Netzwerkbrücke, --minimal nimmt sinnvolle Standardwerte. LXD wird unter Ubuntu als Snap installiert (sudo snap install lxd). Damit ein Benutzer ohne sudo arbeiten kann, muss er in die Gruppe lxd.'},
+    {cmd:'lxc launch', desc:'System-Container oder virtuelle Maschine erstellen und starten', ex:'lxc launch ubuntu:24.04 testbox', distro:'ubuntu', tip:'Anders als bei Docker läuft hier ein komplettes Linux mit systemd, wie eine leichte VM. Mit --vm entsteht eine echte virtuelle Maschine. lxc init statt launch legt nur an, ohne zu starten. lxc image list images: zeigt viele weitere Distributionen.'},
+    {cmd:'lxc list · lxc info', desc:'Instanzen mit Status und IP anzeigen bzw. Details zu einer Instanz', ex:'lxc list', distro:'ubuntu', tip:'lxc list zeigt Name, Zustand, IPv4/IPv6 und Typ (Container oder VM). lxc info testbox ergänzt Ressourcenverbrauch und Snapshots.'},
+    {cmd:'lxc exec', desc:'Befehl in einer Instanz ausführen oder Shell öffnen', ex:'lxc exec testbox -- bash', distro:'ubuntu', tip:'Alles hinter -- läuft in der Instanz, standardmäßig als root. lxc console testbox verbindet stattdessen mit der Konsole (beenden mit Strg+A, dann Q).'},
+    {cmd:'lxc stop · start · delete', desc:'Instanz anhalten, starten oder löschen', ex:'lxc stop testbox && lxc delete testbox', distro:'ubuntu', tip:'delete geht nur bei gestoppten Instanzen, --force löscht auch laufende. Hängt eine Instanz beim Stoppen, hilft lxc stop --force.'},
+    {cmd:'lxc snapshot · lxc restore', desc:'Zustand einer Instanz sichern und zurückholen', ex:'lxc snapshot testbox vor-update', distro:'ubuntu', tip:'Vor riskanten Änderungen einen Snapshot anlegen, bei Problemen mit lxc restore testbox vor-update zurückspringen. Ideal zum gefahrlosen Üben von Linux-Befehlen.'},
+    {cmd:'lxc file push · pull', desc:'Dateien in eine Instanz kopieren oder herausholen', ex:'lxc file push skript.sh testbox/root/', distro:'ubuntu', tip:'Ziel bzw. Quelle in der Instanz wird als name/pfad geschrieben. -r kopiert ganze Ordner.'},
+    {cmd:'LXC · LXD · Incus · Docker', desc:'Begriffe auseinanderhalten', ex:'lxc-ls · lxc list · incus list', tip:'LXC ist die Container-Technik im Kernel-Umfeld mit eigenen Werkzeugen (lxc-create, lxc-start, lxc-ls; Proxmox nutzt sie mit pct). LXD ist Canonicals Verwaltung darüber, ihr Kommando heißt verwirrenderweise lxc. Incus ist der freie Community-Ableger von LXD seit 2023 (Befehl incus). Docker packt dagegen meist nur eine einzelne Anwendung pro Container.'},
+  ]},
+]},
+{id:'sonstige', title:'Sonstige Befehle', groups:[
+  {items:[
+    {cmd:'echo', lpi:'2.1 · 3.3', desc:'Text im Terminal ausgeben', ex:"echo 'Hallo Welt'", tip:'Gibt den Text aus. In Skripten sehr nützlich für Statusmeldungen. echo $HOME gibt den Inhalt der Variablen HOME aus. echo -n unterdrückt den Zeilenumbruch am Ende.'},
+    {cmd:'ldd', desc:'Benötigte Shared Libraries eines Programms anzeigen', ex:'ldd /usr/bin/ls', tip:'Zeigt welche dynamischen Bibliotheken ls braucht. Wenn ein Programm nicht startet und "library not found" meldet, verrät ldd was fehlt.'},
+    {cmd:'cc · gcc · g++ · make', desc:'C- und C++-Programme kompilieren', ex:'gcc -o programm programm.c', tip:'-o legt den Namen der Ausgabedatei fest. make liest eine Makefile und kompiliert nur geänderte Teile. Für größere Projekte: ./configure && make && sudo make install'},
+    {cmd:'gpg', desc:'Dateien verschlüsseln oder digital signieren', ex:'gpg -c geheim.txt', tip:'-c verschlüsselt symmetrisch mit einem Passwort. Erstellt geheim.txt.gpg. Entschlüsseln: gpg geheim.txt.gpg. Für asymmetrische Verschlüsselung braucht man ein Schlüsselpaar.'},
+    {cmd:'bc', desc:'Taschenrechner im Terminal', ex:"echo '5*7' | bc", tip:'bc kann auch komplexere Berechnungen. echo "scale=2; 10/3" | bc gibt 3.33 aus. scale legt die Nachkommastellen fest. Oder einfach bc ohne Argumente für interaktiven Modus.'},
+  ]},
+]},
+];
+
+/* Kapitel aus DATA erzeugen (Kapitelleiste, Suche und Lernmodus übernimmt basis.js) */
+const content = document.getElementById('content');
+const noResults = document.getElementById('noResults');
+const badgeMap = {
+  'debian': '<span class="badge badge-deb">Debian</span>',
+  'ubuntu': '<span class="badge badge-ubuntudeb">Ubuntu</span>',
+  'debian/ubuntu': '<span class="badge badge-deb">Debian</span><span class="badge badge-ubuntudeb" style="margin-left:4px">Ubuntu</span>',
+  'modern': '<span class="badge badge-modern">moderner Ersatz</span>',
+};
+let totalCount = 0;
+DATA.forEach(cat => {
+  const catCount = cat.groups.reduce((s,g)=>s+g.items.length,0);
+  totalCount += catCount;
+  const section = document.createElement('section');
+  section.className = 'category-section';
+  section.id = 'sec-'+cat.id;
+  section.dataset.nav = cat.title;
+  const head = document.createElement('div');
+  head.className = 'category-head';
+  const lpiCount = cat.groups.reduce((s,g)=>s+g.items.filter(it=>it.lpi).length,0);
+  head.innerHTML = `<h2>${cat.title}</h2><span class="path">${catCount} Befehle${lpiCount ? ` · ${lpiCount} davon LPI 010` : ''}</span>`;
+  section.appendChild(head);
+  cat.groups.forEach(g => {
+    const groupEl = document.createElement('div');
+    groupEl.className = 'group';
+    if(g.name){
+      const gn = document.createElement('div');
+      gn.className = 'group-name';
+      gn.textContent = g.name;
+      groupEl.appendChild(gn);
+    }
+    const cardsEl = document.createElement('div');
+    cardsEl.className = 'cards';
+    g.items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card befehl';
+      card.dataset.search = (item.desc + ' ' + item.cmd + ' ' + (item.note||'') + (item.lpi ? ' lpi ' + item.lpi : '')).toLowerCase();
+      card.dataset.lpi = item.lpi || '';
+      const chips = item.cmd.split(' · ').map(c=>`<span class="cmd-chip">${c}</span>`).join('');
+      const badge = (item.distro ? (badgeMap[item.distro] || '') : '') + (item.lpi ? `<span class="badge badge-lpi" title="Lernziel LPI Linux Essentials 010-160">LPI ${item.lpi}</span>` : '');
+      card.innerHTML = `
+        <div class="desc">${item.desc}${item.note ? ` <span style="color:var(--text-muted);font-size:11.5px;">(${item.note})</span>` : ''}</div>
+        <div class="cmdrow">${chips}${badge}</div>
+        <div class="example"><span class="p">$</span><code>${item.ex}</code></div>
+        ${item.tip ? `<div class="tip">${item.tip}</div>` : ''}
+      `;
+      cardsEl.appendChild(card);
+    });
+    groupEl.appendChild(cardsEl);
+    section.appendChild(groupEl);
+  });
+  content.insertBefore(section, noResults);
+});
+document.getElementById('statTotal').textContent = totalCount;
+document.getElementById('statCat').textContent = DATA.length;
+
+/* Filter "LPI 010" und Lernkarten aus den Befehlen */
+let lpiOnly = false;
+const allItems = [];
+DATA.forEach(cat => cat.groups.forEach(g => g.items.forEach(item => {
+  allItems.push({tag: cat.title + (item.lpi ? ' · LPI ' + item.lpi : ''), vorne: item.desc, hinten: item.cmd, zusatz: item.ex, lpi: item.lpi || ''});
+})));
+window.LH = {
+  rechte: true,
+  filter: null,
+  lernen: { art: 'karten', runde: 20, einheit: 'Befehlen', hintenMono: true, zusatzPrompt: true,
+            karten: () => lpiOnly ? allItems.filter(i => i.lpi) : allItems }
+};
+document.getElementById('lpiBtn').addEventListener('click', (e)=>{
+  lpiOnly = !lpiOnly;
+  e.currentTarget.classList.toggle('an', lpiOnly);
+  e.currentTarget.setAttribute('aria-pressed', String(lpiOnly));
+  LH.filter = lpiOnly ? (card => card.dataset.lpi !== '') : null;
+  LH.runSearch();
+});
+<!--@fuss-->
+  <span>Befehlsauswahl angelehnt an <a href="https://helmbold.de/artikel/linux-blatt/" target="_blank" rel="noopener">"Linux auf einem Blatt"</a> von Christian Helmbold (2012), ergänzt um Befehle aus dem <a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu CLI cheat sheet</a> (Canonical, 2025) · Beschreibungen, Beispiele und Tipps: eigene Formulierung</span>
+  <span>LPI-Etiketten: Nummern der Lernziele <a href="https://www.lpi.org/our-certifications/exam-010-objectives/" target="_blank" rel="noopener">Linux Essentials 010-160 (v1.6)</a> des Linux Professional Institute</span>

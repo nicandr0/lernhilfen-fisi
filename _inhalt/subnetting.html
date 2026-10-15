@@ -1,0 +1,240 @@
+<!--@meta-->
+{
+  "untertitel": "IPv4 - Grundlagen, klassisches Subnetting und VLSM - LF6-Vorbereitung",
+  "suche": "z. B. 'Broadcast', '/27', 'Zweierpotenz' …",
+  "lernen": "karten"
+}
+<!--@inhalt-->
+      <section class="category-section" id="grundlagen" data-nav="8.1 IPv4-Grundlagen">
+        <div class="category-head"><h2>8.1 IPv4-Grundlagen</h2><span class="path">Aufbau, Bitwertigkeit, Maske</span></div>
+
+      <div class="group">
+        <div class="group-name">8.1.1 - 8.1.2 Aufbau und Umrechnung</div>
+      <div class="card" data-search="ipv4 adresse oktett aufbau 32 bit">
+        <h4>Was ist eine IPv4-Adresse?</h4>
+        <p>32 Bit, aufgeteilt in vier <b>Oktette</b> zu je 8 Bit. Beispiel: <code>192.168.10.25</code>. Jedes Oktett kann Werte von 0-255 annehmen. Erst zusammen mit der <b>Subnetzmaske</b> erkennt man, welcher Teil das Netz und welcher Teil das Gerät beschreibt.</p>
+      </div>
+
+      <div class="card" data-search="bitwertigkeit binär umrechnen 128 64 32 16 8 4 2 1">
+        <h4>Bitwertigkeit innerhalb eines Oktetts</h4>
+        <div class="tbl-wrap"><table class="tbl zahlen">
+          <tr><th>Bit-Position</th><td>1.</td><td>2.</td><td>3.</td><td>4.</td><td>5.</td><td>6.</td><td>7.</td><td>8.</td></tr>
+          <tr><th>Basis</th><td>2⁷</td><td>2⁶</td><td>2⁵</td><td>2⁴</td><td>2³</td><td>2²</td><td>2¹</td><td>2⁰</td></tr>
+          <tr><th>Dezimalwert</th><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
+        </table></div>
+        <div class="merksatz">Ein Oktett wird von links nach rechts gelesen. Nur die Stellen mit einer 1 werden addiert.</div>
+      </div>
+
+      <div class="card" data-search="beispiel binär dezimal umrechnen 192">
+        <h4>Beispiel: Binär -&gt; Dezimal</h4>
+        <p><code>11000000</code> = 1·128 + 1·64 + 0·32 + 0·16 + 0·8 + 0·4 + 0·2 + 0·1 = <b>192</b></p>
+      </div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.1.3 Bitwertigkeit und Subnetting</div>
+      <div class="card" data-search="maske netzanteil hostanteil cidr 24 255.255.255.0">
+        <h4>Warum Bitwertigkeit für Subnetting wichtig ist</h4>
+        <p>Eine Maske wie <code>255.255.255.0</code> ist binär <code>11111111.11111111.11111111.00000000</code>. Einsen = Netzanteil, Nullen = Hostanteil. Bei <span class="formel">/24</span> sind 24 Bits für das Netz reserviert.</p>
+      </div>
+
+      <div class="card" data-search="maske anschrift beispiel 192.168.10.25 netz gerät">
+        <h4>Merkbild: Die Maske zieht die Grenze</h4>
+        <p>Man kann sich die IPv4-Adresse wie eine Anschrift vorstellen: Ein Teil sagt "in welchem Netz bin ich", der andere "welches Gerät bin ich". Bei <code>192.168.10.25/24</code> gehören die ersten 24 Bit zum Netz, die restlichen 8 Bit sind für Geräte frei -&gt; Netz ist <code>192.168.10.0/24</code>.</p>
+      </div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.1.4 Merkkarte Zweierpotenzen</div>
+      <div class="card" data-search="zweierpotenzen merkkarte 1 2 4 8 16 32 64 128 256">
+        <h4>Merkkarte: wichtige Zweierpotenzen</h4>
+        <div class="tbl-wrap"><table class="tbl zahlen">
+          <tr><th>Potenz</th><td>2⁰</td><td>2¹</td><td>2²</td><td>2³</td><td>2⁴</td><td>2⁵</td><td>2⁶</td><td>2⁷</td><td>2⁸</td></tr>
+          <tr><th>Wert</th><td>1</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td><td>64</td><td>128</td><td>256</td></tr>
+        </table></div>
+        <div class="merksatz">IP-Netze wachsen immer in Zweierpotenzen. Wenn der Bedarf nicht genau passt, nimmt man den nächstgrößeren Block.</div>
+      </div>
+    
+      </div>
+      </section>
+
+      <section class="category-section" id="subnetting" data-nav="8.2 Subnetting">
+        <div class="category-head"><h2>8.2 Klassisches Subnetting</h2><span class="path">gleich große Netze</span></div>
+
+      <div class="card" data-search="warum subnetting abteilung gäste wlan server">
+        <h4>Warum Subnetting?</h4>
+        <p>Ein großes Netz für alle Geräte ist unübersichtlich und unsicher. Subnetting baut daraus mehrere "Räume mit Türen" - jede Abteilung bekommt ein eigenes Teilnetz. Störungen lassen sich eingrenzen, Sicherheitsregeln sauberer setzen.</p>
+      </div>
+
+      <div class="card" data-search="hostbits netzbits ausleihen mehr subnetze weniger geräte">
+        <h4>Prinzip: Hostbits ausleihen</h4>
+        <p>Für gleich große Teilnetze werden Bits aus dem Hostanteil genommen und zu Netzbits gemacht.</p>
+        <div class="merksatz">Merksatz: Mehr Netzbits = mehr Teilnetze, aber weniger Platz für Geräte pro Teilnetz.</div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.2.1 Rechenrezept</div>
+      <div class="card" data-search="rezept rechenrezept subnetting schritte">
+        <h4>Rezeptkarte: klassisches Subnetting</h4>
+        <ol class="schritte">
+          <li>Wie viele Teilnetze brauche ich? -&gt; Anzahl notieren.</li>
+          <li>Welche Zweierpotenz passt? -&gt; kleinste ausreichende Zweierpotenz wählen.</li>
+          <li>Wie viele Bits werden geliehen? -&gt; Exponent = Anzahl geliehener Bits.</li>
+          <li>Wie lautet die neue Maske? -&gt; alte CIDR-Zahl + geliehene Bits.</li>
+          <li>Wie groß ist ein Teilnetz? -&gt; Hostbits bestimmen, 2^Hostbits rechnen.</li>
+          <li>Welche Adressen sind nutzbar? -&gt; Netz-ID und Broadcast abziehen.</li>
+        </ol>
+      </div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.2.2 Mini-Musterrechnung</div>
+      <div class="card" data-search="musterrechnung beispiel 192.168.10.0 4 teilnetze 26">
+        <h4>Mini-Musterrechnung Subnetting</h4>
+        <p>Aus <code>192.168.10.0/24</code> sollen 4 gleich große Teilnetze entstehen. 4 = 2² -&gt; 2 Hostbits geliehen -&gt; aus /24 wird <span class="formel">/26</span>. 6 Hostbits übrig -&gt; 2⁶ = 64 Adressen/Teilnetz, davon 2 reserviert -&gt; 62 nutzbare Hosts.</p>
+        <p>Schrittweite 64: <code>192.168.10.0/26</code>, <code>.64/26</code>, <code>.128/26</code>, <code>.192/26</code></p>
+      </div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.2.3 Schnellübersicht &amp; Beispielantwort</div>
+      <div class="card" data-search="geliehene bits subnetze tabelle 2 4 8 16 32 64 128 256">
+        <h4>Schnellübersicht: geliehene Bits -&gt; Subnetze</h4>
+        <div class="tbl-wrap"><table class="tbl zahlen">
+          <tr><th>Geliehene Bits</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+          <tr><th>Anzahl Subnetze</th><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td><td>64</td><td>128</td><td>256</td></tr>
+        </table></div>
+      </div>
+
+      <div class="card" data-search="beispielantwort 8 subnetze 27 224 etage 30 hosts">
+        <h4>Beispielantwort: 8 Teilnetze aus /24</h4>
+        <p>8 = 2³ -&gt; 3 Bits geliehen -&gt; aus /24 wird <span class="formel">/27</span> (dezimal 255.255.255.224). Es bleiben 5 Hostbits -&gt; 2⁵ = 32 Adressen, davon 30 nutzbar.</p>
+        <p>1. Subnetz: Netz-ID <code>192.168.14.0</code>, Hosts <code>.1</code>-<code>.30</code>, Broadcast <code>.31</code>. 2. Subnetz beginnt bei <code>.32</code> (Bereich <code>.33</code>-<code>.62</code>, Broadcast <code>.63</code>).</p>
+        <div class="merksatz">Berufsbezug: So entsteht je Etage ein eigenes Netzsegment mit klar abgegrenztem Adressbereich.</div>
+      </div>
+    
+      </div>
+      </section>
+
+      <section class="category-section" id="vlsm" data-nav="8.3 VLSM">
+        <div class="category-head"><h2>8.3 VLSM</h2><span class="path">unterschiedlich große Netze</span></div>
+
+      <div class="card" data-search="vlsm warum bedarf unterschiedlich abteilung">
+        <h4>Warum VLSM?</h4>
+        <p>Sobald Abteilungen unterschiedlich groß sind, verschwendet klassisches Subnetting Platz (z.B. gleich große Netze für 154 und 5 Rechner). VLSM gibt jeder Abteilung ein Netz passend zum tatsächlichen Bedarf.</p>
+        <div class="merksatz">Immer vom größten zum kleinsten Bedarf planen - sonst blockiert ein kleines Netz den Platz für ein großes.</div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.3.1 Rechenrezept</div>
+      <div class="card" data-search="ablauf zusatzbedarf netz-id broadcast router zweierpotenz">
+        <h4>Rezeptkarte: VLSM</h4>
+        <ol class="schritte">
+          <li>Wer braucht am meisten? -&gt; Abteilungen absteigend sortieren.</li>
+          <li>Wie viele Adressen wirklich gebraucht? -&gt; Rechner + Netz-ID + Broadcast + Router zählen.</li>
+          <li>Welche Blockgröße passt? -&gt; nächsthöhere Zweierpotenz wählen.</li>
+          <li>Welche CIDR-Maske passt? -&gt; Hostbits bestimmen, 32 − Hostbits rechnen.</li>
+          <li>Wo beginnt das Netz? -&gt; beim ersten freien Adressblock.</li>
+          <li>Nächster freier Block? -&gt; Netzgröße als Schrittweite weiterzählen.</li>
+        </ol>
+      </div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.3.2 Mini-Musterrechnung</div>
+      <div class="card" data-search="musterrechnung 20 rechner 23 32 27">
+        <h4>Mini-Musterrechnung VLSM</h4>
+        <p>Abteilung braucht 20 Rechner + Netz-ID + Broadcast + Router = 23 benötigte Adressen. 16 zu klein, also 32. 32 = 2⁵ -&gt; Maske <span class="formel">/27</span>. Erstes freies Netz <code>192.168.20.0</code> -&gt; Block <code>192.168.20.0/27</code>, nächster freier Block <code>192.168.20.32/27</code>.</p>
+      </div>
+      </div>
+      <div class="group">
+        <div class="group-name">8.3.3 Beispiel: kompletter VLSM-Bedarf</div>
+      <div class="card" data-search="vlsm beispiel tabelle fertigung versand konstruktion vertrieb personalwesen buchhaltung geschäftsführung 172.16">
+        <h4>Beispiel: kompletter VLSM-Plan (172.16.16.0/16)</h4>
+        <div class="tbl-wrap"><table class="tbl zahlen">
+          <tr><th>#</th><th>Abteilung</th><th>Rechner</th><th>+Zusatz</th><th>Bedarf</th><th>2er-Pot.</th><th>CIDR</th><th>Netz-ID</th></tr>
+          <tr><td>1</td><td>Fertigung</td><td>154</td><td>+3</td><td>157</td><td>256</td><td>/24</td><td>172.16.16.0</td></tr>
+          <tr><td>2</td><td>Versand</td><td>110</td><td>+3</td><td>113</td><td>128</td><td>/25</td><td>172.16.17.0</td></tr>
+          <tr><td>3</td><td>Konstruktion</td><td>63</td><td>+3</td><td>66</td><td>128</td><td>/25</td><td>172.16.17.128</td></tr>
+          <tr><td>4</td><td>Vertrieb</td><td>25</td><td>+3</td><td>28</td><td>32</td><td>/27</td><td>172.16.18.0</td></tr>
+          <tr><td>5</td><td>Personalwesen</td><td>14</td><td>+3</td><td>17</td><td>32</td><td>/27</td><td>172.16.18.32</td></tr>
+          <tr><td>6</td><td>Buchhaltung</td><td>10</td><td>+3</td><td>13</td><td>16</td><td>/28</td><td>172.16.18.64</td></tr>
+          <tr><td>7</td><td>Geschäftsführung</td><td>5</td><td>+3</td><td>8</td><td>8</td><td>/29</td><td>172.16.18.80</td></tr>
+        </table></div>
+        <p>Zwischenrechnung: 157+113+66+28+17+13+8 = 402 benötigte Adressen. /16 bietet 2¹⁶ = 65.536 Adressen -&gt; reicht deutlich.</p>
+      </div>
+
+      <div class="card" data-search="praxis hinweis visual subnet calculator kontrolle">
+        <h4>Praxis-Hinweis</h4>
+        <p>Den Visual Subnet Calculator erst <b>nach</b> der eigenen Rechnung als Kontrolle nutzen, nicht davor - sonst lernt man das Verfahren nicht.</p>
+      </div>
+    
+      </div>
+      </section>
+
+      <section class="category-section" id="begriffe" data-nav="Glossar">
+        <div class="category-head"><h2>Glossar</h2><span class="path">Begriffsübersicht</span></div>
+
+      <div class="card" data-search="glossar ipv4-adresse 32 bit oktett oktett achtergruppe 0-255 subnetzmaske bitmaske netzanteil hostanteil cidr-suffix netzbits /24 netzanteil hostanteil netz-id erste adresse broadcast-adresse letzte adresse subnetting gleich groß vlsm unterschiedlich groß bedarf schrittweite abstand netz-ids adressklassen klasse a b c historisch">
+        <div class="tbl-wrap"><table class="tbl zeilen" id="glossar-table">
+        <tr><th>Begriff</th><th>Bedeutung</th></tr>
+        <tr data-search="ipv4-adresse 32 bit oktett"><td>IPv4-Adresse</td><td>Logische Adresse mit 32 Bit, vier Oktette zu je 8 Bit</td></tr>
+        <tr data-search="oktett achtergruppe 0-255"><td>Oktett</td><td>Achtergruppe von Bits, Dezimalbereich 0-255</td></tr>
+        <tr data-search="subnetzmaske bitmaske netzanteil hostanteil"><td>Subnetzmaske</td><td>Bitmaske, legt Netz- und Hostanteil fest</td></tr>
+        <tr data-search="cidr-suffix netzbits /24"><td>CIDR-Suffix</td><td>Kurzschreibweise der Maske als Anzahl Netzbits, z.B. /24</td></tr>
+        <tr data-search="netzanteil"><td>Netzanteil</td><td>Teil der Adresse, der das Netz kennzeichnet</td></tr>
+        <tr data-search="hostanteil"><td>Hostanteil</td><td>Teil der Adresse, der das Endgerät kennzeichnet</td></tr>
+        <tr data-search="netz-id erste adresse"><td>Netz-ID</td><td>Erste Adresse eines Subnetzes, nicht an Hosts vergebbar</td></tr>
+        <tr data-search="broadcast-adresse letzte adresse"><td>Broadcast-Adresse</td><td>Letzte Adresse eines Subnetzes, adressiert alle Hosts</td></tr>
+        <tr data-search="subnetting gleich groß"><td>Subnetting</td><td>Aufteilen in gleich große Teilnetze durch Ausleihen von Hostbits</td></tr>
+        <tr data-search="vlsm unterschiedlich groß bedarf"><td>VLSM</td><td>Aufteilen in unterschiedlich große Teilnetze nach Bedarf</td></tr>
+        <tr data-search="schrittweite abstand netz-ids"><td>Schrittweite</td><td>Abstand zwischen zwei Netz-IDs, entspricht der Netzgröße</td></tr>
+        <tr data-search="adressklassen klasse a b c historisch"><td>Adressklassen</td><td>Historische Einteilung in Klasse A, B, C mit festen Bereichen</td></tr>
+      </table></div>
+      </div>
+      </section>
+
+      <section class="category-section" id="hilfe" data-nav="Wenn's hakt">
+        <div class="category-head"><h2>Wenn's hakt</h2><span class="path">Hilfe bei Bearbeitungsstillstand</span></div>
+
+      <div class="card" data-search="umrechnung hakt wertigkeiten links rechts">
+        <h4>Umrechnung hakt</h4>
+        <p>Wertigkeiten 128 bis 1 aufschreiben, Oktett von links nach rechts abarbeiten.</p>
+      </div>
+      <div class="card" data-search="maske unklar einsen zählen cidr">
+        <h4>Maske unklar</h4>
+        <p>Einsen der Maske von links zählen - diese Zahl ist bereits das CIDR-Suffix.</p>
+      </div>
+      <div class="card" data-search="bits passen nicht zweierpotenz nächsthöher">
+        <h4>Anzahl der Bits passt nicht</h4>
+        <p>Über die Zweierpotenzen gehen, den nächsthöheren Wert wählen, nicht den nächstniedrigeren.</p>
+      </div>
+      <div class="card" data-search="vlsm faden verlieren größtes netz">
+        <h4>Faden im VLSM-Teil verloren</h4>
+        <p>Nur das größte Netz vollständig bearbeiten - die Systematik wiederholt sich danach.</p>
+      </div>
+      <div class="card" data-search="netze überschneiden schrittweite vielfaches">
+        <h4>Netze überschneiden sich</h4>
+        <p>Schrittweite prüfen - jede Netz-ID muss ein Vielfaches der eigenen Netzgröße sein.</p>
+      </div>
+      <div class="card" data-search="ergebnis unplausibel binär nachrechnen">
+        <h4>Ergebnis wirkt unplausibel</h4>
+        <p>Netz-ID und Broadcast eines Teilnetzes binär nachrechnen, mit der Tabelle vergleichen.</p>
+      </div>
+      </section>
+<!--@skript-->
+/* Lernkarten */
+const KARTEN = [
+  {tag:'Grundlage', vorne:'Aus wie vielen Bit besteht eine IPv4-Adresse und wie ist sie aufgeteilt?', hinten:'32 Bit', zusatz:'Vier Oktette zu je 8 Bit, z.B. 192.168.10.25'},
+  {tag:'Umrechnung', vorne:'Was ergibt das Oktett 11000000 in Dezimal?', hinten:'192', zusatz:'128+64 = 192 (nur Einsen zählen)'},
+  {tag:'Maske', vorne:'Was bedeutet CIDR /24?', hinten:'24 Netzbits, dezimal 255.255.255.0', zusatz:'Die ersten 24 Bit sind Netzanteil, 8 Bit bleiben für Hosts'},
+  {tag:'Begriff', vorne:'Was ist die Netz-ID?', hinten:'Die erste Adresse eines Subnetzes', zusatz:'Nicht an Endgeräte vergebbar, z.B. 192.168.14.0'},
+  {tag:'Begriff', vorne:'Was ist die Broadcast-Adresse?', hinten:'Die letzte Adresse eines Subnetzes', zusatz:'Adressiert alle Hosts im Netz, z.B. 192.168.14.31'},
+  {tag:'Subnetting', vorne:'8 Teilnetze werden benötigt - wie viele Bits müssen geliehen werden?', hinten:'3 Bits', zusatz:'2³ = 8, daher 3 Hostbits an den Netzanteil abgeben'},
+  {tag:'Subnetting', vorne:'Aus /24 werden 3 Bits geliehen. Welche neue Maske entsteht?', hinten:'/27', zusatz:'24 + 3 = 27, dezimal 255.255.255.224'},
+  {tag:'Subnetting', vorne:'Bei /27 bleiben 5 Hostbits. Wie viele Adressen pro Subnetz, wie viele nutzbar?', hinten:'32 Adressen, 30 nutzbar', zusatz:'2⁵ = 32, minus Netz-ID und Broadcast = 30'},
+  {tag:'Merksatz', vorne:'Was passiert, wenn man mehr Netzbits ausleiht?', hinten:'Mehr Teilnetze, aber weniger Hosts pro Teilnetz', zusatz:'Ordnung wird "erkauft" mit weniger Geräten je Netz'},
+  {tag:'VLSM', vorne:'Wofür steht VLSM und wann braucht man es?', hinten:'Variable Length Subnet Mask - wenn Abteilungen unterschiedlich groß sind', zusatz:'Verhindert Adressverschwendung im Vergleich zu gleich großen Netzen'},
+  {tag:'VLSM', vorne:'In welcher Reihenfolge plant man VLSM-Netze?', hinten:'Vom größten zum kleinsten Bedarf', zusatz:'Sonst blockiert ein kleines Netz den Platz für ein größeres'},
+  {tag:'VLSM', vorne:'Welche 3 Zusatzadressen plant man mindestens je Teilnetz zusätzlich zu den Rechnern ein?', hinten:'Netz-ID, Broadcast-Adresse, Router-Adresse', zusatz:'20 Rechner + 3 = 23 benötigte Adressen'},
+  {tag:'VLSM', vorne:'Eine Abteilung braucht 23 Adressen. Welche Blockgröße und Maske?', hinten:'32 Adressen, /27', zusatz:'23 passt nicht in 16, also nächsthöhere Zweierpotenz 32 = 2⁵ -> 32-5=27'},
+  {tag:'Praxis', vorne:'Wann sollte der Visual Subnet Calculator genutzt werden?', hinten:'Erst nach der eigenen Rechnung, zur Kontrolle', zusatz:'Er ersetzt nicht die eigene Rechnung, hilft aber Fehler zu finden'},
+  {tag:'Fehlersuche', vorne:'Wie prüft man, ob sich zwei Teilnetze überschneiden?', hinten:'Netz-ID muss ein Vielfaches der eigenen Netzgröße sein', zusatz:'Schrittweite = Netzgröße kontrollieren'}
+];
+window.LH = { lernen: { art: 'karten', karten: KARTEN } };
+<!--@fuss-->
+  <span>Subnetting &amp; VLSM auf einem Blatt v2 - Zusammenfassung eigener Formulierung auf Basis des Dozenten-Lernmoduls "IPv4 - Subnetting (FLSM) und VLSM".</span>
+  <span>Quelle laut Dokument: Präsentationen "IP-Adressen (v4) mit Subnetting" und "VLSM Subnetting"; kein Anspruch auf Vollständigkeit, kein Ersatz für die Original-Unterlagen.</span>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- Diese Datei wird von bauen.py erzeugt. Nicht hier bearbeiten, sondern in _vorlage/ bzw. _inhalt/. -->
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITEL}}</title>
+<meta name="description" content="{{BESCHREIBUNG}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+{{STYLES}}
+</style>
+{{SEITEN_STYLE}}
+</head>
+<body>
+{{LHNAV}}
+
+<div class="termbar">
+  <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
+  <span class="path">nicandro@debian:~$ open {{PFAD}}</span>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1><span class="prompt">$</span> {{BEFEHL}}<span class="cursor"></span></h1>
+    <p class="subtitle">{{UNTERTITEL}}</p>
+    <div class="meta-row">
+{{META}}
+    </div>
+    <div class="controls">
+      <div class="search-box">
+        <span class="glyph">/</span>
+        <input id="searchInput" type="search" placeholder="{{SUCHE_PLATZHALTER}}" autocomplete="off" aria-label="Suchen">
+        <span class="hint">ESC</span>
+      </div>
+{{KNOEPFE}}
+      <button class="btn primary" id="lernBtn" type="button">◆ Lernmodus</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Kapitel">
+      <div class="lslabel">-- {{NAV_TITEL}} --</div>
+    </nav>
+    <main class="content" id="content">
+{{INHALT}}
+      <div class="no-results" id="noResults">Keine Treffer. Versuch's mit einem anderen Begriff.</div>
+    </main>
+  </div>
+</div>
+
+<footer class="seitenfuss">
+  <span>© 2026 <a href="https://github.com/nicandr0" target="_blank" rel="noopener">Nicandro Marziale</a> – Design, Entwicklung und Formulierung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></span>
+{{FUSS}}
+</footer>
+
+<div class="lernmodus" id="lernmodus" role="dialog" aria-modal="true" aria-label="Lernmodus">
+  <div class="lm-box">
+    <button class="lm-close" type="button" aria-label="Schließen">×</button>
+    <div id="lmKarten">
+      <div class="lm-progress">Karte 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-card" id="lmCard" tabindex="0" role="button" aria-label="Karte umdrehen">
+        <div class="lm-cat" id="lmCat"></div>
+        <div class="lm-front" id="lmFront"></div>
+        <div id="lmBack" class="hidden">
+          <div class="lm-reveal" id="lmReveal"></div>
+          <div class="lm-extra" id="lmExtra"></div>
+        </div>
+        <div class="lm-flip-hint" id="lmFlipHint">Klicken zum Aufdecken</div>
+      </div>
+      <div class="lm-actions">
+        <button class="btn again" id="lmAgain" type="button">↺ nochmal üben</button>
+        <button class="btn know" id="lmKnow" type="button">✓ weiß ich</button>
+      </div>
+      <div class="lm-keys">Leertaste aufdecken · ← nochmal · → weiß ich · Esc schließen</div>
+    </div>
+    <div id="lmQuiz">
+      <div class="lm-progress">Frage 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-cat" id="lmQCat"></div>
+      <div class="lm-question" id="lmQuestion"></div>
+      <div class="lm-options" id="lmOptions"></div>
+      <div class="lm-hint">Es können mehrere Antworten richtig sein - Checkbox(en) auswählen und prüfen.</div>
+      <div class="lm-explain" id="lmExplain"></div>
+      <div class="lm-actions">
+        <button class="btn check" id="lmCheck" type="button">Prüfen</button>
+        <button class="btn next hidden" id="lmNext" type="button">Weiter →</button>
+      </div>
+    </div>
+    <div id="lmDone" class="lm-done hidden">
+      <h3>Runde fertig</h3>
+      <p id="lmDoneText"></p>
+      <button class="btn primary" id="lmRestart" type="button">Neue Runde starten</button>
+    </div>
+  </div>
+</div>
+
+<script>
+{{SKRIPT}}
+</script>
+<script>
+{{BASIS_JS}}
+</script>
+</body>
+</html>

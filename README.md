@@ -12,9 +12,26 @@ Interaktive Lernhilfen aus meiner Umschulung zum Fachinformatiker Systemintegrat
 | [Routing](routing-auf-einem-blatt.html) | ANDing, Default Route, Routing-Tabelle, statisch vs. dynamisch, Fehlerbilder, Glossar, „Wenn's hakt“, Quiz, Selbsteinschätzung | eigene Zusammenfassung nach Unterricht |
 | [Switching](switching-auf-einem-blatt.html) | VLANs, Access/Trunk, STP, LAG, LACP, MLAG, Fehlerbilder, Lernkarten | eigene Zusammenfassung nach Unterricht |
 
-## Navigation zwischen den Lernhilfen
+## Aufbau und Bearbeitung
 
-Jede Lernhilfe hat oben dieselbe Leiste mit Links zu allen anderen. Sie bleibt beim Scrollen stehen. Weil jede Seite eine eigenständige HTML-Datei bleiben soll (auch offline nutzbar), steht die Leiste in jeder Datei einzeln (`<nav class="lh-nav">` plus `<style id="lh-nav-css">`). **Kommt eine neue Lernhilfe dazu, muss ihr Link in allen Dateien nachgetragen werden.**
+Alle Lernhilfen teilen sich ein Design und ein Verhalten (Leiste oben, Kapitelleiste, Suche, Lernmodus). Gepflegt wird getrennt, veröffentlicht wird je Lernhilfe **eine eigenständige HTML-Datei**, die auch offline und einzeln weitergegeben funktioniert.
+
+```
+_vorlage/styles.css       Design aller Seiten
+_vorlage/basis.js         Kapitelleiste, Suche, Lernmodus (Lernkarten oder Quiz), Selbsteinschätzung
+_vorlage/seite.html       Gerüst einer Lernhilfe
+_vorlage/uebersicht.html  Gerüst der Startseite
+_vorlage/lernhilfen.json  Liste aller Lernhilfen (Leiste oben und Startseite)
+_inhalt/<id>.html         Inhalt je Lernhilfe
+bauen.py                  setzt alles zu den fertigen HTML-Dateien zusammen
+```
+
+- Design ändern: `_vorlage/styles.css` bearbeiten, dann `python3 bauen.py`.
+- Neue Lernhilfe: Inhaltsdatei in `_inhalt/` anlegen (Aufbau wie die vorhandenen), Eintrag in `_vorlage/lernhilfen.json`, dann `python3 bauen.py`. Leiste und Startseite enthalten sie danach automatisch.
+- Vor jedem Commit: `python3 bauen.py --pruefen` meldet, ob die fertigen Dateien zum Stand der Vorlagen passen.
+- Die fertigen HTML-Dateien nicht direkt bearbeiten, sie werden beim nächsten Bauen überschrieben.
+
+Nur Python-Standardbibliothek nötig, keine weiteren Pakete.
 
 ## LPI-Etiketten
 

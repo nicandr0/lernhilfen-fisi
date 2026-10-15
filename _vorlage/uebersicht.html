@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- Diese Datei wird von bauen.py erzeugt. Nicht hier bearbeiten, sondern in _vorlage/ und _vorlage/lernhilfen.json. -->
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernhilfen FiSi</title>
+<meta name="description" content="Interaktive Lernhilfen für die Umschulung Fachinformatiker Systemintegration.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+{{STYLES}}
+.uebersicht{padding:26px 34px 34px;}
+.lernhilfen{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;}
+@media (max-width:420px){.lernhilfen{grid-template-columns:1fr;}}
+a.lernhilfe{display:block;background:var(--surface);border:1px solid var(--border-soft);border-left:3px solid var(--gold);border-radius:9px;padding:16px 18px;color:var(--text-primary);text-decoration:none;transition:border-color .15s;}
+a.lernhilfe:hover{border-color:var(--amber-dim);}
+a.lernhilfe:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+a.lernhilfe b{display:block;font-family:var(--mono);font-size:14px;color:var(--amber);margin-bottom:6px;}
+a.lernhilfe small{display:block;font-size:13.5px;color:var(--text-secondary);line-height:1.55;}
+.uebersicht-hinweis{margin-top:22px;font-size:13px;color:var(--text-muted);line-height:1.6;}
+.uebersicht-hinweis a{color:var(--amber);text-decoration:none;}
+@media (max-width:820px){.uebersicht{padding:20px 16px 26px;}}
+</style>
+</head>
+<body>
+{{LHNAV}}
+
+<div class="termbar">
+  <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
+  <span class="path">nicandro@debian:~$ ls lernhilfen-fisi/</span>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1><span class="prompt">$</span> lernhilfen --fisi<span class="cursor"></span></h1>
+    <p class="subtitle">Interaktive Lernhilfen für die Umschulung Fachinformatiker Systemintegration: suchen, nachlesen, mit Lernkarten und Quiz üben. Jede Seite ist eine einzelne HTML-Datei und läuft im Browser, auch offline.</p>
+    <div class="meta-row"><span><b>{{ANZAHL}}</b> Lernhilfen</span></div>
+  </header>
+  <main class="uebersicht">
+    <div class="lernhilfen">
+{{KARTEN}}
+    </div>
+    <p class="uebersicht-hinweis">Quellen und Hinweise je Seite: siehe README im <a href="https://github.com/nicandr0/lernhilfen-fisi">Repository</a>. Kein Ersatz für die Original-Unterrichtsunterlagen.</p>
+  </main>
+</div>
+
+<footer class="seitenfuss">
+  <span>© 2026 <a href="https://github.com/nicandr0" target="_blank" rel="noopener">Nicandro Marziale</a> · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> (teilen und bearbeiten erlaubt, mit Namensnennung, nicht kommerziell, unter gleicher Lizenz)</span>
+</footer>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!--@meta-->
+{
+  "untertitel": "Die 7 Schichten der Datenkommunikation - Namen, Aufgaben, Protokolle, Adressen, Geräte",
+  "suche": "z. B. 'Router', 'Port', 'Layer 3' …",
+  "lernen": "karten"
+}
+<!--@style-->
+/* Schicht-Nummer vor dem Kartentitel */
+.layer-badge{display:inline-block;min-width:22px;text-align:center;background:var(--amber-soft);color:var(--amber);border-radius:5px;padding:1px 7px;font-family:var(--mono);font-weight:600;margin-right:6px;}
+<!--@inhalt-->
+      <section class="category-section" id="uebersicht" data-nav="Übersicht">
+        <div class="category-head"><h2>Übersicht</h2><span class="path">Alle 7 Schichten auf einen Blick</span></div>
+
+      <div class="schaubild">
+      <svg viewBox="0 0 680 470" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>OSI-Modell - 7 Schichten</title>
+        <desc>Die 7 Schichten des OSI-Modells von Anwendung bis Bitübertragung mit Protokollen und Geräten</desc>
+
+        <text x="40" y="24" fill="#93a1b8" font-size="12" font-family="IBM Plex Sans, Segoe UI, sans-serif">Anwendungsorientiert</text>
+        <rect x="40" y="32" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <g transform="translate(52,42)" stroke="#e3a458" stroke-width="1.4" fill="none">
+          <rect x="0" y="0" width="24" height="18" rx="2"/>
+          <line x1="0" y1="5" x2="24" y2="5"/>
+          <circle cx="3.5" cy="2.5" r="0.8" fill="#e3a458" stroke="none"/>
+          <circle cx="6.5" cy="2.5" r="0.8" fill="#e3a458" stroke="none"/>
+        </g>
+        <text x="90" y="51" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 · Anwendung / Application</text>
+        <text x="90" y="68" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">HTTP, FTP, SMTP, DNS · Proxy, Gateway</text>
+
+        <rect x="40" y="84" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <g transform="translate(52,94)" stroke="#e3a458" stroke-width="1.4" fill="none">
+          <rect x="0" y="0" width="24" height="18" rx="2"/>
+          <path d="M2 15 L8 8 L12 12 L17 5 L22 11"/>
+          <circle cx="6" cy="5" r="2"/>
+        </g>
+        <text x="90" y="103" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 · Darstellung / Presentation</text>
+        <text x="90" y="120" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">TLS, SSL, JPEG, ASCII</text>
+
+        <rect x="40" y="136" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <g transform="translate(52,146)" stroke="#e3a458" stroke-width="1.4" fill="none">
+          <circle cx="5" cy="9" r="4"/>
+          <circle cx="19" cy="9" r="4"/>
+          <line x1="9" y1="9" x2="15" y2="9" stroke-dasharray="2 2"/>
+        </g>
+        <text x="90" y="155" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 · Sitzung / Session</text>
+        <text x="90" y="172" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">NetBIOS, RPC</text>
+
+        <line x1="340" y1="184" x2="340" y2="200" stroke="#2a3444" stroke-width="1"/>
+        <text x="40" y="216" fill="#93a1b8" font-size="12" font-family="IBM Plex Sans, Segoe UI, sans-serif">Transportorientiert</text>
+
+        <rect x="40" y="224" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,234)" stroke="#7fae70" stroke-width="1.4" fill="none">
+          <rect x="0" y="2" width="10" height="14" rx="1.5"/>
+          <rect x="13" y="2" width="10" height="14" rx="1.5"/>
+          <line x1="4" y1="6" x2="6" y2="6"/>
+          <line x1="17" y1="6" x2="19" y2="6"/>
+        </g>
+        <text x="90" y="243" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 · Transport</text>
+        <text x="90" y="260" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP, UDP · Ports · Firewall</text>
+
+        <rect x="40" y="276" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,286)" stroke="#7fae70" stroke-width="1.4" fill="none">
+          <rect x="4" y="4" width="16" height="10" rx="2"/>
+          <line x1="7" y1="4" x2="7" y2="1"/>
+          <line x1="12" y1="4" x2="12" y2="0"/>
+          <line x1="17" y1="4" x2="17" y2="1"/>
+          <line x1="12" y1="14" x2="12" y2="18"/>
+        </g>
+        <text x="90" y="295" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 · Vermittlung / Network</text>
+        <text x="90" y="312" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">IP, ICMP · IP-Adressen · Router</text>
+
+        <rect x="40" y="328" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,338)" stroke="#7fae70" stroke-width="1.4" fill="none">
+          <rect x="1" y="4" width="22" height="10" rx="1.5"/>
+          <line x1="5" y1="14" x2="5" y2="17"/>
+          <line x1="12" y1="14" x2="12" y2="17"/>
+          <line x1="19" y1="14" x2="19" y2="17"/>
+          <line x1="5" y1="4" x2="5" y2="1"/>
+          <line x1="12" y1="4" x2="12" y2="1"/>
+          <line x1="19" y1="4" x2="19" y2="1"/>
+        </g>
+        <text x="90" y="347" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 · Sicherung / Data Link</text>
+        <text x="90" y="364" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Ethernet, ARP · MAC-Adressen · Switch</text>
+
+        <rect x="40" y="380" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,391)" stroke="#7fae70" stroke-width="1.4" fill="none">
+          <path d="M1 9 Q6 2 12 9 T23 9"/>
+          <circle cx="1" cy="9" r="1.4" fill="#7fae70" stroke="none"/>
+          <circle cx="23" cy="9" r="1.4" fill="#7fae70" stroke="none"/>
+        </g>
+        <text x="90" y="399" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 · Bitübertragung / Physical</text>
+        <text x="90" y="416" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Hub, Kabel</text>
+
+        <text x="340" y="452" fill="#cc9f3f" font-size="12" font-style="italic" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">A - P - S - T - N - D - P · Alle Prüfer Suchen Tests Nach Der Pause</text>
+      </svg>
+      </div>
+      </section>
+
+      <section class="category-section" id="kapselung" data-nav="Kapselung">
+        <div class="category-head"><h2>Kapselung</h2><span class="path">Wie Daten durch die Schichten wandern</span></div>
+
+      <div class="schaubild">
+      <svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>Kapselung der Daten durch die Schichten</title>
+        <desc>Beim Senden fügt jede Schicht einen eigenen Header hinzu, beim Empfänger werden sie wieder entfernt</desc>
+
+        <text x="40" y="24" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Daten</text>
+        <text x="130" y="24" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 7-5</text>
+        <rect x="220" y="8" width="420" height="28" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="430" y="26" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
+
+        <line x1="340" y1="40" x2="340" y2="54" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="50" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">kapselt</text>
+
+        <text x="40" y="72" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Segment</text>
+        <text x="130" y="72" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 4</text>
+        <rect x="220" y="56" width="60" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="250" y="74" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP</text>
+        <rect x="282" y="56" width="358" height="28" rx="5" fill="#1a222e" stroke="#2a3444" stroke-width="1"/>
+        <text x="461" y="74" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
+
+        <line x1="340" y1="88" x2="340" y2="102" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="98" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">kapselt</text>
+
+        <text x="40" y="120" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Paket</text>
+        <text x="130" y="120" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 3</text>
+        <rect x="220" y="104" width="55" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="247" y="122" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">IP</text>
+        <rect x="277" y="104" width="55" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="304" y="122" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP</text>
+        <rect x="334" y="104" width="306" height="28" rx="5" fill="#1a222e" stroke="#2a3444" stroke-width="1"/>
+        <text x="487" y="122" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
+
+        <line x1="340" y1="136" x2="340" y2="150" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="146" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">kapselt</text>
+
+        <text x="40" y="168" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Frame</text>
+        <text x="130" y="168" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 2</text>
+        <rect x="220" y="152" width="65" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="252" y="170" fill="#7fae70" font-size="9" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Ethernet</text>
+        <rect x="287" y="152" width="50" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="312" y="170" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">IP</text>
+        <rect x="339" y="152" width="50" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="364" y="170" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP</text>
+        <rect x="391" y="152" width="199" height="28" rx="5" fill="#1a222e" stroke="#2a3444" stroke-width="1"/>
+        <text x="490" y="170" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
+        <rect x="592" y="152" width="48" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="616" y="170" fill="#7fae70" font-size="9" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">FCS</text>
+
+        <line x1="340" y1="184" x2="340" y2="198" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="194" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">wandelt in</text>
+
+        <text x="40" y="216" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Bits</text>
+        <text x="130" y="216" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 1</text>
+        <path d="M220 208 h20 v-6 h10 v12 h10 v-12 h10 v12 h10 v-6 h20 v-6 h10 v12 h10 v-12 h10 v12 h10 v-6 h20" fill="none" stroke="#7fae70" stroke-width="1.4"/>
+        <text x="480" y="212" fill="#93a1b8" font-size="10" font-family="IBM Plex Sans, Segoe UI, sans-serif">01001011 01110100 ...</text>
+
+        <text x="340" y="248" fill="#cc9f3f" font-size="11" text-anchor="middle" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">Beim Empfänger läuft der Vorgang umgekehrt ab (Entkapselung)</text>
+        <text x="340" y="266" fill="#93a1b8" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">jede Schicht liest nur ihren eigenen Header, entfernt ihn und reicht den Rest nach oben weiter</text>
+      </svg>
+      </div>
+      <div class="card" data-search="kapselung encapsulation header pdu segment paket frame bits">
+        <h4>PDU je Schicht</h4>
+        <p>Jede Schicht hat ihre eigene Bezeichnung für die Dateneinheit (PDU - Protocol Data Unit): Schicht 4 Segment, Schicht 3 Paket, Schicht 2 Frame, Schicht 1 Bits. Schicht 5-7 arbeiten meist einfach mit "Daten".</p>
+      </div>
+      </section>
+
+      <section class="category-section" id="tcpip-vergleich" data-nav="OSI vs. TCP/IP">
+        <div class="category-head"><h2>OSI vs. TCP/IP</h2><span class="path">Gegenüberstellung</span></div>
+
+      <div class="schaubild">
+      <svg viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>OSI-Modell im Vergleich zum TCP/IP-Modell</title>
+        <desc>Die 7 OSI-Schichten links, rechts die 4 zusammengefassten TCP/IP-Schichten</desc>
+
+        <text x="60" y="20" fill="#93a1b8" font-size="12" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">OSI (7 Schichten)</text>
+        <text x="440" y="20" fill="#93a1b8" font-size="12" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP/IP (4 Schichten)</text>
+
+        <rect x="60" y="30" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="150" y="51" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 Anwendung</text>
+        <rect x="60" y="68" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="150" y="89" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 Darstellung</text>
+        <rect x="60" y="106" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="150" y="127" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 Sitzung</text>
+
+        <rect x="60" y="150" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="171" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 Transport</text>
+
+        <rect x="60" y="188" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="209" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 Vermittlung</text>
+
+        <rect x="60" y="226" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="247" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 Sicherung</text>
+        <rect x="60" y="264" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="285" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 Bitübertragung</text>
+
+        <path d="M240 47 C 320 47, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <path d="M240 85 C 320 85, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <path d="M240 123 C 320 123, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="30" width="220" height="92" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="80" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Application</text>
+
+        <path d="M240 167 L 400 167" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="150" width="220" height="34" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="171" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Transport</text>
+
+        <path d="M240 205 L 400 205" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="188" width="220" height="34" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="209" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Internet</text>
+
+        <path d="M240 243 C 320 243, 320 280, 400 280" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <path d="M240 281 C 320 281, 320 280, 400 280" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="226" width="220" height="72" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="266" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Network Access</text>
+
+        <text x="340" y="332" fill="#93a1b8" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP/IP fasst OSI-Schicht 5-7 zu "Application" und Schicht 1-2 zu "Network Access" zusammen</text>
+      </svg>
+      </div>
+      </section>
+
+      <section class="category-section" id="geraete-vergleich" data-nav="Geräte-Vergleich">
+        <div class="category-head"><h2>Geräte-Vergleich</h2><span class="path">Router, Switch, Firewall</span></div>
+
+      <div class="card" data-search="router switch firewall vergleich verwechslung unterschied layer">
+        <h4>Router</h4>
+        <p><span class="formel">Layer 3</span> verbindet unterschiedliche Netzwerke, leitet Pakete anhand der Ziel-IP-Adresse weiter.</p>
+      </div>
+      <div class="card" data-search="router switch firewall vergleich verwechslung unterschied layer">
+        <h4>Switch</h4>
+        <p><span class="formel">Layer 2</span> verbindet Geräte innerhalb desselben Netzwerks, leitet Frames anhand der MAC-Adresse weiter.</p>
+      </div>
+      <div class="card" data-search="router switch firewall vergleich verwechslung unterschied layer">
+        <h4>Firewall</h4>
+        <p><span class="formel">Layer 3/4</span> (klassischer Paketfilter) prüft und filtert Datenverkehr nach IP-Adresse und Port. Eine Application-Firewall/WAF arbeitet zusätzlich auf <span class="formel">Layer 7</span>.</p>
+        <div class="merksatz">Merksatz: Switch verbindet im Netz, Router verbindet Netze, Firewall kontrolliert, was durchdarf.</div>
+      </div>
+      </section>
+
+      <section class="category-section" id="grundlagen" data-nav="Grundlagen">
+        <div class="category-head"><h2>Grundlagen</h2><span class="path">Was ist das OSI-Modell</span></div>
+
+      <div class="card" data-search="osi referenzmodell 7 schichten iso">
+        <h4>OSI-Referenzmodell</h4>
+        <p>Schichtenmodell mit 7 Ebenen zur Beschreibung der Netzwerkkommunikation. Jede Schicht übernimmt eine klar abgegrenzte Aufgabe und nutzt die Dienste der darunterliegenden Schicht.</p>
+        <div class="merksatz">Merksatz: Je höher die Schicht, desto näher am Anwender. Je tiefer, desto näher an der Hardware.</div>
+      </div>
+      <div class="card" data-search="anwendungsorientiert transportorientiert obere untere schichten gruppierung">
+        <h4>Zwei Gruppen</h4>
+        <p>Schicht 5-7: anwendungsorientiert (Daten, Formate, Sitzungen)</p>
+        <p>Schicht 1-4: transportorientiert (Übertragung, Adressierung, Wegfindung)</p>
+      </div>
+      </section>
+
+      <section class="category-section" id="schichten" data-nav="Die 7 Schichten">
+        <div class="category-head"><h2>Die 7 Schichten</h2><span class="path">Layer 7 bis 1</span></div>
+
+      <div class="group">
+        <div class="group-name">Anwendungsorientiert</div>
+      <div class="card" data-search="layer 7 anwendung application http ftp smtp dns proxy gateway url hostname">
+        <h4><span class="layer-badge">7</span>Anwendung / Application</h4>
+        <p>TCP/IP-Schicht: Application</p>
+        <p>Schnittstelle zum Nutzer. Stellt Funktionen für Anwendungen bereit, ermöglicht die Verbindung zu den unteren Schichten. Hier findet die Dateneingabe und -ausgabe statt.</p>
+        <p><span class="formel">Protokolle: HTTP, FTP, SMTP, DNS</span></p>
+        <p><span class="formel">Adressen: URLs, Hostnamen</span></p>
+        <p><span class="formel">Geräte: Proxy, Gateway</span></p>
+      </div>
+
+      <div class="card" data-search="layer 6 darstellung presentation tls ssl jpeg ascii verschlüsselung kompression">
+        <h4><span class="layer-badge">6</span>Darstellung / Presentation</h4>
+        <p>TCP/IP-Schicht: Application</p>
+        <p>Datenformatierung. Bereitet die Daten so auf, dass sie dem Nutzer angezeigt werden können. Zwei Anwendungen verwenden dabei üblicherweise die gleiche Kodierung.</p>
+        <p><span class="formel">Protokolle: TLS, SSL, JPEG, ASCII</span></p>
+      </div>
+
+      <div class="card" data-search="layer 5 sitzung session netbios rpc sitzungsaufbau synchronisation">
+        <h4><span class="layer-badge">5</span>Sitzung / Session</h4>
+        <p>TCP/IP-Schicht: Application</p>
+        <p>Sitzungssteuerung. Ermöglicht Verbindungen zwischen Endsystemen. Die Zeit zwischen Öffnen und Schließen der Kommunikation wird als Sitzung bezeichnet.</p>
+        <p><span class="formel">Protokolle: NetBIOS, RPC</span></p>
+      </div>
+      </div>
+      <div class="group">
+        <div class="group-name">Transportorientiert</div>
+      <div class="card" data-search="layer 4 transport tcp udp port firewall segmentierung flusskontrolle">
+        <h4><span class="layer-badge">4</span>Transport</h4>
+        <p>TCP/IP-Schicht: Transport</p>
+        <p>Adressierung von Anwendungen und Prozessen. End-to-End-Kommunikation zwischen zwei Geräten, Bindeglied zwischen transportorientierten und anwendungsorientierten Schichten. Zur Übertragung wird das Gesamtpaket in kleinere Bestandteile zerlegt.</p>
+        <p><span class="formel">Protokolle: TCP, UDP</span></p>
+        <p><span class="formel">Adressen: Ports</span></p>
+        <p><span class="formel">Geräte: Firewall</span></p>
+      </div>
+
+      <div class="card" data-search="layer 3 vermittlung network ip icmp router routing ip-adresse fragmente">
+        <h4><span class="layer-badge">3</span>Vermittlung / Network</h4>
+        <p>TCP/IP-Schicht: Internet</p>
+        <p>Routing. Reguliert den Datentransfer zwischen zwei verschiedenen Netzwerken - innerhalb eines Netzwerks fällt diese Schicht weg. Segmente aus Layer 4 werden in Fragmente aufgeteilt und beim Empfänger wieder zusammengefügt.</p>
+        <p><span class="formel">Protokolle: IP, ICMP</span></p>
+        <p><span class="formel">Adressen: IP-Adressen</span></p>
+        <p><span class="formel">Geräte: Router</span></p>
+      </div>
+
+      <div class="card" data-search="layer 2 sicherung datalink ethernet arp switch mac-adresse frames">
+        <h4><span class="layer-badge">2</span>Sicherung / Data Link</h4>
+        <p>TCP/IP-Schicht: Network</p>
+        <p>Lokale Adressierung. Ermöglicht eine zuverlässige Verbindung zwischen Endgerät und Übertragungsmedium innerhalb desselben Netzes. Pakete aus Layer 3 werden in kleinere Teile zerlegt, sogenannte Frames.</p>
+        <p><span class="formel">Protokolle: Ethernet, ARP</span></p>
+        <p><span class="formel">Adressen: MAC-Adressen</span></p>
+        <p><span class="formel">Geräte: Switch</span></p>
+      </div>
+
+      <div class="card" data-search="layer 1 bitübertragung physical hub kabel signale hardware">
+        <h4><span class="layer-badge">1</span>Bitübertragung / Physical</h4>
+        <p>TCP/IP-Schicht: Network</p>
+        <p>Physische Übertragung. Elektrische, mechanische und funktionale Schnittstelle zum Übertragungsmedium - beinhaltet die Datenübertragung der beteiligten physischen Geräte wie Kabel und Switch.</p>
+        <p><span class="formel">Geräte: Hub, Kabel</span></p>
+      </div>
+
+    
+      </div>
+      </section>
+
+      <section class="category-section" id="glossar" data-nav="Glossar">
+        <div class="category-head"><h2>Glossar</h2><span class="path">Begriffsübersicht</span></div>
+
+      <div class="card" data-search="glossar osi schichtenmodell 7 ebenen tcp/ip vier schichten praxis segment layer 4 transport dateneinheit paket layer 3 vermittlung dateneinheit frame layer 2 sicherung dateneinheit mac-adresse eindeutig netzwerkkarte hardware ip-adresse logisch netzwerk übergreifend port anwendung prozess unterscheidung kapselung encapsulation header anfügen protokoll regelwerk kommunikation">
+        <div class="tbl-wrap"><table class="tbl zeilen" id="glossar-table">
+        <tr><th>Begriff</th><th>Bedeutung</th></tr>
+        <tr data-search="osi schichtenmodell 7 ebenen"><td>OSI-Modell</td><td>Schichtenmodell mit 7 Ebenen zur Beschreibung der Netzwerkkommunikation</td></tr>
+        <tr data-search="tcp/ip vier schichten praxis"><td>TCP/IP-Modell</td><td>Praxisnaheres 4-Schichten-Modell, fasst mehrere OSI-Schichten zusammen</td></tr>
+        <tr data-search="segment layer 4 transport dateneinheit"><td>Segment</td><td>Dateneinheit der Transportschicht (Layer 4)</td></tr>
+        <tr data-search="paket layer 3 vermittlung dateneinheit"><td>Paket</td><td>Dateneinheit der Vermittlungsschicht (Layer 3)</td></tr>
+        <tr data-search="frame layer 2 sicherung dateneinheit"><td>Frame</td><td>Dateneinheit der Sicherungsschicht (Layer 2)</td></tr>
+        <tr data-search="mac-adresse eindeutig netzwerkkarte hardware"><td>MAC-Adresse</td><td>Eindeutige Hardware-Adresse der Netzwerkkarte, lokale Adressierung</td></tr>
+        <tr data-search="ip-adresse logisch netzwerk übergreifend"><td>IP-Adresse</td><td>Logische Adresse zur netzübergreifenden Adressierung</td></tr>
+        <tr data-search="port anwendung prozess unterscheidung"><td>Port</td><td>Adressiert eine bestimmte Anwendung bzw. einen Prozess auf einem Gerät</td></tr>
+        <tr data-search="kapselung encapsulation header anfügen"><td>Kapselung</td><td>Anfügen von Header-Informationen der jeweiligen Schicht an die Daten</td></tr>
+        <tr data-search="protokoll regelwerk kommunikation"><td>Protokoll</td><td>Regelwerk, das die Kommunikation auf einer bestimmten Schicht festlegt</td></tr>
+      </table></div>
+      </div>
+      </section>
+
+      <section class="category-section" id="eselsbruecke" data-nav="Eselsbrücke">
+        <div class="category-head"><h2>Eselsbrücke</h2><span class="path">Reihenfolge merken</span></div>
+
+      <div class="card" data-search="eselsbrücke merksatz apstndp alle prüfer suchen tests nach der pause">
+        <h4>Alle Prüfer Suchen Tests Nach Der Pause</h4>
+        <p>Erster Buchstabe je Wort = erster Buchstabe der Schicht, von oben (7) nach unten (1):</p>
+        <p>
+          <span class="formel">A - Anwendung (7)</span>
+          <span class="formel">P - Präsentation (6)</span>
+          <span class="formel">S - Sitzung (5)</span>
+          <span class="formel">T - Transport (4)</span>
+          <span class="formel">N - Netzwerk/Vermittlung (3)</span>
+          <span class="formel">D - Datensicherung (2)</span>
+          <span class="formel">P - Physikalisch (1)</span>
+        </p>
+        <div class="merksatz">Merksatz: A-P-S-T-N-D-P - jeder Prüfer sucht Tests nach der Pause.</div>
+      </div>
+      </section>
+
+      <section class="category-section" id="ieee" data-nav="Netzwerkstandards">
+        <div class="category-head"><h2>Wichtige Netzwerkstandards</h2><span class="path">IEEE</span></div>
+
+      <div class="card" data-search="ieee ieee 802.3 ethernet kabelgebunden lan kupfernetzwerk ieee 802.11 wlan wireless lan funknetzwerk wifi ieee 802.15 bluetooth wpan optional persönliche netzwerke ieee 802.1q vlan optional virtuelle netzwerke">
+        <div class="tbl-wrap"><table class="tbl zeilen" id="ieee-table">
+        <tr><th>Standard</th><th>Name</th><th>Beschreibung</th></tr>
+        <tr data-search="ieee 802.3 ethernet kabelgebunden lan kupfernetzwerk"><td>IEEE 802.3</td><td>Ethernet (kabelgebundenes LAN)</td><td>Das Standard-Kupfernetzwerk</td></tr>
+        <tr data-search="ieee 802.11 wlan wireless lan funknetzwerk wifi"><td>IEEE 802.11</td><td>WLAN (Wireless LAN)</td><td>Funknetzwerk (Wi-Fi)</td></tr>
+        <tr data-search="ieee 802.15 bluetooth wpan optional persönliche netzwerke"><td>IEEE 802.15 <em>(optional)</em></td><td>Bluetooth / WPAN</td><td>Persönliche Netzwerke</td></tr>
+        <tr data-search="ieee 802.1q vlan optional virtuelle netzwerke"><td>IEEE 802.1Q <em>(optional)</em></td><td>VLAN</td><td>Virtuelle Netzwerke</td></tr>
+      </table></div>
+      </div>
+      <div class="card" data-search="switch mac 802.3 802.11 ap-bereich router ip-bereich schema">
+        <h4>Einordnung im Netzwerk</h4>
+        <p>802.3 (Ethernet) und 802.11 (WLAN) liefern die physische/logische Anbindung der Endgeräte an Switch bzw. Access Point - Layer 1/2. VLAN (802.1Q) teilt ein physisches Netz logisch auf, ebenfalls Layer 2. Router und Firewall sitzen dahinter auf Layer 3/4.</p>
+      </div>
+      </section>
+
+      <section class="category-section" id="hilfe" data-nav="Wenn's hakt">
+        <div class="category-head"><h2>Wenn's hakt</h2><span class="path">Hilfe bei Bearbeitungsstillstand</span></div>
+
+      <div class="card" data-search="schicht zuordnen unklar gerät protokoll">
+        <h4>Zuordnung eines Geräts/Protokolls unklar</h4>
+        <p>Fragen, auf welcher Adressart das Gerät arbeitet: MAC = Layer 2, IP = Layer 3, Port = Layer 4.</p>
+      </div>
+      <div class="card" data-search="firewall mehrdeutig layer 3 4 7">
+        <h4>Firewall wirkt mehrdeutig</h4>
+        <p>Klassische Paketfilter-Firewall arbeitet auf Layer 3/4 (IP + Port). Application-Firewall/WAF auf Layer 7. Für eine einfache 1-Gerät-pro-Layer-Zuordnung: Router = Layer 3, Firewall = Layer 4.</p>
+      </div>
+      <div class="card" data-search="tcp/ip osi unterschied verwechslung schichten">
+        <h4>OSI und TCP/IP verwechselt</h4>
+        <p>OSI hat 7 Schichten, TCP/IP nur 4. Schicht 5-7 des OSI-Modells entsprechen zusammen der Application-Schicht im TCP/IP-Modell.</p>
+      </div>
+      <div class="card" data-search="reihenfolge schichten merken oben unten">
+        <h4>Reihenfolge der Schichten vergessen</h4>
+        <p>Von oben (7) nach unten (1): Anwendung, Darstellung, Sitzung, Transport, Vermittlung, Sicherung, Bitübertragung.</p>
+      </div>
+      </section>
+<!--@skript-->
+/* Lernkarten */
+const KARTEN = [
+  {tag:'Grundlage', vorne:'Aus wie vielen Schichten besteht das OSI-Modell?', hinten:'7 Schichten', zusatz:'Von Anwendung (7) bis Bitübertragung (1)'},
+  {tag:'Grundlage', vorne:'Welche Schichten gelten als anwendungsorientiert?', hinten:'Schicht 5-7', zusatz:'Sitzung, Darstellung, Anwendung'},
+  {tag:'Grundlage', vorne:'Welche Schichten gelten als transportorientiert?', hinten:'Schicht 1-4', zusatz:'Bitübertragung, Sicherung, Vermittlung, Transport'},
+  {tag:'Layer 7', vorne:'Was macht die Anwendungsschicht (Layer 7)?', hinten:'Schnittstelle zum Nutzer', zusatz:'Protokolle: HTTP, FTP, SMTP, DNS - Geräte: Proxy, Gateway'},
+  {tag:'Layer 6', vorne:'Was macht die Darstellungsschicht (Layer 6)?', hinten:'Datenformatierung', zusatz:'z.B. Verschlüsselung, Kompression - TLS, SSL, JPEG, ASCII'},
+  {tag:'Layer 5', vorne:'Was macht die Sitzungsschicht (Layer 5)?', hinten:'Sitzungssteuerung', zusatz:'Auf- und Abbau von Verbindungen - NetBIOS, RPC'},
+  {tag:'Layer 4', vorne:'Was macht die Transportschicht (Layer 4)?', hinten:'Adressierung von Anwendungen/Prozessen', zusatz:'TCP, UDP - Adressen: Ports - Gerät: Firewall'},
+  {tag:'Layer 3', vorne:'Was macht die Vermittlungsschicht (Layer 3)?', hinten:'Routing zwischen Netzwerken', zusatz:'IP, ICMP - Adressen: IP-Adressen - Gerät: Router'},
+  {tag:'Layer 2', vorne:'Was macht die Sicherungsschicht (Layer 2)?', hinten:'Lokale Adressierung', zusatz:'Ethernet, ARP - Adressen: MAC-Adressen - Gerät: Switch'},
+  {tag:'Layer 1', vorne:'Was macht die Bitübertragungsschicht (Layer 1)?', hinten:'Physische Übertragung', zusatz:'Elektrische/mechanische Schnittstelle - Geräte: Hub, Kabel'},
+  {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 4?', hinten:'Segment', zusatz:'Wird auf Layer 3 in Fragmente/Pakete zerlegt'},
+  {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 3?', hinten:'Paket', zusatz:'Wird auf Layer 2 in Frames zerlegt'},
+  {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 2?', hinten:'Frame', zusatz:'Wird auf Layer 1 als Bitfolge übertragen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Router?', hinten:'Layer 3 - Vermittlung', zusatz:'Routet anhand von IP-Adressen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Switch?', hinten:'Layer 2 - Sicherung', zusatz:'Vermittelt anhand von MAC-Adressen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet eine klassische Firewall?', hinten:'Layer 3/4', zusatz:'Filtert nach IP-Adressen und Ports; Application-Firewalls arbeiten auf Layer 7'},
+  {tag:'TCP/IP', vorne:'Welche OSI-Schichten entsprechen der Application-Schicht im TCP/IP-Modell?', hinten:'Schicht 5, 6 und 7', zusatz:'Sitzung, Darstellung, Anwendung werden zusammengefasst'},
+  {tag:'Eselsbrücke', vorne:'Wie lautet die Eselsbrücke für die 7 OSI-Schichten (von oben nach unten)?', hinten:'Alle Prüfer Suchen Tests Nach Der Pause', zusatz:'A-P-S-T-N-D-P'},
+  {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt kabelgebundenes Ethernet?', hinten:'IEEE 802.3', zusatz:'Das Standard-Kupfernetzwerk'},
+  {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt WLAN?', hinten:'IEEE 802.11', zusatz:'Funknetzwerk (Wi-Fi)'},
+  {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt VLAN?', hinten:'IEEE 802.1Q', zusatz:'Virtuelle Netzwerke, optional'},
+  {tag:'Kapselung', vorne:'Wie heißt die Dateneinheit auf Layer 1?', hinten:'Bits', zusatz:'Frame wird in eine Bitfolge umgewandelt'},
+  {tag:'Kapselung', vorne:'Was passiert beim Empfänger mit den Headern?', hinten:'Sie werden Schicht für Schicht wieder entfernt', zusatz:'Entkapselung - jede Schicht liest nur ihren eigenen Header'},
+  {tag:'Geräte', vorne:'Was ist der Hauptunterschied zwischen Router und Switch?', hinten:'Router verbindet Netze, Switch verbindet Geräte im selben Netz', zusatz:'Router = Layer 3 / IP, Switch = Layer 2 / MAC'}
+];
+window.LH = { lernen: { art: 'karten', karten: KARTEN } };
+<!--@fuss-->
+  <span>OSI-Modell auf einem Blatt - Zusammenfassung eigener Formulierung auf Basis des im Unterricht erarbeiteten Miro-Boards.</span>
+  <span>Kein Anspruch auf Vollständigkeit, kein Ersatz für die Original-Unterlagen.</span>

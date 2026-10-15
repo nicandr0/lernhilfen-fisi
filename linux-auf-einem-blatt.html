@@ -1,13 +1,19 @@
 <!DOCTYPE html>
+<!-- Diese Datei wird von bauen.py erzeugt. Nicht hier bearbeiten, sondern in _vorlage/ bzw. _inhalt/. -->
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>linux-auf-einem-blatt.sh</title>
+<meta name="description" content="272 Befehle und Pfade mit Beispielen und Tipps, Lernkarten, Filter für LPI Linux Essentials 010, Docker und LXD für Fortgeschrittene">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ==========================================================================
+   Lernhilfen FiSi – gemeinsames Design (Terminal-Stil)
+   Wird von bauen.py in jede Seite eingebettet. Hier ändern, dann bauen.
+   ========================================================================== */
 :root{
   --bg:#0d1117;
   --bg-elevated:#131a23;
@@ -24,8 +30,12 @@
   --gold:#cc9f3f;
   --green:#7fae70;
   --green-soft:rgba(127,174,112,0.14);
+  --red:#c77b6e;
+  --red-soft:rgba(199,123,110,0.14);
   --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
   --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --lh-h:34px;
+  color-scheme:dark;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -45,7 +55,20 @@ body{
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--surface-hover);}
 
-/* ---- terminal chrome header ---- */
+/* ---- Lernhilfen-Leiste (Links zu allen Lernhilfen, bleibt oben stehen) ---- */
+.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);
+  display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;
+  padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  background:#0d1117;border-bottom:1px solid var(--border);
+  font:500 12px/1 var(--mono);}
+.lh-nav::-webkit-scrollbar{display:none;}
+.lh-nav .lh-ttl{color:var(--text-muted);padding-right:6px;}
+.lh-nav a{color:var(--text-secondary);text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
+.lh-nav a:hover{color:var(--text-primary);background:var(--surface);}
+.lh-nav a[aria-current="page"]{color:var(--amber);border-color:rgba(227,164,88,0.4);background:var(--amber-soft);}
+.lh-nav a:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+
+/* ---- Terminal-Rahmen ---- */
 .termbar{
   max-width:1240px;margin:20px auto 0;
   background:var(--bg-elevated);
@@ -54,73 +77,42 @@ body{
   padding:10px 16px;
   display:flex;align-items:center;gap:10px;
 }
-.dot{width:11px;height:11px;border-radius:50%;}
+.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
 .dot.d1{background:#e37f6b;}
 .dot.d2{background:var(--amber);}
 .dot.d3{background:var(--green);}
-.termbar .path{
-  margin-left:10px;color:var(--text-muted);font-family:var(--mono);font-size:12.5px;
-}
-
+.termbar .path{margin-left:10px;color:var(--text-muted);font-family:var(--mono);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* overflow:clip statt hidden: kein eigener Scroll-Bereich, sonst bleibt die Kapitelleiste nicht stehen */
 .wrap{max-width:1240px;margin:0 auto;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--bg-elevated);overflow:hidden;overflow:clip;}
 
-header.hero{
-  padding:34px 34px 26px;
-  border-bottom:1px solid var(--border);
-  background:linear-gradient(180deg, rgba(227,164,88,0.04), transparent 70%);
-}
-.hero-top{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:14px;}
-h1{
-  font-family:var(--mono);font-weight:700;font-size:clamp(22px,3vw,30px);
-  margin:0;color:var(--text-primary);letter-spacing:-0.01em;
-}
+/* ---- Kopfbereich ---- */
+header.hero{padding:34px 34px 26px;border-bottom:1px solid var(--border);background:linear-gradient(180deg, rgba(227,164,88,0.04), transparent 70%);}
+h1{font-family:var(--mono);font-weight:700;font-size:clamp(22px,3vw,30px);margin:0;color:var(--text-primary);letter-spacing:-0.01em;overflow-wrap:anywhere;}
 h1 .prompt{color:var(--green);}
 h1 .cursor{display:inline-block;width:9px;height:1.1em;background:var(--amber);margin-left:2px;vertical-align:-2px;animation:blink 1.1s step-end infinite;}
 @keyframes blink{50%{opacity:0;}}
-.subtitle{color:var(--text-secondary);font-size:14px;margin-top:8px;max-width:640px;line-height:1.55;}
+.subtitle{color:var(--text-secondary);font-size:14px;margin:8px 0 0;max-width:680px;line-height:1.55;}
 .meta-row{display:flex;gap:18px;color:var(--text-muted);font-family:var(--mono);font-size:12px;margin-top:14px;flex-wrap:wrap;}
 .meta-row span b{color:var(--amber);font-weight:600;}
 
 .controls{display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap;}
-.search-box{
-  flex:1;min-width:240px;position:relative;
-}
-.search-box input{
-  width:100%;background:var(--surface);border:1px solid var(--border);
-  color:var(--text-primary);font-family:var(--mono);font-size:14px;
-  padding:11px 14px 11px 34px;border-radius:8px;outline:none;
-  transition:border-color .15s, box-shadow .15s;
-}
+.search-box{flex:1;min-width:240px;position:relative;}
+.search-box input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text-primary);font-family:var(--mono);font-size:14px;padding:11px 46px 11px 34px;border-radius:8px;outline:none;transition:border-color .15s, box-shadow .15s;}
 .search-box input:focus{border-color:var(--amber-dim);box-shadow:0 0 0 3px var(--amber-soft);}
 .search-box .glyph{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-family:var(--mono);pointer-events:none;}
 .search-box .hint{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:11px;font-family:var(--mono);pointer-events:none;}
-.btn{
-  font-family:var(--mono);font-size:13px;font-weight:500;
-  background:var(--surface);border:1px solid var(--border);color:var(--text-primary);
-  padding:11px 16px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;
-}
+.btn{font-family:var(--mono);font-size:13px;font-weight:500;background:var(--surface);border:1px solid var(--border);color:var(--text-primary);padding:11px 16px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn:hover{background:var(--surface-hover);border-color:var(--amber-dim);}
+.btn:focus-visible,.cat-link:focus-visible,.sc-btn:focus-visible,.lm-card:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
 .btn.primary{background:var(--amber-soft);border-color:var(--amber-dim);color:var(--amber);}
 .btn.primary:hover{background:rgba(227,164,88,0.22);}
+.btn.an{background:rgba(204,159,63,0.16);border-color:var(--gold);color:var(--gold);}
 
+/* ---- Kapitelleiste (links, bleibt stehen) ---- */
 .layout{display:flex;}
-
-/* ---- sidebar styled like ls -la ---- */
-nav.sidebar{
-  width:300px;flex-shrink:0;border-right:1px solid var(--border);
-  padding:18px 0;max-height:calc(100vh - var(--lh-h) - 8px);overflow-y:auto;position:sticky;top:var(--lh-h);
-  align-self:flex-start;
-}
-.sidebar .lslabel{
-  font-family:var(--mono);font-size:10.5px;color:var(--text-muted);
-  padding:0 18px 8px;text-transform:uppercase;letter-spacing:.08em;
-}
-.cat-link{
-  display:flex;align-items:center;gap:10px;width:100%;
-  padding:8px 18px;background:none;border:none;cursor:pointer;text-align:left;
-  font-family:var(--mono);font-size:12.5px;color:var(--text-secondary);
-  border-left:2px solid transparent;transition:all .12s;
-}
+nav.sidebar{width:300px;flex-shrink:0;border-right:1px solid var(--border);padding:18px 0;max-height:calc(100vh - var(--lh-h) - 8px);overflow-y:auto;position:sticky;top:var(--lh-h);align-self:flex-start;}
+.sidebar .lslabel{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);padding:0 18px 8px;text-transform:uppercase;letter-spacing:.08em;}
+.cat-link{display:flex;align-items:center;gap:10px;width:100%;padding:8px 18px;background:none;border:none;cursor:pointer;text-align:left;font-family:var(--mono);font-size:12.5px;color:var(--text-secondary);border-left:2px solid transparent;transition:all .12s;}
 .cat-link .perm{color:var(--text-muted);opacity:.65;}
 .cat-link .name{color:inherit;flex:1;}
 .cat-link .cnt{color:var(--text-muted);font-size:11px;}
@@ -128,84 +120,91 @@ nav.sidebar{
 .cat-link.active{background:var(--surface);color:var(--amber);border-left-color:var(--amber);}
 .cat-link.active .cnt{color:var(--amber);}
 
+/* ---- Inhalt ---- */
 main.content{flex:1;min-width:0;padding:8px 30px 60px;}
-
 .category-section{padding-top:26px;scroll-margin-top:calc(var(--lh-h) + 16px);}
-.category-head{
-  display:flex;align-items:baseline;gap:10px;margin-bottom:4px;
-  padding-bottom:10px;border-bottom:1px solid var(--border-soft);
-}
-.category-head h2{
-  font-family:var(--mono);font-size:16px;margin:0;color:var(--text-primary);font-weight:600;
-}
+.category-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--border-soft);}
+.category-head h2{font-family:var(--mono);font-size:16px;margin:0;color:var(--text-primary);font-weight:600;text-wrap:balance;}
 .category-head .path{color:var(--text-muted);font-size:12px;font-family:var(--mono);}
 
+/* Gruppe = Zwischenüberschrift innerhalb eines Kapitels */
 .group{margin-top:24px;}
-.group-name{
-  font-size:13.5px;font-weight:600;color:var(--amber);font-family:var(--mono);
-  text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;
-  padding:3px 0 3px 10px;border-left:3px solid var(--gold);
-}
+.group-name{font-size:13.5px;font-weight:600;color:var(--amber);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;padding:3px 0 3px 10px;border-left:3px solid var(--gold);}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
 
-.card{
-  background:var(--surface);border:1px solid var(--border-soft);border-radius:9px;
-  padding:14px 15px;transition:border-color .15s, transform .1s;
-}
+/* Karte */
+.card{background:var(--surface);border:1px solid var(--border-soft);border-left:3px solid var(--gold);border-radius:9px;padding:14px 16px;margin:12px 0;transition:border-color .15s;min-width:0;}
 .card:hover{border-color:var(--amber-dim);}
-.card .desc{font-size:13.5px;color:var(--text-primary);line-height:1.45;margin-bottom:9px;min-height:19px;}
-.card .cmdrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
-.cmd-chip{
-  font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--green);
-  background:var(--green-soft);border:1px solid rgba(127,174,112,0.3);
-  padding:3px 9px;border-radius:6px;
-}
-.card .example{
-  font-family:var(--mono);font-size:12px;color:var(--text-secondary);
-  background:var(--bg-elevated);border:1px solid var(--border-soft);border-radius:6px;
-  padding:8px 10px;display:flex;align-items:center;gap:8px;
-}
-.card .example .p{color:var(--amber);flex-shrink:0;}
-.card .example code{color:var(--text-primary);}
-.card .tip{font-size:11.5px;color:var(--text-secondary);margin-top:7px;line-height:1.5;padding-top:7px;border-top:1px solid var(--border-soft);}
+.cards > .card{margin:0;}
+.card h4{margin:0 0 6px;font-family:var(--mono);font-size:13.5px;color:var(--amber);font-weight:600;}
+.card p{margin:0 0 6px;font-size:13.5px;color:var(--text-secondary);line-height:1.55;}
+.card p:last-child{margin-bottom:0;}
+.card ul,.card ol{margin:6px 0;padding-left:20px;}
+.card li{font-size:13.5px;color:var(--text-secondary);line-height:1.55;margin-bottom:5px;}
+.card li b,.card p b{color:var(--text-primary);}
+.card-note{font-size:12px;color:var(--text-muted);margin:2px 0 10px;}
+code{background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:.92em;color:#cbd6e4;}
+
+/* Merksatz und Hinweiskästen */
+.merksatz{margin-top:10px;padding:8px 12px;background:var(--green-soft);border-left:3px solid var(--green);border-radius:6px;color:var(--green);font-size:12.5px;font-style:italic;}
+.hinweis{margin-top:10px;padding:9px 12px;border-left:3px solid var(--amber);border-radius:6px;background:var(--amber-soft);font-size:13px;color:var(--text-secondary);line-height:1.55;}
+.hinweis b{display:block;font-family:var(--mono);font-size:12px;color:var(--amber);margin-bottom:2px;}
+.hinweis.merk{border-left-color:var(--green);background:var(--green-soft);}
+.hinweis.merk b{color:var(--green);}
+.hinweis.fehler{border-left-color:var(--red);background:var(--red-soft);}
+.hinweis.fehler b{color:var(--red);}
+
+/* Formel-/Wert-Etikett */
+.formel{display:inline-block;background:var(--amber-soft);color:var(--amber);padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:.86em;margin:2px 4px 2px 0;}
+
+/* Nummerierte Rechenschritte */
+.schritte{list-style:none;counter-reset:schritt;padding-left:0 !important;margin:8px 0;}
+.schritte li{counter-increment:schritt;position:relative;padding:5px 0 5px 34px;}
+.schritte li::before{content:counter(schritt);position:absolute;left:0;top:4px;width:22px;height:22px;border-radius:50%;background:var(--amber-soft);color:var(--amber);font:600 11px/22px var(--mono);text-align:center;}
+
+/* Tabellen */
+.tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:4px 0;}
+.tbl th,.tbl td{border:1px solid var(--border-soft);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.5;}
+.tbl th{background:var(--amber-soft);color:var(--amber);font-family:var(--mono);font-weight:600;font-size:12px;}
+.tbl td{color:var(--text-secondary);}
+.tbl td:first-child{color:var(--text-primary);font-weight:500;}
+.tbl.zahlen th,.tbl.zahlen td{text-align:center;font-variant-numeric:tabular-nums;}
+.tbl.zahlen td:first-child{color:var(--text-secondary);font-weight:400;}
+
+/* Schaubilder (SVG) */
+.schaubild{margin:4px 0 10px;overflow-x:auto;}
+.schaubild svg{display:block;width:100%;min-width:460px;max-width:760px;height:auto;margin:0 auto;}
+
+/* Selbsteinschätzung */
+.sc-btn{font-family:var(--mono);font-size:11.5px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:5px 9px;border-radius:6px;cursor:pointer;white-space:nowrap;}
+.sc-btn:hover{border-color:var(--amber-dim);}
+.sc-btn.sicher.active{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.sc-btn.unsicher.active{background:var(--amber-soft);border-color:var(--amber);color:var(--amber);}
+.sc-btn.wiederholen.active{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.sc-actions{display:flex;gap:6px;flex-wrap:wrap;}
 
 mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0 1px;}
-.badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.04em;vertical-align:middle;}
-.badge-deb{background:rgba(192,112,48,0.15);color:#c07030;border:1px solid rgba(192,112,48,0.3);}
-.badge-ubuntudeb{background:rgba(100,150,220,0.13);color:#7aabdd;border:1px solid rgba(100,150,220,0.28);}
-.badge-lpi{background:rgba(204,159,63,0.13);color:var(--gold);border:1px solid rgba(204,159,63,0.35);margin-left:4px;}
-.btn.lpi-on{background:rgba(204,159,63,0.16);border-color:var(--gold);color:var(--gold);}
-.badge-modern{background:rgba(127,174,112,0.13);color:var(--green);border:1px solid rgba(127,174,112,0.28);}
 .no-results{text-align:center;padding:60px 20px;color:var(--text-muted);font-family:var(--mono);font-size:13px;display:none;}
 .hidden{display:none !important;}
 
-/* ---- Lernmodus overlay ---- */
-.lernmodus{
-  position:fixed;inset:0;background:rgba(8,11,16,0.82);backdrop-filter:blur(4px);
-  display:none;align-items:center;justify-content:center;z-index:50;padding:20px;
-}
+/* ---- Lernmodus (Lernkarten oder Quiz) ---- */
+.lernmodus{position:fixed;inset:0;background:rgba(8,11,16,0.82);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
 .lernmodus.open{display:flex;}
-.lm-box{
-  width:100%;max-width:560px;background:var(--bg-elevated);border:1px solid var(--border);
-  border-radius:14px;padding:28px;position:relative;
-}
-.lm-close{
-  position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);
-  font-size:20px;cursor:pointer;line-height:1;padding:4px;
-}
+.lm-box{width:100%;max-width:600px;max-height:calc(100vh - 40px);overflow-y:auto;background:var(--bg-elevated);border:1px solid var(--border);border-radius:14px;padding:28px;position:relative;}
+.lm-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1;padding:4px;}
 .lm-close:hover{color:var(--text-primary);}
 .lm-progress{font-family:var(--mono);font-size:12px;color:var(--text-muted);margin-bottom:6px;}
 .lm-bar{height:4px;background:var(--surface);border-radius:2px;overflow:hidden;margin-bottom:22px;}
 .lm-bar-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--green));transition:width .25s;}
-.lm-card{
-  min-height:190px;border:1px solid var(--border);border-radius:12px;
-  background:var(--surface);padding:26px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;cursor:pointer;gap:14px;
-}
 .lm-cat{font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;}
-.lm-desc{font-size:17px;color:var(--text-primary);line-height:1.5;}
-.lm-reveal{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--green);}
-.lm-reveal .example{margin-top:10px;font-size:13px;font-weight:400;color:var(--text-secondary);}
+/* Lernkarten */
+.lm-card{min-height:190px;border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;gap:14px;}
+.lm-front{font-size:17px;color:var(--text-primary);line-height:1.5;}
+.lm-reveal{font-size:16px;font-weight:600;color:var(--green);line-height:1.5;}
+.lm-reveal.mono{font-family:var(--mono);font-size:20px;font-weight:700;}
+.lm-extra{margin-top:10px;font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.lm-extra.mono{font-family:var(--mono);}
 .lm-flip-hint{font-family:var(--mono);font-size:11px;color:var(--text-muted);}
 .lm-actions{display:flex;gap:10px;margin-top:18px;}
 .lm-actions .btn{flex:1;text-align:center;justify-content:center;}
@@ -213,48 +212,88 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 .btn.know{border-color:rgba(127,174,112,0.4);color:var(--green);}
 .btn.again:hover{background:var(--amber-soft);}
 .btn.know:hover{background:var(--green-soft);}
+.lm-keys{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);text-align:center;margin-top:12px;}
+/* Quiz */
+.lm-question{font-size:16px;color:var(--text-primary);line-height:1.5;margin:8px 0 16px;}
+.lm-options{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.lm-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;transition:border-color .15s;}
+.lm-opt:hover{border-color:var(--amber-dim);}
+.lm-opt input{margin-top:2px;accent-color:var(--amber);flex-shrink:0;}
+.lm-opt span{font-size:13.5px;color:var(--text-secondary);line-height:1.5;}
+.lm-opt.correct{border-color:var(--green);background:var(--green-soft);}
+.lm-opt.correct span{color:var(--green);}
+.lm-opt.wrong{border-color:var(--red);background:var(--red-soft);}
+.lm-opt.wrong span{color:var(--red);}
+.lm-hint{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:14px;}
+.lm-explain{font-size:12.5px;color:var(--text-secondary);background:var(--surface);border-left:3px solid var(--amber);border-radius:6px;padding:10px 12px;margin-bottom:16px;display:none;}
+.lm-explain.show{display:block;}
+.btn.check{border-color:var(--amber-dim);color:var(--amber);}
+.btn.check:hover{background:var(--amber-soft);}
+.btn.next{border-color:rgba(127,174,112,0.4);color:var(--green);}
+.btn.next:hover{background:var(--green-soft);}
+/* Ende einer Runde */
 .lm-done{text-align:center;padding:20px 0;}
-.lm-done h3{font-family:var(--mono);color:var(--amber);margin-bottom:8px;}
-.lm-done p{color:var(--text-secondary);font-size:13.5px;margin-bottom:18px;}
+.lm-done h3{font-family:var(--mono);color:var(--amber);margin:0 0 8px;}
+.lm-done p{color:var(--text-secondary);font-size:13.5px;margin:0 0 18px;}
 
+/* ---- Fußzeile ---- */
+.seitenfuss{max-width:1240px;margin:0 auto;padding:18px 34px 28px;font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--text-muted);display:flex;gap:10px 18px;flex-wrap:wrap;justify-content:space-between;}
+.seitenfuss a{color:var(--amber);text-decoration:none;}
+.seitenfuss a:hover{text-decoration:underline;}
+
+/* ---- Handy ---- */
 @media (max-width:820px){
   .layout{flex-direction:column;}
-  nav.sidebar{width:100%;position:sticky;top:var(--lh-h);z-index:10;background:var(--bg-elevated);max-height:none;border-right:none;border-bottom:1px solid var(--border);
-    display:flex;overflow-x:auto;padding:12px;gap:4px;}
+  nav.sidebar{width:100%;position:sticky;top:var(--lh-h);z-index:10;background:var(--bg-elevated);max-height:none;border-right:none;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:12px;gap:4px;}
   .sidebar .lslabel{display:none;}
   .cat-link{width:auto;flex-shrink:0;border-left:none;border-bottom:2px solid transparent;border-radius:6px;padding:7px 12px;}
   .cat-link .perm{display:none;}
-  .category-section{scroll-margin-top:calc(var(--lh-h) + 72px);}
   .cat-link.active{border-bottom-color:var(--amber);}
+  .category-section{scroll-margin-top:calc(var(--lh-h) + 72px);}
+  header.hero{padding:24px 18px 20px;}
   main.content{padding:8px 16px 50px;}
   .termbar{margin:10px 10px 0;}
+  .wrap{margin:0 10px;}
+  .seitenfuss{padding:18px;}
+  .lm-box{padding:22px 18px;}
 }
 @media (prefers-reduced-motion:reduce){
   h1 .cursor{animation:none;}
+  *{transition:none !important;scroll-behavior:auto !important;}
+}
+@media print{
+  .lh-nav,nav.sidebar,.controls,.lernmodus{display:none !important;}
+  .category-section{break-inside:avoid-page;}
 }
 </style>
-<style id="lh-nav-css">
-/* Lernhilfen-Leiste: auf allen Seiten gleich, eigene Farben unabhängig vom Seitendesign.
-   Neue Lernhilfe? Link in ALLEN Dateien der Leiste nachtragen (siehe README). */
-:root{--lh-h:34px;}
-.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);box-sizing:border-box;
-  display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;
-  padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
-  background:#0d1117;border-bottom:1px solid #2a3444;
-  font:500 12px/1 ui-monospace,'JetBrains Mono',Consolas,monospace;}
-.lh-nav::-webkit-scrollbar{display:none;}
-.lh-nav .lh-ttl{color:#5c6b83;padding-right:6px;}
-.lh-nav a{color:#93a1b8;text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
-.lh-nav a:hover{color:#e6eaf0;background:#1a222e;}
-.lh-nav a[aria-current="page"]{color:#e3a458;border-color:rgba(227,164,88,0.4);background:rgba(227,164,88,0.14);}
-.lh-nav a:focus-visible{outline:2px solid #e3a458;outline-offset:1px;}
-@media print{.lh-nav{display:none;}}
+<style>
+/* Befehlskarten (nur Linux) */
+.card.befehl{border-left:1px solid var(--border-soft);padding:14px 15px;}
+.card.befehl .desc{font-size:13.5px;color:var(--text-primary);line-height:1.45;margin-bottom:9px;min-height:19px;}
+.card.befehl .cmdrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.cmd-chip{
+  font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--green);
+  background:var(--green-soft);border:1px solid rgba(127,174,112,0.3);
+  padding:3px 9px;border-radius:6px;
+}
+.card.befehl .example{
+  font-family:var(--mono);font-size:12px;color:var(--text-secondary);
+  background:var(--bg-elevated);border:1px solid var(--border-soft);border-radius:6px;
+  padding:8px 10px;display:flex;align-items:center;gap:8px;
+}
+.card.befehl .example .p{color:var(--amber);flex-shrink:0;}
+.card.befehl .example code{color:var(--text-primary);background:none;padding:0;font-size:inherit;}
+.card.befehl .tip{font-size:11.5px;color:var(--text-secondary);margin-top:7px;line-height:1.5;padding-top:7px;border-top:1px solid var(--border-soft);}
+
+.badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.04em;vertical-align:middle;}
+.badge-deb{background:rgba(192,112,48,0.15);color:#c07030;border:1px solid rgba(192,112,48,0.3);}
+.badge-ubuntudeb{background:rgba(100,150,220,0.13);color:#7aabdd;border:1px solid rgba(100,150,220,0.28);}
+.badge-lpi{background:rgba(204,159,63,0.13);color:var(--gold);border:1px solid rgba(204,159,63,0.35);margin-left:4px;}
+.badge-modern{background:rgba(127,174,112,0.13);color:var(--green);border:1px solid rgba(127,174,112,0.28);}
 </style>
 </head>
 <body>
 <nav class="lh-nav" aria-label="Lernhilfen"><span class="lh-ttl">lernhilfen/</span><a href="index.html">Übersicht</a><a href="linux-auf-einem-blatt.html" aria-current="page">Linux</a><a href="subnetting-vlsm-auf-einem-blatt.html">Subnetting</a><a href="osi-modell-auf-einem-blatt.html">OSI</a><a href="routing-auf-einem-blatt.html">Routing</a><a href="switching-auf-einem-blatt.html">Switching</a></nav>
-<script>(function(){var n=document.querySelector(".lh-nav"),c=n&&n.querySelector("[aria-current]");if(c&&n.scrollWidth>n.clientWidth)n.scrollLeft=Math.max(0,c.offsetLeft-60);})();</script>
-
 
 <div class="termbar">
   <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
@@ -263,9 +302,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 
 <div class="wrap">
   <header class="hero">
-    <div class="hero-top">
-      <h1><span class="prompt">$</span> linux --auf-einem-blatt<span class="cursor"></span></h1>
-    </div>
+    <h1><span class="prompt">$</span> linux --auf-einem-blatt<span class="cursor"></span></h1>
     <p class="subtitle">Interaktives Nachschlagewerk & Lernhilfe für Linux-Kommandos. Beschreib, was du vorhast — die passenden Befehle und ein Beispiel dazu findest du sofort. Befehlsauswahl angelehnt an "Linux auf einem Blatt" von Christian Helmbold. Mit dem Knopf <b>LPI 010</b> siehst und übst du nur den Prüfungsstoff von LPI Linux Essentials.</p>
     <div class="meta-row">
       <span><b id="statTotal">0</b> Befehle</span>
@@ -275,50 +312,69 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
     <div class="controls">
       <div class="search-box">
         <span class="glyph">/</span>
-        <input id="searchInput" type="text" placeholder="Was hast du vor? z. B. 'Datei suchen', 'entpacken', 'Rechte ändern' …" autocomplete="off">
-        <span class="hint" id="searchHint">ESC</span>
+        <input id="searchInput" type="search" placeholder="Was hast du vor? z. B. &#x27;Datei suchen&#x27;, &#x27;entpacken&#x27;, &#x27;Rechte ändern&#x27; …" autocomplete="off" aria-label="Suchen">
+        <span class="hint">ESC</span>
       </div>
-      <button class="btn" id="lpiBtn" title="Nur Prüfungsstoff LPI Linux Essentials 010-160 anzeigen">LPI 010</button>
-      <button class="btn primary" id="lernBtn">◆ Lernmodus</button>
+      <button class="btn" id="lpiBtn" type="button" aria-pressed="false" title="Nur Prüfungsstoff LPI Linux Essentials 010-160 anzeigen">LPI 010</button>
+      <button class="btn primary" id="lernBtn" type="button">◆ Lernmodus</button>
     </div>
   </header>
 
   <div class="layout">
-    <nav class="sidebar" id="sidebar">
+    <nav class="sidebar" id="sidebar" aria-label="Kapitel">
       <div class="lslabel">-- Kategorien --</div>
     </nav>
-    <main class="content" id="content"></main>
+    <main class="content" id="content">
+
+      <div class="no-results" id="noResults">Keine Treffer. Versuch's mit einem anderen Begriff.</div>
+    </main>
   </div>
 </div>
 
-<div class="no-results" id="noResults">Keine Treffer. Versuch's mit einem anderen Begriff.</div>
+<footer class="seitenfuss">
+  <span>© 2026 <a href="https://github.com/nicandr0" target="_blank" rel="noopener">Nicandro Marziale</a> – Design, Entwicklung und Formulierung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></span>
+  <span>Befehlsauswahl angelehnt an <a href="https://helmbold.de/artikel/linux-blatt/" target="_blank" rel="noopener">"Linux auf einem Blatt"</a> von Christian Helmbold (2012), ergänzt um Befehle aus dem <a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu CLI cheat sheet</a> (Canonical, 2025) · Beschreibungen, Beispiele und Tipps: eigene Formulierung</span>
+  <span>LPI-Etiketten: Nummern der Lernziele <a href="https://www.lpi.org/our-certifications/exam-010-objectives/" target="_blank" rel="noopener">Linux Essentials 010-160 (v1.6)</a> des Linux Professional Institute</span>
+</footer>
 
-<div class="lernmodus" id="lernmodus">
+<div class="lernmodus" id="lernmodus" role="dialog" aria-modal="true" aria-label="Lernmodus">
   <div class="lm-box">
-    <button class="lm-close" id="lmClose">×</button>
-    <div id="lmActive">
-      <div class="lm-progress" id="lmProgress">Karte 1 / 20</div>
-      <div class="lm-bar"><div class="lm-bar-fill" id="lmBarFill" style="width:0%"></div></div>
-      <div class="lm-card" id="lmCard">
-        <div class="lm-cat" id="lmCat">Kategorie</div>
-        <div class="lm-desc" id="lmDesc">Beschreibung</div>
+    <button class="lm-close" type="button" aria-label="Schließen">×</button>
+    <div id="lmKarten">
+      <div class="lm-progress">Karte 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-card" id="lmCard" tabindex="0" role="button" aria-label="Karte umdrehen">
+        <div class="lm-cat" id="lmCat"></div>
+        <div class="lm-front" id="lmFront"></div>
         <div id="lmBack" class="hidden">
-          <div class="lm-reveal" id="lmReveal">cmd</div>
-          <div class="example" style="margin-top:10px;">
-            <span class="lm-flip-hint" id="lmExample"></span>
-          </div>
+          <div class="lm-reveal" id="lmReveal"></div>
+          <div class="lm-extra" id="lmExtra"></div>
         </div>
         <div class="lm-flip-hint" id="lmFlipHint">Klicken zum Aufdecken</div>
       </div>
       <div class="lm-actions">
-        <button class="btn again" id="lmAgain">↺ nochmal üben</button>
-        <button class="btn know" id="lmKnow">✓ weiß ich</button>
+        <button class="btn again" id="lmAgain" type="button">↺ nochmal üben</button>
+        <button class="btn know" id="lmKnow" type="button">✓ weiß ich</button>
+      </div>
+      <div class="lm-keys">Leertaste aufdecken · ← nochmal · → weiß ich · Esc schließen</div>
+    </div>
+    <div id="lmQuiz">
+      <div class="lm-progress">Frage 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-cat" id="lmQCat"></div>
+      <div class="lm-question" id="lmQuestion"></div>
+      <div class="lm-options" id="lmOptions"></div>
+      <div class="lm-hint">Es können mehrere Antworten richtig sein - Checkbox(en) auswählen und prüfen.</div>
+      <div class="lm-explain" id="lmExplain"></div>
+      <div class="lm-actions">
+        <button class="btn check" id="lmCheck" type="button">Prüfen</button>
+        <button class="btn next hidden" id="lmNext" type="button">Weiter →</button>
       </div>
     </div>
     <div id="lmDone" class="lm-done hidden">
-      <h3>Runde fertig 🎉</h3>
+      <h3>Runde fertig</h3>
       <p id="lmDoneText"></p>
-      <button class="btn primary" id="lmRestart">Neue Runde starten</button>
+      <button class="btn primary" id="lmRestart" type="button">Neue Runde starten</button>
     </div>
   </div>
 </div>
@@ -719,37 +775,28 @@ const DATA = [
 ]},
 ];
 
-/* faux permission strings for sidebar, purely decorative/thematic */
-const PERMS = ['drwxr-xr-x','drwxrwxr-x','drwxr-x---','drwxr-xr-x','drwxrwxr-x','drwxr-xr-x','drwxr-x---','drwxrwxr-x','drwxr-xr-x','drwxr-x---','drwxrwxr-x','drwxr-xr-x'];
-
+/* Kapitel aus DATA erzeugen (Kapitelleiste, Suche und Lernmodus übernimmt basis.js) */
 const content = document.getElementById('content');
-const sidebar = document.getElementById('sidebar');
+const noResults = document.getElementById('noResults');
+const badgeMap = {
+  'debian': '<span class="badge badge-deb">Debian</span>',
+  'ubuntu': '<span class="badge badge-ubuntudeb">Ubuntu</span>',
+  'debian/ubuntu': '<span class="badge badge-deb">Debian</span><span class="badge badge-ubuntudeb" style="margin-left:4px">Ubuntu</span>',
+  'modern': '<span class="badge badge-modern">moderner Ersatz</span>',
+};
 let totalCount = 0;
-
-DATA.forEach((cat, ci) => {
+DATA.forEach(cat => {
   const catCount = cat.groups.reduce((s,g)=>s+g.items.length,0);
   totalCount += catCount;
-
-  const link = document.createElement('button');
-  link.className = 'cat-link';
-  link.dataset.target = cat.id;
-  link.innerHTML = `<span class="perm">${PERMS[ci % PERMS.length]}</span><span class="name">${cat.title}</span><span class="cnt">${catCount}</span>`;
-  link.addEventListener('click', () => {
-    document.getElementById('sec-'+cat.id).scrollIntoView({behavior:'smooth', block:'start'});
-  });
-  sidebar.appendChild(link);
-
   const section = document.createElement('section');
   section.className = 'category-section';
   section.id = 'sec-'+cat.id;
-  section.dataset.cat = cat.id;
-
+  section.dataset.nav = cat.title;
   const head = document.createElement('div');
   head.className = 'category-head';
   const lpiCount = cat.groups.reduce((s,g)=>s+g.items.filter(it=>it.lpi).length,0);
   head.innerHTML = `<h2>${cat.title}</h2><span class="path">${catCount} Befehle${lpiCount ? ` · ${lpiCount} davon LPI 010` : ''}</span>`;
   section.appendChild(head);
-
   cat.groups.forEach(g => {
     const groupEl = document.createElement('div');
     groupEl.className = 'group';
@@ -763,16 +810,10 @@ DATA.forEach((cat, ci) => {
     cardsEl.className = 'cards';
     g.items.forEach(item => {
       const card = document.createElement('div');
-      card.className = 'card';
+      card.className = 'card befehl';
       card.dataset.search = (item.desc + ' ' + item.cmd + ' ' + (item.note||'') + (item.lpi ? ' lpi ' + item.lpi : '')).toLowerCase();
       card.dataset.lpi = item.lpi || '';
       const chips = item.cmd.split(' · ').map(c=>`<span class="cmd-chip">${c}</span>`).join('');
-      const badgeMap = {
-        'debian': '<span class="badge badge-deb">Debian</span>',
-        'ubuntu': '<span class="badge badge-ubuntudeb">Ubuntu</span>',
-        'debian/ubuntu': '<span class="badge badge-deb">Debian</span><span class="badge badge-ubuntudeb" style="margin-left:4px">Ubuntu</span>',
-        'modern': '<span class="badge badge-modern">moderner Ersatz</span>',
-      };
       const badge = (item.distro ? (badgeMap[item.distro] || '') : '') + (item.lpi ? `<span class="badge badge-lpi" title="Lernziel LPI Linux Essentials 010-160">LPI ${item.lpi}</span>` : '');
       card.innerHTML = `
         <div class="desc">${item.desc}${item.note ? ` <span style="color:var(--text-muted);font-size:11.5px;">(${item.note})</span>` : ''}</div>
@@ -785,193 +826,286 @@ DATA.forEach((cat, ci) => {
     groupEl.appendChild(cardsEl);
     section.appendChild(groupEl);
   });
-
-  content.appendChild(section);
+  content.insertBefore(section, noResults);
 });
-
 document.getElementById('statTotal').textContent = totalCount;
 document.getElementById('statCat').textContent = DATA.length;
 
-/* active sidebar link on scroll */
-const sections = Array.from(document.querySelectorAll('.category-section'));
-const links = Array.from(document.querySelectorAll('.cat-link'));
-function setActive(id){
-  links.forEach(l => l.classList.toggle('active', l.dataset.target === id));
-  followActive(links.find(l => l.dataset.target === id));
-}
-/* Handy: waagerechte Kapitelleiste zum aktiven Kapitel mitscrollen */
-function followActive(link){
-  const nav = link && link.parentElement;
-  if(!nav || nav.scrollWidth <= nav.clientWidth) return;
-  nav.scrollTo({left: Math.max(0, link.offsetLeft - 12), behavior:'smooth'});
-}
-const observer = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting) setActive(e.target.dataset.cat);
-  });
-}, {rootMargin:'-10% 0px -75% 0px'});
-sections.forEach(s=>observer.observe(s));
-setActive(DATA[0].id);
-
-/* search */
-const searchInput = document.getElementById('searchInput');
-const noResults = document.getElementById('noResults');
-const statVisible = document.getElementById('statVisible');
-const statVisibleNum = document.getElementById('statVisibleNum');
-
-function highlight(el, query){
-  // simple: no DOM text rewrite to keep it safe/cheap; rely on card matching only
-}
-
+/* Filter "LPI 010" und Lernkarten aus den Befehlen */
 let lpiOnly = false;
-function runSearch(){
-  const q = searchInput.value.trim().toLowerCase();
-  let visibleCount = 0;
-  if(!q && !lpiOnly){
-    document.querySelectorAll('.card').forEach(c=>c.classList.remove('hidden'));
-    document.querySelectorAll('.group').forEach(g=>g.classList.remove('hidden'));
-    document.querySelectorAll('.category-section').forEach(s=>s.classList.remove('hidden'));
-    noResults.style.display = 'none';
-    statVisible.classList.add('hidden');
-    return;
-  }
-  document.querySelectorAll('.category-section').forEach(section=>{
-    let sectionHasMatch = false;
-    section.querySelectorAll('.group').forEach(group=>{
-      let groupHasMatch = false;
-      group.querySelectorAll('.card').forEach(card=>{
-        const match = card.dataset.search.includes(q) && (!lpiOnly || card.dataset.lpi !== '');
-        card.classList.toggle('hidden', !match);
-        if(match){ groupHasMatch = true; visibleCount++; }
-      });
-      group.classList.toggle('hidden', !groupHasMatch);
-      if(groupHasMatch) sectionHasMatch = true;
-    });
-    section.classList.toggle('hidden', !sectionHasMatch);
-  });
-  noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-  statVisible.classList.remove('hidden');
-  statVisibleNum.textContent = visibleCount;
-}
-searchInput.addEventListener('input', runSearch);
-document.getElementById('lpiBtn').addEventListener('click', (e)=>{
-  lpiOnly = !lpiOnly;
-  e.currentTarget.classList.toggle('lpi-on', lpiOnly);
-  runSearch();
-});
-searchInput.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape'){ searchInput.value=''; runSearch(); searchInput.blur(); }
-});
-document.addEventListener('keydown', (e)=>{
-  if(e.key === '/' && document.activeElement !== searchInput){
-    e.preventDefault(); searchInput.focus();
-  }
-});
-
-/* ---- Lernmodus ---- */
 const allItems = [];
 DATA.forEach(cat => cat.groups.forEach(g => g.items.forEach(item => {
-  allItems.push({cat: cat.title, cmd: item.cmd, desc: item.desc, ex: item.ex, lpi: item.lpi || ''});
+  allItems.push({tag: cat.title + (item.lpi ? ' · LPI ' + item.lpi : ''), vorne: item.desc, hinten: item.cmd, zusatz: item.ex, lpi: item.lpi || ''});
 })));
-
-const lernmodus = document.getElementById('lernmodus');
-const lmActive = document.getElementById('lmActive');
-const lmDone = document.getElementById('lmDone');
-const lmCard = document.getElementById('lmCard');
-const lmCat = document.getElementById('lmCat');
-const lmDesc = document.getElementById('lmDesc');
-const lmBack = document.getElementById('lmBack');
-const lmReveal = document.getElementById('lmReveal');
-const lmExample = document.getElementById('lmExample');
-const lmFlipHint = document.getElementById('lmFlipHint');
-const lmProgress = document.getElementById('lmProgress');
-const lmBarFill = document.getElementById('lmBarFill');
-const lmDoneText = document.getElementById('lmDoneText');
-
-let deck = [];
-let deckTotal = 0;
-let known = 0;
-let current = null;
-let revealed = false;
-
-function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
-
-function startLernmodus(){
-  const pool = lpiOnly ? allItems.filter(i => i.lpi) : allItems;
-  deck = shuffle(pool).slice(0, 20);
-  deckTotal = deck.length;
-  known = 0;
-  lmActive.classList.remove('hidden');
-  lmDone.classList.add('hidden');
-  nextCard();
-}
-
-function nextCard(){
-  revealed = false;
-  if(deck.length === 0){
-    lmActive.classList.add('hidden');
-    lmDone.classList.remove('hidden');
-    lmDoneText.textContent = `Du hast ${known} von ${deckTotal} Befehlen direkt gewusst.`;
-    return;
-  }
-  current = deck.shift();
-  lmCat.textContent = current.cat + (current.lpi ? ' · LPI ' + current.lpi : '');
-  lmDesc.textContent = current.desc;
-  lmReveal.textContent = current.cmd;
-  lmExample.innerHTML = `<span style="color:var(--amber)">$</span> ${current.ex}`;
-  lmBack.classList.add('hidden');
-  lmFlipHint.classList.remove('hidden');
-  lmProgress.textContent = `Karte ${deckTotal - deck.length} / ${deckTotal}`;
-  lmBarFill.style.width = ((deckTotal - deck.length - 1)/deckTotal*100) + '%';
-}
-
-function flipCard(){
-  revealed = !revealed;
-  lmBack.classList.toggle('hidden', !revealed);
-  lmFlipHint.classList.toggle('hidden', revealed);
-}
-
-lmCard.addEventListener('click', flipCard);
-document.getElementById('lernBtn').addEventListener('click', ()=>{
-  lernmodus.classList.add('open');
-  startLernmodus();
-});
-document.getElementById('lmClose').addEventListener('click', ()=> lernmodus.classList.remove('open'));
-lernmodus.addEventListener('click', (e)=>{ if(e.target === lernmodus) lernmodus.classList.remove('open'); });
-
-document.getElementById('lmKnow').addEventListener('click', (e)=>{
-  e.stopPropagation();
-  known++;
-  lmBarFill.style.width = ((deckTotal - deck.length)/deckTotal*100) + '%';
-  nextCard();
-});
-document.getElementById('lmAgain').addEventListener('click', (e)=>{
-  e.stopPropagation();
-  deck.push(current);
-  nextCard();
-});
-document.getElementById('lmRestart').addEventListener('click', startLernmodus);
-
-document.addEventListener('keydown', (e)=>{
-  if(!lernmodus.classList.contains('open')) return;
-  if(e.key === 'Escape'){ lernmodus.classList.remove('open'); }
-  if(e.key === ' '){ e.preventDefault(); flipCard(); }
-  if(e.key === 'ArrowRight' && revealed){ known++; nextCard(); }
-  if(e.key === 'ArrowLeft' && revealed){ deck.push(current); nextCard(); }
+window.LH = {
+  rechte: true,
+  filter: null,
+  lernen: { art: 'karten', runde: 20, einheit: 'Befehlen', hintenMono: true, zusatzPrompt: true,
+            karten: () => lpiOnly ? allItems.filter(i => i.lpi) : allItems }
+};
+document.getElementById('lpiBtn').addEventListener('click', (e)=>{
+  lpiOnly = !lpiOnly;
+  e.currentTarget.classList.toggle('an', lpiOnly);
+  e.currentTarget.setAttribute('aria-pressed', String(lpiOnly));
+  LH.filter = lpiOnly ? (card => card.dataset.lpi !== '') : null;
+  LH.runSearch();
 });
 </script>
+<script>
+/* ==========================================================================
+   Lernhilfen FiSi – gemeinsames Verhalten aller Seiten
+   Wird von bauen.py NACH dem Seitenskript eingebettet. Eine Seite kann vorher
+   window.LH setzen:
+     LH.rechte       true = Kapitelleiste im Stil "ls -la" mit Rechten und Anzahl
+     LH.filter       function(card) -> true/false, zusätzlicher Filter zur Suche
+     LH.lernen       { art:'karten', karten:[...] | function, runde:Zahl,
+                       einheit:'Karten', hintenMono:bool, zusatzPrompt:bool }
+                     { art:'quiz', fragen:[{cat,q,opts,correct}] }
+     Karte:          { tag, vorne, hinten, zusatz }
+   ========================================================================== */
+(function(){
+  'use strict';
+  var LH = window.LH = window.LH || {};
+  var $ = function(s, r){ return (r || document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-<footer style="max-width:1240px;margin:0 auto;padding:18px 34px 28px;font-family:var(--mono);font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-soft);display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;">
-  <span>© 2026 <a href="https://github.com/nicandr0" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:none;">Nicandro Marziale</a> – Design & Entwicklung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener" style="color:inherit;">CC BY-NC-SA 4.0</a></span>
-  <span>Befehlsauswahl angelehnt an <a href="https://helmbold.de/artikel/linux-blatt/" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:none;">"Linux auf einem Blatt"</a> von Christian Helmbold (2012), ergänzt um Befehle aus dem <a href="https://ubuntu.com/" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:none;">Ubuntu CLI cheat sheet</a> (Canonical, 2025) · Beschreibungen, Beispiele und Tipps: eigene Formulierung</span>
-  <span>LPI-Etiketten: Nummern der Lernziele <a href="https://www.lpi.org/our-certifications/exam-010-objectives/" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:none;">Linux Essentials 010-160 (v1.6)</a> des Linux Professional Institute</span>
-</footer>
+  /* ---- Lernhilfen-Leiste: auf dem Handy zur aktuellen Seite scrollen ---- */
+  var lhNav = $('.lh-nav'), lhCur = lhNav && $('[aria-current]', lhNav);
+  if(lhCur && lhNav.scrollWidth > lhNav.clientWidth) lhNav.scrollLeft = Math.max(0, lhCur.offsetLeft - 60);
+
+  /* ---- Kapitelleiste aus den Kapiteln erzeugen ---- */
+  var PERMS = ['drwxr-xr-x','drwxrwxr-x','drwxr-x---'];
+  var sidebar = $('#sidebar');
+  var sections = $$('.category-section');
+  var links = [];
+  sections.forEach(function(sec, i){
+    if(!sec.id) sec.id = 'k' + (i + 1);
+    var name = sec.dataset.nav || ($('h2', sec) ? $('h2', sec).textContent : sec.id);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cat-link';
+    b.dataset.target = sec.id;
+    var cnt = sec.dataset.count || $$('.card', sec).length;
+    b.innerHTML = (LH.rechte ? '<span class="perm">' + PERMS[i % PERMS.length] + '</span>' : '') +
+      '<span class="name"></span>' + (LH.rechte ? '<span class="cnt">' + cnt + '</span>' : '');
+    $('.name', b).textContent = name;
+    b.addEventListener('click', function(){ sec.scrollIntoView({behavior:'smooth', block:'start'}); });
+    if(sidebar) sidebar.appendChild(b);
+    links.push(b);
+  });
+
+  function followActive(link){
+    var nav = link && link.parentElement;
+    if(!nav || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollTo({left: Math.max(0, link.offsetLeft - 12), behavior:'smooth'});
+  }
+  function setActive(id){
+    var hit = null;
+    links.forEach(function(l){ var on = l.dataset.target === id; l.classList.toggle('active', on); if(on) hit = l; });
+    followActive(hit);
+  }
+  // aktives Kapitel: das letzte, dessen Anfang im oberen Drittel liegt; ganz unten immer das letzte
+  var aktiv = null, geplant = false;
+  function aktualisieren(){
+    geplant = false;
+    var sichtbar = sections.filter(function(s){ return !s.classList.contains('hidden'); });
+    if(!sichtbar.length) return;
+    var grenze = window.innerHeight * 0.3, act = sichtbar[0];
+    sichtbar.forEach(function(s){ if(s.getBoundingClientRect().top <= grenze) act = s; });
+    if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) act = sichtbar[sichtbar.length - 1];
+    if(act.id !== aktiv){ aktiv = act.id; setActive(act.id); }
+  }
+  window.addEventListener('scroll', function(){ if(!geplant){ geplant = true; requestAnimationFrame(aktualisieren); } }, {passive:true});
+  window.addEventListener('resize', aktualisieren);
+  aktualisieren();
+
+  /* ---- Kennzahlen im Kopfbereich ---- */
+  function lernPool(){
+    var l = LH.lernen; if(!l) return [];
+    var p = l.art === 'quiz' ? l.fragen : l.karten;
+    return (typeof p === 'function' ? p() : p) || [];
+  }
+  $$('[data-stat="kapitel"]').forEach(function(el){ el.textContent = sections.length; });
+  $$('[data-stat="lernen"]').forEach(function(el){ el.textContent = lernPool().length; });
+
+  /* ---- Selbsteinschätzung (nur im eigenen Browser gespeichert) ---- */
+  $$('.einschaetzung').forEach(function(box){
+    var key = box.dataset.schluessel || ('lh-einschaetzung-' + location.pathname);
+    var themen = [];
+    try { themen = JSON.parse(box.dataset.themen || '[]'); } catch(e) {}
+    var labels = {sicher:'sicher', unsicher:'unsicher', wiederholen:'bitte wiederholen'};
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { state = {}; }
+    function save(){ try { localStorage.setItem(key, JSON.stringify(state)); } catch(e) {} }
+    var html = '<p class="card-note">Zum Markieren anklicken. Die Auswahl wird nur in deinem Browser gespeichert und dient deiner eigenen Übersicht beim Lernen.</p>' +
+      '<div class="tbl-wrap"><table class="tbl"><tr><th>Thema</th><th>Einschätzung</th></tr>';
+    themen.forEach(function(t, i){
+      html += '<tr><td></td><td><div class="sc-actions">' + Object.keys(labels).map(function(k){
+        return '<button type="button" class="sc-btn ' + k + (state[i] === k ? ' active' : '') + '" data-row="' + i + '" data-state="' + k + '">' + labels[k] + '</button>';
+      }).join('') + '</div></td></tr>';
+    });
+    html += '</table></div><div style="margin-top:10px;"><button type="button" class="sc-btn sc-reset">Auswahl zurücksetzen</button></div>';
+    box.innerHTML = html;
+    $$('td:first-child', box).forEach(function(td, i){ td.textContent = themen[i]; });
+    box.addEventListener('click', function(e){
+      var b = e.target.closest('.sc-btn'); if(!b) return;
+      if(b.classList.contains('sc-reset')){ state = {}; save(); $$('.sc-btn.active', box).forEach(function(x){ x.classList.remove('active'); }); return; }
+      var row = b.dataset.row, was = b.classList.contains('active');
+      $$('.sc-btn[data-row="' + row + '"]', box).forEach(function(x){ x.classList.remove('active'); });
+      if(was){ delete state[row]; } else { b.classList.add('active'); state[row] = b.dataset.state; }
+      save();
+    });
+  });
+
+  /* ---- Suche ---- */
+  var searchInput = $('#searchInput');
+  var noResults = $('#noResults');
+  var statVisible = $('#statVisible'), statVisibleNum = $('#statVisibleNum');
+  function text(el){ return ((el.dataset.search || '') + ' ' + el.textContent).toLowerCase(); }
+  function runSearch(){
+    var q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    var f = typeof LH.filter === 'function' ? LH.filter : null;
+    var all = !q && !f;
+    var visible = 0;
+    sections.forEach(function(sec){
+      var secHit = false;
+      $$('.card', sec).forEach(function(card){
+        var hit;
+        var rows = $$('table.zeilen tr', card).filter(function(r){ return !$('th', r); });
+        if(all){
+          hit = true; rows.forEach(function(r){ r.classList.remove('hidden'); });
+        } else if(rows.length && q){
+          var rowHits = 0;
+          rows.forEach(function(r){ var m = text(r).indexOf(q) > -1; r.classList.toggle('hidden', !m); if(m) rowHits++; });
+          hit = rowHits > 0;
+          if(!hit && (card.dataset.search || '').toLowerCase().indexOf(q) > -1){ hit = true; rows.forEach(function(r){ r.classList.remove('hidden'); }); }
+        } else {
+          rows.forEach(function(r){ r.classList.remove('hidden'); });
+          hit = !q || text(card).indexOf(q) > -1;
+        }
+        if(hit && f) hit = f(card);
+        card.classList.toggle('hidden', !hit);
+        if(hit){ secHit = true; visible++; }
+      });
+      $$('.group', sec).forEach(function(g){ g.classList.toggle('hidden', !all && !$$('.card', g).some(function(c){ return !c.classList.contains('hidden'); })); });
+      $$('.schaubild', sec).forEach(function(s){
+        var m = all || (!f && q && text(s).indexOf(q) > -1);
+        s.classList.toggle('hidden', !m);
+        if(m) secHit = true;
+      });
+      sec.classList.toggle('hidden', !all && !secHit);
+    });
+    if(noResults) noResults.style.display = (!all && visible === 0) ? 'block' : 'none';
+    if(statVisible){ statVisible.classList.toggle('hidden', all); if(statVisibleNum) statVisibleNum.textContent = visible; }
+    aktualisieren();
+  }
+  LH.runSearch = runSearch;
+  if(searchInput){
+    searchInput.addEventListener('input', runSearch);
+    searchInput.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ searchInput.value = ''; runSearch(); searchInput.blur(); } });
+  }
+
+  /* ---- Lernmodus ---- */
+  var lm = $('#lernmodus'), lernBtn = $('#lernBtn');
+  if(!LH.lernen || !lm){ if(lernBtn) lernBtn.classList.add('hidden'); }
+  else {
+    var isQuiz = LH.lernen.art === 'quiz';
+    var actBox = $(isQuiz ? '#lmQuiz' : '#lmKarten'), doneBox = $('#lmDone');
+    $(isQuiz ? '#lmKarten' : '#lmQuiz').classList.add('hidden');
+    var deck = [], total = 0, good = 0, cur = null, revealed = false, checked = false;
+    function shuffle(a){ a = a.slice(); for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+    function progress(n){ $('.lm-progress', actBox).textContent = (isQuiz ? 'Frage ' : 'Karte ') + n + ' / ' + total; $('.lm-bar-fill', actBox).style.width = ((n - 1) / total * 100) + '%'; }
+    function finish(){
+      actBox.classList.add('hidden'); doneBox.classList.remove('hidden');
+      $('#lmDoneText').textContent = isQuiz
+        ? 'Du hast ' + good + ' von ' + total + ' Fragen richtig beantwortet.'
+        : 'Du hast ' + good + ' von ' + total + ' ' + (LH.lernen.einheit || 'Karten') + ' direkt gewusst.';
+    }
+    function start(){
+      var pool = lernPool();
+      deck = shuffle(pool);
+      if(!isQuiz && LH.lernen.runde) deck = deck.slice(0, LH.lernen.runde);
+      total = deck.length; good = 0;
+      actBox.classList.remove('hidden'); doneBox.classList.add('hidden');
+      next();
+    }
+    function next(){
+      if(!deck.length){ finish(); return; }
+      cur = deck.shift();
+      progress(total - deck.length);
+      if(isQuiz){
+        checked = false;
+        $('#lmQCat').textContent = cur.cat || '';
+        $('#lmQuestion').textContent = cur.q;
+        var opts = $('#lmOptions'); opts.innerHTML = '';
+        cur.opts.forEach(function(o, i){
+          var lab = document.createElement('label'); lab.className = 'lm-opt';
+          lab.innerHTML = '<input type="checkbox" value="' + i + '"><span></span>';
+          $('span', lab).textContent = o; opts.appendChild(lab);
+        });
+        $('#lmExplain').classList.remove('show'); $('#lmCheck').classList.remove('hidden'); $('#lmNext').classList.add('hidden');
+      } else {
+        revealed = false;
+        $('#lmCat').textContent = cur.tag || '';
+        $('#lmFront').textContent = cur.vorne;
+        var rv = $('#lmReveal'); rv.textContent = cur.hinten; rv.classList.toggle('mono', !!LH.lernen.hintenMono);
+        var ex = $('#lmExtra'); ex.classList.toggle('mono', !!LH.lernen.zusatzPrompt);
+        ex.innerHTML = '';
+        if(cur.zusatz){
+          if(LH.lernen.zusatzPrompt){ var p = document.createElement('span'); p.style.color = 'var(--amber)'; p.textContent = '$ '; ex.appendChild(p); }
+          ex.appendChild(document.createTextNode(cur.zusatz));
+        }
+        $('#lmBack').classList.add('hidden'); $('#lmFlipHint').classList.remove('hidden');
+      }
+    }
+    function flip(){ if(isQuiz) return; revealed = !revealed; $('#lmBack').classList.toggle('hidden', !revealed); $('#lmFlipHint').classList.toggle('hidden', revealed); }
+    function know(){ good++; next(); }
+    function again(){ deck.push(cur); next(); }
+    function check(){
+      if(checked) return; checked = true;
+      var boxes = $$('#lmOptions input');
+      var sel = boxes.filter(function(b){ return b.checked; }).map(function(b){ return +b.value; });
+      var ok = sel.length === cur.correct.length && cur.correct.every(function(v){ return sel.indexOf(v) > -1; });
+      boxes.forEach(function(b, i){
+        var o = b.closest('.lm-opt'); b.disabled = true;
+        if(cur.correct.indexOf(i) > -1) o.classList.add('correct'); else if(sel.indexOf(i) > -1) o.classList.add('wrong');
+      });
+      if(ok) good++;
+      var ex = $('#lmExplain');
+      ex.textContent = ok ? 'Richtig! Alle passenden Antworten wurden korrekt ausgewählt.' : 'Nicht ganz - grün markiert die richtigen Antworten, rot deine falsch ausgewählten.';
+      ex.classList.add('show'); $('#lmCheck').classList.add('hidden'); $('#lmNext').classList.remove('hidden');
+    }
+    function open(){ lm.classList.add('open'); start(); }
+    function close(){ lm.classList.remove('open'); if(lernBtn) lernBtn.focus(); }
+    if(lernBtn) lernBtn.addEventListener('click', open);
+    $$('.lm-close', lm).forEach(function(b){ b.addEventListener('click', close); });
+    lm.addEventListener('click', function(e){ if(e.target === lm) close(); });
+    $('#lmRestart').addEventListener('click', start);
+    var card = $('#lmCard');
+    card.addEventListener('click', flip);
+    card.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); flip(); } });
+    $('#lmKnow').addEventListener('click', function(e){ e.stopPropagation(); know(); });
+    $('#lmAgain').addEventListener('click', function(e){ e.stopPropagation(); again(); });
+    $('#lmCheck').addEventListener('click', check);
+    $('#lmNext').addEventListener('click', next);
+    document.addEventListener('keydown', function(e){
+      if(!lm.classList.contains('open')) return;
+      if(e.key === 'Escape'){ close(); return; }
+      if(isQuiz || doneBox.classList.contains('hidden') === false) return;
+      if(e.key === ' '){ e.preventDefault(); flip(); }
+      if(e.key === 'ArrowRight' && revealed) know();
+      if(e.key === 'ArrowLeft' && revealed) again();
+    });
+  }
+
+  /* ---- Taste "/" springt in die Suche ---- */
+  document.addEventListener('keydown', function(e){
+    if(lm && lm.classList.contains('open')) return;
+    if(e.key === '/' && searchInput && document.activeElement !== searchInput && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+      e.preventDefault(); searchInput.focus();
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,300 @@
+<!--@meta-->
+{
+  "untertitel": "Lernhilfe zu Routing: ANDing, Default Route, Static &amp; Dynamic Routes. Basierend auf Netzwerktechnik Vorbereitung VII.",
+  "suche": "z. B. 'ANDing', 'Default Route', 'Next Hop' …",
+  "lernen": "quiz"
+}
+<!--@inhalt-->
+      <section class="category-section" id="c1" data-nav="1. Grundlagen">
+        <div class="category-head"><h2>1. Grundlagen klären</h2></div>
+        <div class="card" data-search="routing grundlagen switch router subnetz">
+          <ul>
+            <li><b>Routing:</b> Weiterleitung von Paketen zwischen unterschiedlichen Netzen</li>
+            <li><b>Warum nötig:</b> Innerhalb eines Netzes reicht Switching, netzübergreifend nicht</li>
+            <li><b>Gleiches Netz:</b> direkte Zustellung über Switching/ARP, kein Router beteiligt</li>
+            <li><b>Fremdes Netz:</b> Paket muss über einen Router weitergeleitet werden</li>
+            <li><b>Rolle des Routers:</b> verbindet unterschiedliche Netze, trifft Weiterleitungsentscheidungen anhand der Zieladresse</li>
+            <li><b>Switch reicht nicht:</b> arbeitet nur auf Schicht 2 (MAC-Adressen), kennt keine Netzgrenzen</li>
+          </ul>
+          <div class="merksatz">Routing wird relevant, sobald Daten ein Subnetz verlassen und in ein anderes Netz weitergeleitet werden müssen.</div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c2" data-nav="2. Lokale Entscheidung">
+        <div class="category-head"><h2>2. Lokale Entscheidung des Hosts verstehen</h2></div>
+        <div class="card" data-search="host entscheidung gateway anding lokal">
+          <ul>
+            <li>Host führt ANDing durch: eigene IP + eigene Maske sowie Ziel-IP + eigene Maske</li>
+            <li>Ergebnis gleich -> Ziel im gleichen Netz -> direkte Zustellung (ARP-Auflösung)</li>
+            <li>Ergebnis unterschiedlich -> Ziel in fremdem Netz -> Paket geht an das Standardgateway</li>
+            <li>Standardgateway = Router-Interface im eigenen Netz, das den weiteren Weg übernimmt</li>
+          </ul>
+          <div class="merksatz">Routing beginnt nicht erst am Router, sondern schon beim sendenden Host mit der Entscheidung "lokal zustellen oder an Gateway übergeben".</div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c3" data-nav="3. ANDing">
+        <div class="category-head"><h2>3. ANDing einordnen</h2></div>
+        <div class="card" data-search="anding subnetzmaske netzwerkadresse und-verknüpfung">
+          <ul>
+            <li><b>ANDing:</b> logische UND-Verknüpfung, bitweise zwischen IP-Adresse und Subnetzmaske</li>
+            <li><b>Ergebnis:</b> die Netzwerkadresse</li>
+            <li><b>Zweck:</b> feststellen, zu welchem Netz eine IP-Adresse gehört</li>
+            <li><b>Anwendung:</b> wird auf Quell- und Ziel-IP angewendet, die resultierenden Netzwerkadressen werden verglichen</li>
+          </ul>
+          <div class="merksatz">Nicht der Rechenweg zählt, sondern das Verständnis - ANDing dient dazu, Quell- und Zielnetz zu vergleichen.</div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c4" data-nav="4. Default Route">
+        <div class="category-head"><h2>4. Default Route verstehen</h2></div>
+        <div class="card" data-search="default route standardroute gateway of last resort">
+          <ul>
+            <li><b>Default Route:</b> Standardroute, greift, wenn kein genauerer Eintrag zum Ziel vorhanden ist</li>
+            <li>Auch "Gateway of Last Resort" genannt</li>
+            <li>Wird bei unbekanntem Zielnetz verwendet</li>
+            <li>Für Clients besonders wichtig, da sie meist nur ihr eigenes Netz plus Default Gateway kennen</li>
+          </ul>
+          <div class="merksatz">Default Route = Auffangregel für alles, was sonst nicht bekannt ist.</div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c5" data-nav="5. Routing-Tabelle">
+        <div class="category-head"><h2>5. Routing-Tabelle grob verstehen</h2></div>
+        <div class="card" data-search="routing-tabelle zielnetz next hop interface präfix">
+          <ul>
+            <li><b>Routing-Tabelle:</b> Liste von Einträgen mit Zielnetz, Präfix/Subnetzmaske, Next Hop, ausgehendem Interface</li>
+            <li>Unverzichtbar für Router, da jede Weiterleitungsentscheidung darauf basiert</li>
+            <li>Auch normale Hosts besitzen eine einfache Routing-Tabelle (eigenes Netz + Default Route)</li>
+            <li>Mehrere mögliche Wege -> die spezifischere Route wird bevorzugt (siehe Punkt 9)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="category-section" id="c6" data-nav="6. Static Routes">
+        <div class="category-head"><h2>6. Static Routes</h2></div>
+        <div class="card" data-search="statische route manuell overhead pflegeaufwand">
+          <ul>
+            <li><b>Statische Route:</b> manuell eingetragener, fester Pfad zu einem Zielnetz</li>
+            <li><b>Vorteile:</b> einfach, kontrollierbar, geringer Overhead (keine Protokoll-Last)</li>
+            <li><b>Nachteile:</b> hoher Pflegeaufwand, wenig flexibel bei Änderungen</li>
+            <li>Funktioniert gut in kleinen/einfachen Netzen, wird in großen Umgebungen schnell aufwendig</li>
+          </ul>
+          <div class="merksatz">Statische Routen sind einfach und kontrollierbar, aber nicht immer gut skalierbar.</div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c7" data-nav="7. Dynamic Routes">
+        <div class="category-head"><h2>7. Dynamic Routes</h2></div>
+        <div class="card" data-search="dynamische route protokoll automatisch skalierbarkeit">
+          <ul>
+            <li><b>Dynamische Route:</b> wird automatisch über ein Routing-Protokoll zwischen Routern ausgetauscht</li>
+            <li>Passt sich selbstständig an Netzänderungen an</li>
+            <li><b>Vorteile ggü. static:</b> bessere Skalierbarkeit, weniger manueller Aufwand</li>
+            <li><b>Nachteile:</b> höhere Komplexität, zusätzlicher Verwaltungs- und Verständnisaufwand</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="category-section" id="c8" data-nav="8. Static vs. Dynamic">
+        <div class="category-head"><h2>8. Static vs. Dynamic Routes vergleichen</h2></div>
+        <div class="card" data-search="vergleich statisch dynamisch tabelle kontrolle komplexität overhead änderungen static dynamic">
+          <div class="tbl-wrap"><table class="tbl">
+            <tr><th>Kriterium</th><th>Static Routes</th><th>Dynamic Routes</th></tr>
+            <tr><td>Kontrolle</td><td>leicht zu kontrollieren, vorhersehbar</td><td>weniger direkte Kontrolle</td></tr>
+            <tr><td>Reaktion auf Änderungen</td><td>keine automatische Anpassung</td><td>reagiert automatisch</td></tr>
+            <tr><td>Komplexität</td><td>einfacher</td><td>komplexer (Protokoll verstehen und betreuen)</td></tr>
+            <tr><td>Overhead</td><td>gering, keine Protokoll-Last</td><td>Router tauschen laufend Informationen aus</td></tr>
+            <tr><td>Sinnvoll bei</td><td>kleinen, stabilen Netzen</td><td>großen, wachsenden oder wechselnden Netzen</td></tr>
+          </table></div>
+        </div>
+        <div class="card" data-search="vergleich statisch dynamisch vorteile nachteile">
+          <ul>
+            <li><b>Vorteile static:</b> leicht zu kontrollieren, vorhersehbar, geringer Overhead</li>
+            <li><b>Vorteile dynamic:</b> reagiert automatisch auf Veränderungen, bessere Skalierbarkeit</li>
+            <li>Kleine/einfache Netze -> eher static; große/wachsende Netze -> eher dynamic</li>
+          </ul>
+          <div class="merksatz">Kein Ansatz ist pauschal besser - es kommt auf Netzgröße und Anforderungen an.</div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c9" data-nav="9. Spezifischere Route">
+        <div class="category-head"><h2>9. Spezifischere Route gewinnt</h2></div>
+        <div class="card" data-search="spezifischere route präfix longest match">
+          <ul>
+            <li>Bei mehreren passenden Routen gewinnt die Route mit dem längeren Präfix (genauere Route)</li>
+            <li>Längeres Präfix = kleineres, genaueres Zielnetz</li>
+            <li>Wichtig z. B. wenn Default Route UND eine spezifische Route zum selben Ziel passen würden - die spezifische gewinnt</li>
+          </ul>
+          <div class="merksatz">Router nehmen nicht "irgendeinen" Weg, sondern entscheiden anhand von Genauigkeit und festen Regeln.</div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c10" data-nav="10. Next Hop / Interface">
+        <div class="category-head"><h2>10. Next Hop und Interface einordnen</h2></div>
+        <div class="card" data-search="next hop interface nächster router port">
+          <ul>
+            <li><b>Next Hop:</b> IP-Adresse des nächsten Routers auf dem Weg zum Ziel</li>
+            <li><b>Ausgehendes Interface:</b> Port, über den das Paket den Router verlässt</li>
+            <li>Kenntnis des Zielnetzes allein reicht nicht - der Router muss auch wissen, über welchen Nachbarn das Paket weitergeht</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="category-section" id="c11" data-nav="11. Fehlerbilder">
+        <div class="category-head"><h2>11. Typische Fehlerbilder grob einordnen</h2></div>
+        <div class="card" data-search="fehlerbilder gateway route rückweg asymmetrisch">
+          <ul>
+            <li>Falsches oder fehlendes Standardgateway</li>
+            <li>Fehlende Route zu einem Zielnetz</li>
+            <li>Falscher Next Hop</li>
+            <li>Statische Route falsch eingetragen</li>
+            <li>Rückweg fehlt</li>
+            <li>Netz ist bekannt, aber nicht erreichbar (z. B. Next Hop down)</li>
+            <li>Kommunikation funktioniert nur in eine Richtung (asymmetrisches Routing)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="category-section" id="c12" data-nav="12. Routing in der Praxis">
+        <div class="category-head"><h2>12. Routing in der Praxis bewusst wahrnehmen</h2></div>
+        <div class="card" data-search="praxis subnetting fehlersuche planung">
+          <ul>
+            <li>Fast jedes größere Netzwerk ist auf Routing angewiesen (Trennung in Subnetze)</li>
+            <li>Viele Erreichbarkeitsprobleme hängen direkt oder indirekt mit Routing zusammen</li>
+            <li>Enger Zusammenhang zu IP-Adressierung und Subnetting - ohne sauberes Subnetting kein sauberes Routing</li>
+            <li>Sauberes Routing-Verständnis hilft bei Fehlersuche und Netzplanung</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="category-section" id="c13" data-nav="13. Eigene Einschätzung">
+        <div class="category-head"><h2>13. Eigene Einschätzung</h2></div>
+        <div class="card" data-search="einschätzung selbsteinschätzung sicher unsicher wiederholen">
+          <div class="einschaetzung" data-schluessel="routing-selbsteinschaetzung" data-themen='["Grundidee und Aufgabe von Routing", "Lokale Zustellung vs. Weiterleitung ans Gateway", "Rolle von ANDing bei der Netzbestimmung", "Bedeutung der Default Route", "Routing-Tabelle lesen", "Unterschied statische vs. dynamische Routen", "Spezifischere Route (Präfixvergleich)", "Next Hop und Interface", "Typische Fehlerbilder erkennen"]'></div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c14" data-nav="Glossar">
+        <div class="category-head"><h2>Glossar</h2></div>
+        <div class="card" data-search="glossar begriffe routing anding default route next hop static route dynamic route routing-tabelle präfix standardgateway interface">
+          <div class="tbl-wrap"><table class="tbl">
+            <tr><th>Begriff</th><th>Bedeutung</th></tr>
+            <tr><td>Routing</td><td>Weiterleitung von Paketen zwischen unterschiedlichen Netzen</td></tr>
+            <tr><td>ANDing</td><td>Bitweise UND-Verknüpfung von IP-Adresse und Subnetzmaske, Ergebnis ist die Netzwerkadresse</td></tr>
+            <tr><td>Standardgateway</td><td>Router-Interface im eigenen Netz, an das ein Host Pakete für fremde Netze übergibt</td></tr>
+            <tr><td>Default Route</td><td>Standardroute ("Gateway of Last Resort"), greift, wenn kein genauerer Eintrag zum Zielnetz passt</td></tr>
+            <tr><td>Routing-Tabelle</td><td>Liste mit Zielnetz, Präfix, Next Hop und ausgehendem Interface</td></tr>
+            <tr><td>Präfix</td><td>Länge der Netzmaske (z. B. /24), bestimmt, wie genau eine Route ist</td></tr>
+            <tr><td>Next Hop</td><td>IP-Adresse des nächsten Routers auf dem Weg zum Ziel</td></tr>
+            <tr><td>Ausgehendes Interface</td><td>Schnittstelle, über die das Paket den Router verlässt</td></tr>
+            <tr><td>Static Route</td><td>Manuell eingetragener, fester Weg in der Routing-Tabelle</td></tr>
+            <tr><td>Dynamic Route</td><td>Automatisch über ein Routing-Protokoll gelernter Weg</td></tr>
+          </table></div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c15" data-nav="Wenn's hakt">
+        <div class="category-head"><h2>Wenn's hakt</h2></div>
+        <div class="card" data-search="anding unklar rechnung rechenweg ip subnetzmaske hakt">
+          <h4>ANDing-Rechnung unklar</h4>
+          <p>Nicht am Rechenweg festbeißen, sondern auf den Zweck schauen: ANDing liefert die Netzwerkadresse, damit Quell- und Zielnetz verglichen werden können.</p>
+        </div>
+        <div class="card" data-search="static dynamic verwechselt unterschied eselsbrücke hakt">
+          <h4>Static und Dynamic verwechselt</h4>
+          <p>Eselsbrücke: Static = der Administrator trägt den Weg selbst ein (fest). Dynamic = die Router tauschen sich untereinander automatisch aus (beweglich).</p>
+        </div>
+        <div class="card" data-search="default route wann greift zielnetz unbekannt hakt">
+          <h4>Wann genau greift die Default Route?</h4>
+          <p>Erst, wenn kein anderer, spezifischerer Eintrag in der Routing-Tabelle zum Zielnetz passt. Sie ist die letzte Instanz, nicht die erste Wahl.</p>
+        </div>
+        <div class="card" data-search="next hop interface verwechselt wohin wodurch hakt">
+          <h4>Next Hop und Interface verwechselt</h4>
+          <p>Next Hop = <b>wohin</b> (IP-Adresse des nächsten Routers). Interface = <b>wodurch</b> (die eigene Schnittstelle, über die das Paket den Router verlässt).</p>
+        </div>
+      </section>
+<!--@skript-->
+/* ---- Lernmodus: Quiz mit Checkboxen ---- */
+const QUIZ = [
+  {cat:'Grundlagen', q:'Warum reicht ein Switch für netzübergreifende Kommunikation nicht aus?', opts:[
+    'Weil er nur auf Schicht 2 (MAC-Adressen) arbeitet und keine Netzgrenzen kennt',
+    'Weil Switches keine Kabel unterstützen',
+    'Weil ein Switch keine Pakete verarbeiten kann'
+  ], correct:[0]},
+  {cat:'Grundlagen', q:'Wann wird Routing relevant?', opts:[
+    'Sobald Daten ein Subnetz verlassen und in ein anderes Netz müssen',
+    'Nur wenn WLAN verwendet wird',
+    'Nur beim Startvorgang eines Rechners'
+  ], correct:[0]},
+  {cat:'Lokale Entscheidung', q:'Welche Werte nutzt ein Host, um zu entscheiden, ob das Ziel im gleichen oder einem fremden Netz liegt?', opts:[
+    'Eigene IP-Adresse',
+    'Subnetzmaske',
+    'Ziel-IP-Adresse',
+    'MAC-Adresse des Zielrechners'
+  ], correct:[0,1,2]},
+  {cat:'Lokale Entscheidung', q:'Wohin sendet ein Host, wenn das Ziel in einem fremden Netz liegt?', opts:[
+    'Direkt an die Ziel-IP',
+    'An das Standardgateway',
+    'An den DNS-Server'
+  ], correct:[1]},
+  {cat:'ANDing', q:'Was ist das Ergebnis eines ANDing zwischen IP-Adresse und Subnetzmaske?', opts:[
+    'Die Netzwerkadresse',
+    'Die MAC-Adresse',
+    'Die Broadcast-Adresse'
+  ], correct:[0]},
+  {cat:'ANDing', q:'Wozu dient ANDing im Routing-Kontext?', opts:[
+    'Um festzustellen, zu welchem Netz eine IP-Adresse gehört',
+    'Um die Übertragungsgeschwindigkeit zu erhöhen',
+    'Um Quell- und Zielnetz zu vergleichen'
+  ], correct:[0,2]},
+  {cat:'Default Route', q:'Wann wird die Default Route verwendet?', opts:[
+    'Wenn für das Ziel keine spezifischere Route vorhanden ist',
+    'Immer zuerst, bevor andere Routen geprüft werden',
+    'Nur bei Dynamic Routing'
+  ], correct:[0]},
+  {cat:'Default Route', q:'Wie wird die Default Route auch genannt?', opts:[
+    'Gateway of Last Resort',
+    'Next Hop Protocol',
+    'Loopback Route'
+  ], correct:[0]},
+  {cat:'Routing-Tabelle', q:'Welche Informationen stehen typischerweise in einer Routing-Tabelle?', opts:[
+    'Zielnetz',
+    'Next Hop',
+    'Ausgehendes Interface',
+    'Passwort des Routers'
+  ], correct:[0,1,2]},
+  {cat:'Static Routes', q:'Was ist ein Nachteil statischer Routen?', opts:[
+    'Hoher Pflegeaufwand bei Änderungen',
+    'Hoher Overhead durch Protokoll-Last',
+    'Sie funktionieren nur mit IPv6'
+  ], correct:[0]},
+  {cat:'Static Routes', q:'Welche Vorteile haben statische Routen?', opts:[
+    'Einfach und kontrollierbar',
+    'Geringer Overhead',
+    'Passen sich automatisch an Netzänderungen an'
+  ], correct:[0,1]},
+  {cat:'Dynamic Routes', q:'Was ist ein Vorteil dynamischer Routen gegenüber statischen?', opts:[
+    'Bessere Skalierbarkeit in großen Netzen',
+    'Geringerer Verwaltungsaufwand als bei statischen Routen',
+    'Automatische Anpassung an Netzänderungen'
+  ], correct:[0,2]},
+  {cat:'Spezifischere Route', q:'Welche Route wird bevorzugt, wenn mehrere Routen zum Ziel passen?', opts:[
+    'Die Route mit dem längeren Präfix (genauere Route)',
+    'Immer die Default Route',
+    'Die zuerst eingetragene Route'
+  ], correct:[0]},
+  {cat:'Next Hop', q:'Was beschreibt der Next Hop?', opts:[
+    'Die IP-Adresse des nächsten Routers auf dem Weg zum Ziel',
+    'Das Zielnetz selbst',
+    'Die Subnetzmaske des Zielnetzes'
+  ], correct:[0]},
+  {cat:'Fehlerbilder', q:'Welche der folgenden sind typische Routing-Fehlerbilder?', opts:[
+    'Fehlendes oder falsches Standardgateway',
+    'Fehlender Rückweg',
+    'Kommunikation funktioniert nur in eine Richtung',
+    'Falsche Bildschirmauflösung'
+  ], correct:[0,1,2]},
+];
+window.LH = { lernen: { art: 'quiz', fragen: QUIZ } };
+<!--@fuss-->
+  <span>Lernhilfe Netzwerktechnik - Routing (Vorbereitung VII)</span>

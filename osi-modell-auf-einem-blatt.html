@@ -1,296 +1,372 @@
 <!DOCTYPE html>
+<!-- Diese Datei wird von bauen.py erzeugt. Nicht hier bearbeiten, sondern in _vorlage/ bzw. _inhalt/. -->
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OSI-Modell auf einem Blatt</title>
+<title>osi-modell-auf-einem-blatt.sh</title>
+<meta name="description" content="Die 7 Schichten mit Aufgaben, Protokollen, Adressen und Geräten, Vergleich mit TCP/IP, Kapselung, Lernkarten">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg: #12161c;
-    --bg-panel: #1a2029;
-    --bg-card: #202836;
-    --border: #2c3646;
-    --text: #dfe6ef;
-    --text-dim: #8b97a8;
-    --amber: #e0a840;
-    --amber-soft: rgba(224,168,64,0.12);
-    --gold: #c9a24d;
-    --green: #6fbf8b;
-    --green-soft: rgba(111,191,139,0.12);
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin:0;
-    background: linear-gradient(180deg, #10141a, #151b23 40%, #12161c);
-    color: var(--text);
-    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-    padding: 0 0 60px;
-  }
-  header {
-    padding: 28px 24px 18px;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: var(--lh-h);
-    background: rgba(16,20,26,0.92);
-    backdrop-filter: blur(6px);
-    z-index: 20;
-  }
-  header h1 { margin: 0 0 4px; font-size: 1.5em; letter-spacing: 0.3px; color: var(--amber); }
-  header h1 span { color: var(--text-dim); font-weight: 400; font-size: 0.6em; }
-  .sub { color: var(--text-dim); font-size: 0.85em; margin-bottom: 14px; }
-  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  #search {
-    flex: 1 1 260px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 0.95em;
-    outline: none;
-  }
-  #search:focus { border-color: var(--amber); }
-  .mode-btn {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 10px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: all .15s;
-  }
-  .mode-btn:hover { border-color: var(--amber); color: var(--text); }
-  .mode-btn.active { background: var(--amber-soft); border-color: var(--amber); color: var(--amber); }
-  main { max-width: 920px; margin: 0 auto; padding: 20px 20px 0; }
+/* ==========================================================================
+   Lernhilfen FiSi – gemeinsames Design (Terminal-Stil)
+   Wird von bauen.py in jede Seite eingebettet. Hier ändern, dann bauen.
+   ========================================================================== */
+:root{
+  --bg:#0d1117;
+  --bg-elevated:#131a23;
+  --surface:#1a222e;
+  --surface-hover:#212b3a;
+  --border:#2a3444;
+  --border-soft:#212a38;
+  --text-primary:#e6eaf0;
+  --text-secondary:#93a1b8;
+  --text-muted:#5c6b83;
+  --amber:#e3a458;
+  --amber-soft:rgba(227,164,88,0.14);
+  --amber-dim:rgba(227,164,88,0.35);
+  --gold:#cc9f3f;
+  --green:#7fae70;
+  --green-soft:rgba(127,174,112,0.14);
+  --red:#c77b6e;
+  --red-soft:rgba(199,123,110,0.14);
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --lh-h:34px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(227,164,88,0.06), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(127,174,112,0.05), transparent 55%),
+    var(--bg);
+  color:var(--text-primary);
+  font-family:var(--sans);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--amber-soft);color:var(--text-primary);}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:var(--surface-hover);}
 
-  .category {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 14px;
-    overflow: hidden;
-    background: var(--bg-panel);
-  }
-  .cat-head {
-    padding: 14px 18px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    user-select: none;
-  }
-  .cat-head:hover { background: rgba(255,255,255,0.02); }
-  .cat-title { font-weight: 600; color: var(--amber); font-size: 1.02em; }
-  .cat-title small { color: var(--text-dim); font-weight: 400; margin-left: 8px; }
-  .chevron { color: var(--text-dim); transition: transform .2s; }
-  .category.open .chevron { transform: rotate(90deg); }
-  .cat-body { display: none; padding: 4px 18px 18px; border-top: 1px solid var(--border); }
-  .category.open .cat-body { display: block; }
-
-  h4.sub-head {
-    color: var(--gold);
-    font-size: 0.95em;
-    margin: 20px 0 6px;
-    border-left: 3px solid var(--gold);
-    padding-left: 8px;
-  }
-
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--gold);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin: 12px 0;
-  }
-  .card h4 { margin: 0 0 6px; color: var(--text); font-size: 0.95em; }
-  .card p, .card li { color: var(--text-dim); font-size: 0.9em; margin: 4px 0; }
-  .card .formula {
-    display: inline-block;
-    background: var(--amber-soft);
-    color: var(--amber);
-    padding: 2px 8px;
-    border-radius: 5px;
-    font-family: 'Consolas', monospace;
-    font-size: 0.88em;
-    margin: 3px 4px 3px 0;
-  }
-  .card .merksatz {
-    margin-top: 8px;
-    padding: 8px 12px;
-    background: var(--green-soft);
-    border-left: 3px solid var(--green);
-    border-radius: 5px;
-    color: #b7e3c6;
-    font-style: italic;
-    font-size: 0.87em;
-  }
-  .card .beispiel {
-    margin-top: 6px;
-    padding: 6px 10px;
-    background: var(--amber-soft);
-    border-radius: 5px;
-    color: #f0d6a0;
-    font-size: 0.86em;
-  }
-
-  table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 0.85em; }
-  th, td { border: 1px solid var(--border); padding: 6px 9px; text-align: center; }
-  th { background: rgba(224,168,64,0.08); color: var(--amber); font-weight: 600; }
-  td { color: var(--text-dim); }
-  tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
-
-  code {
-    background: rgba(255,255,255,0.06);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-family: 'Consolas', monospace;
-    color: #cbd6e4;
-  }
-
-  .hidden { display: none !important; }
-
-  #flash-wrap { display: none; margin-top: 10px; }
-  #flash-wrap.active { display: block; }
-  .flash-progress { color: var(--text-dim); font-size: 0.85em; margin-bottom: 10px; text-align:center; }
-  .flashcard { max-width: 560px; margin: 0 auto; height: 260px; perspective: 1200px; cursor: pointer; }
-  .flash-inner { position: relative; width: 100%; height: 100%; transition: transform .5s; transform-style: preserve-3d; }
-  .flashcard.flipped .flash-inner { transform: rotateY(180deg); }
-  .flash-face {
-    position: absolute; inset: 0; backface-visibility: hidden;
-    border-radius: 14px; border: 1px solid var(--border);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 24px; text-align: center;
-  }
-  .flash-front { background: linear-gradient(155deg, var(--bg-card), #1a222e); }
-  .flash-front .tag { color: var(--amber); font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-  .flash-front .q { font-size: 1.1em; color: var(--text); }
-  .flash-back { background: linear-gradient(155deg, #1c2c22, #182018); transform: rotateY(180deg); }
-  .flash-back .a { color: #c9ecd6; font-size: 1em; margin-bottom: 8px; }
-  .flash-back .ex { color: var(--text-dim); font-size: 0.85em; font-style: italic; }
-  .flash-hint { text-align: center; color: var(--text-dim); font-size: 0.8em; margin-top: 10px; }
-  .flash-controls { display: flex; justify-content: center; gap: 10px; margin-top: 16px; }
-  .flash-controls button {
-    background: var(--bg-card); border: 1px solid var(--border); color: var(--text);
-    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9em;
-  }
-  .flash-controls button:hover { border-color: var(--amber); }
-
-  .osi-svg-wrap { text-align: center; margin: 4px 0 10px; }
-  .osi-svg-wrap svg { max-width: 100%; height: auto; }
-
-  footer { max-width: 920px; margin: 30px auto 0; padding: 0 20px; color: var(--text-dim); font-size: 0.78em; line-height: 1.5; }
-  footer .quelle { display: block; margin-top: 4px; color: #5f6b7a; }
-
-  .layer-badge {
-    display: inline-block; min-width: 22px; text-align: center;
-    background: var(--amber-soft); color: var(--amber); border-radius: 5px;
-    padding: 1px 7px; font-family: 'Consolas', monospace; font-weight: 600; margin-right: 6px;
-  }
-</style>
-<style id="lh-nav-css">
-/* Lernhilfen-Leiste: auf allen Seiten gleich, eigene Farben unabhängig vom Seitendesign.
-   Neue Lernhilfe? Link in ALLEN Dateien der Leiste nachtragen (siehe README). */
-:root{--lh-h:34px;}
-.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);box-sizing:border-box;
+/* ---- Lernhilfen-Leiste (Links zu allen Lernhilfen, bleibt oben stehen) ---- */
+.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);
   display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;
   padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
-  background:#0d1117;border-bottom:1px solid #2a3444;
-  font:500 12px/1 ui-monospace,'JetBrains Mono',Consolas,monospace;}
+  background:#0d1117;border-bottom:1px solid var(--border);
+  font:500 12px/1 var(--mono);}
 .lh-nav::-webkit-scrollbar{display:none;}
-.lh-nav .lh-ttl{color:#5c6b83;padding-right:6px;}
-.lh-nav a{color:#93a1b8;text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
-.lh-nav a:hover{color:#e6eaf0;background:#1a222e;}
-.lh-nav a[aria-current="page"]{color:#e3a458;border-color:rgba(227,164,88,0.4);background:rgba(227,164,88,0.14);}
-.lh-nav a:focus-visible{outline:2px solid #e3a458;outline-offset:1px;}
-@media print{.lh-nav{display:none;}}
+.lh-nav .lh-ttl{color:var(--text-muted);padding-right:6px;}
+.lh-nav a{color:var(--text-secondary);text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
+.lh-nav a:hover{color:var(--text-primary);background:var(--surface);}
+.lh-nav a[aria-current="page"]{color:var(--amber);border-color:rgba(227,164,88,0.4);background:var(--amber-soft);}
+.lh-nav a:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+
+/* ---- Terminal-Rahmen ---- */
+.termbar{
+  max-width:1240px;margin:20px auto 0;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:10px 10px 0 0;
+  padding:10px 16px;
+  display:flex;align-items:center;gap:10px;
+}
+.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.dot.d1{background:#e37f6b;}
+.dot.d2{background:var(--amber);}
+.dot.d3{background:var(--green);}
+.termbar .path{margin-left:10px;color:var(--text-muted);font-family:var(--mono);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* overflow:clip statt hidden: kein eigener Scroll-Bereich, sonst bleibt die Kapitelleiste nicht stehen */
+.wrap{max-width:1240px;margin:0 auto;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--bg-elevated);overflow:hidden;overflow:clip;}
+
+/* ---- Kopfbereich ---- */
+header.hero{padding:34px 34px 26px;border-bottom:1px solid var(--border);background:linear-gradient(180deg, rgba(227,164,88,0.04), transparent 70%);}
+h1{font-family:var(--mono);font-weight:700;font-size:clamp(22px,3vw,30px);margin:0;color:var(--text-primary);letter-spacing:-0.01em;overflow-wrap:anywhere;}
+h1 .prompt{color:var(--green);}
+h1 .cursor{display:inline-block;width:9px;height:1.1em;background:var(--amber);margin-left:2px;vertical-align:-2px;animation:blink 1.1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+.subtitle{color:var(--text-secondary);font-size:14px;margin:8px 0 0;max-width:680px;line-height:1.55;}
+.meta-row{display:flex;gap:18px;color:var(--text-muted);font-family:var(--mono);font-size:12px;margin-top:14px;flex-wrap:wrap;}
+.meta-row span b{color:var(--amber);font-weight:600;}
+
+.controls{display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap;}
+.search-box{flex:1;min-width:240px;position:relative;}
+.search-box input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text-primary);font-family:var(--mono);font-size:14px;padding:11px 46px 11px 34px;border-radius:8px;outline:none;transition:border-color .15s, box-shadow .15s;}
+.search-box input:focus{border-color:var(--amber-dim);box-shadow:0 0 0 3px var(--amber-soft);}
+.search-box .glyph{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-family:var(--mono);pointer-events:none;}
+.search-box .hint{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:11px;font-family:var(--mono);pointer-events:none;}
+.btn{font-family:var(--mono);font-size:13px;font-weight:500;background:var(--surface);border:1px solid var(--border);color:var(--text-primary);padding:11px 16px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:hover{background:var(--surface-hover);border-color:var(--amber-dim);}
+.btn:focus-visible,.cat-link:focus-visible,.sc-btn:focus-visible,.lm-card:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+.btn.primary{background:var(--amber-soft);border-color:var(--amber-dim);color:var(--amber);}
+.btn.primary:hover{background:rgba(227,164,88,0.22);}
+.btn.an{background:rgba(204,159,63,0.16);border-color:var(--gold);color:var(--gold);}
+
+/* ---- Kapitelleiste (links, bleibt stehen) ---- */
+.layout{display:flex;}
+nav.sidebar{width:300px;flex-shrink:0;border-right:1px solid var(--border);padding:18px 0;max-height:calc(100vh - var(--lh-h) - 8px);overflow-y:auto;position:sticky;top:var(--lh-h);align-self:flex-start;}
+.sidebar .lslabel{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);padding:0 18px 8px;text-transform:uppercase;letter-spacing:.08em;}
+.cat-link{display:flex;align-items:center;gap:10px;width:100%;padding:8px 18px;background:none;border:none;cursor:pointer;text-align:left;font-family:var(--mono);font-size:12.5px;color:var(--text-secondary);border-left:2px solid transparent;transition:all .12s;}
+.cat-link .perm{color:var(--text-muted);opacity:.65;}
+.cat-link .name{color:inherit;flex:1;}
+.cat-link .cnt{color:var(--text-muted);font-size:11px;}
+.cat-link:hover{background:var(--surface);color:var(--text-primary);}
+.cat-link.active{background:var(--surface);color:var(--amber);border-left-color:var(--amber);}
+.cat-link.active .cnt{color:var(--amber);}
+
+/* ---- Inhalt ---- */
+main.content{flex:1;min-width:0;padding:8px 30px 60px;}
+.category-section{padding-top:26px;scroll-margin-top:calc(var(--lh-h) + 16px);}
+.category-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--border-soft);}
+.category-head h2{font-family:var(--mono);font-size:16px;margin:0;color:var(--text-primary);font-weight:600;text-wrap:balance;}
+.category-head .path{color:var(--text-muted);font-size:12px;font-family:var(--mono);}
+
+/* Gruppe = Zwischenüberschrift innerhalb eines Kapitels */
+.group{margin-top:24px;}
+.group-name{font-size:13.5px;font-weight:600;color:var(--amber);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;padding:3px 0 3px 10px;border-left:3px solid var(--gold);}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
+
+/* Karte */
+.card{background:var(--surface);border:1px solid var(--border-soft);border-left:3px solid var(--gold);border-radius:9px;padding:14px 16px;margin:12px 0;transition:border-color .15s;min-width:0;}
+.card:hover{border-color:var(--amber-dim);}
+.cards > .card{margin:0;}
+.card h4{margin:0 0 6px;font-family:var(--mono);font-size:13.5px;color:var(--amber);font-weight:600;}
+.card p{margin:0 0 6px;font-size:13.5px;color:var(--text-secondary);line-height:1.55;}
+.card p:last-child{margin-bottom:0;}
+.card ul,.card ol{margin:6px 0;padding-left:20px;}
+.card li{font-size:13.5px;color:var(--text-secondary);line-height:1.55;margin-bottom:5px;}
+.card li b,.card p b{color:var(--text-primary);}
+.card-note{font-size:12px;color:var(--text-muted);margin:2px 0 10px;}
+code{background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:.92em;color:#cbd6e4;}
+
+/* Merksatz und Hinweiskästen */
+.merksatz{margin-top:10px;padding:8px 12px;background:var(--green-soft);border-left:3px solid var(--green);border-radius:6px;color:var(--green);font-size:12.5px;font-style:italic;}
+.hinweis{margin-top:10px;padding:9px 12px;border-left:3px solid var(--amber);border-radius:6px;background:var(--amber-soft);font-size:13px;color:var(--text-secondary);line-height:1.55;}
+.hinweis b{display:block;font-family:var(--mono);font-size:12px;color:var(--amber);margin-bottom:2px;}
+.hinweis.merk{border-left-color:var(--green);background:var(--green-soft);}
+.hinweis.merk b{color:var(--green);}
+.hinweis.fehler{border-left-color:var(--red);background:var(--red-soft);}
+.hinweis.fehler b{color:var(--red);}
+
+/* Formel-/Wert-Etikett */
+.formel{display:inline-block;background:var(--amber-soft);color:var(--amber);padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:.86em;margin:2px 4px 2px 0;}
+
+/* Nummerierte Rechenschritte */
+.schritte{list-style:none;counter-reset:schritt;padding-left:0 !important;margin:8px 0;}
+.schritte li{counter-increment:schritt;position:relative;padding:5px 0 5px 34px;}
+.schritte li::before{content:counter(schritt);position:absolute;left:0;top:4px;width:22px;height:22px;border-radius:50%;background:var(--amber-soft);color:var(--amber);font:600 11px/22px var(--mono);text-align:center;}
+
+/* Tabellen */
+.tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:4px 0;}
+.tbl th,.tbl td{border:1px solid var(--border-soft);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.5;}
+.tbl th{background:var(--amber-soft);color:var(--amber);font-family:var(--mono);font-weight:600;font-size:12px;}
+.tbl td{color:var(--text-secondary);}
+.tbl td:first-child{color:var(--text-primary);font-weight:500;}
+.tbl.zahlen th,.tbl.zahlen td{text-align:center;font-variant-numeric:tabular-nums;}
+.tbl.zahlen td:first-child{color:var(--text-secondary);font-weight:400;}
+
+/* Schaubilder (SVG) */
+.schaubild{margin:4px 0 10px;overflow-x:auto;}
+.schaubild svg{display:block;width:100%;min-width:460px;max-width:760px;height:auto;margin:0 auto;}
+
+/* Selbsteinschätzung */
+.sc-btn{font-family:var(--mono);font-size:11.5px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:5px 9px;border-radius:6px;cursor:pointer;white-space:nowrap;}
+.sc-btn:hover{border-color:var(--amber-dim);}
+.sc-btn.sicher.active{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.sc-btn.unsicher.active{background:var(--amber-soft);border-color:var(--amber);color:var(--amber);}
+.sc-btn.wiederholen.active{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.sc-actions{display:flex;gap:6px;flex-wrap:wrap;}
+
+mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0 1px;}
+.no-results{text-align:center;padding:60px 20px;color:var(--text-muted);font-family:var(--mono);font-size:13px;display:none;}
+.hidden{display:none !important;}
+
+/* ---- Lernmodus (Lernkarten oder Quiz) ---- */
+.lernmodus{position:fixed;inset:0;background:rgba(8,11,16,0.82);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+.lernmodus.open{display:flex;}
+.lm-box{width:100%;max-width:600px;max-height:calc(100vh - 40px);overflow-y:auto;background:var(--bg-elevated);border:1px solid var(--border);border-radius:14px;padding:28px;position:relative;}
+.lm-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1;padding:4px;}
+.lm-close:hover{color:var(--text-primary);}
+.lm-progress{font-family:var(--mono);font-size:12px;color:var(--text-muted);margin-bottom:6px;}
+.lm-bar{height:4px;background:var(--surface);border-radius:2px;overflow:hidden;margin-bottom:22px;}
+.lm-bar-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--green));transition:width .25s;}
+.lm-cat{font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;}
+/* Lernkarten */
+.lm-card{min-height:190px;border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;gap:14px;}
+.lm-front{font-size:17px;color:var(--text-primary);line-height:1.5;}
+.lm-reveal{font-size:16px;font-weight:600;color:var(--green);line-height:1.5;}
+.lm-reveal.mono{font-family:var(--mono);font-size:20px;font-weight:700;}
+.lm-extra{margin-top:10px;font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.lm-extra.mono{font-family:var(--mono);}
+.lm-flip-hint{font-family:var(--mono);font-size:11px;color:var(--text-muted);}
+.lm-actions{display:flex;gap:10px;margin-top:18px;}
+.lm-actions .btn{flex:1;text-align:center;justify-content:center;}
+.btn.again{border-color:rgba(227,164,88,0.4);color:var(--amber);}
+.btn.know{border-color:rgba(127,174,112,0.4);color:var(--green);}
+.btn.again:hover{background:var(--amber-soft);}
+.btn.know:hover{background:var(--green-soft);}
+.lm-keys{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);text-align:center;margin-top:12px;}
+/* Quiz */
+.lm-question{font-size:16px;color:var(--text-primary);line-height:1.5;margin:8px 0 16px;}
+.lm-options{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.lm-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;transition:border-color .15s;}
+.lm-opt:hover{border-color:var(--amber-dim);}
+.lm-opt input{margin-top:2px;accent-color:var(--amber);flex-shrink:0;}
+.lm-opt span{font-size:13.5px;color:var(--text-secondary);line-height:1.5;}
+.lm-opt.correct{border-color:var(--green);background:var(--green-soft);}
+.lm-opt.correct span{color:var(--green);}
+.lm-opt.wrong{border-color:var(--red);background:var(--red-soft);}
+.lm-opt.wrong span{color:var(--red);}
+.lm-hint{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:14px;}
+.lm-explain{font-size:12.5px;color:var(--text-secondary);background:var(--surface);border-left:3px solid var(--amber);border-radius:6px;padding:10px 12px;margin-bottom:16px;display:none;}
+.lm-explain.show{display:block;}
+.btn.check{border-color:var(--amber-dim);color:var(--amber);}
+.btn.check:hover{background:var(--amber-soft);}
+.btn.next{border-color:rgba(127,174,112,0.4);color:var(--green);}
+.btn.next:hover{background:var(--green-soft);}
+/* Ende einer Runde */
+.lm-done{text-align:center;padding:20px 0;}
+.lm-done h3{font-family:var(--mono);color:var(--amber);margin:0 0 8px;}
+.lm-done p{color:var(--text-secondary);font-size:13.5px;margin:0 0 18px;}
+
+/* ---- Fußzeile ---- */
+.seitenfuss{max-width:1240px;margin:0 auto;padding:18px 34px 28px;font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--text-muted);display:flex;gap:10px 18px;flex-wrap:wrap;justify-content:space-between;}
+.seitenfuss a{color:var(--amber);text-decoration:none;}
+.seitenfuss a:hover{text-decoration:underline;}
+
+/* ---- Handy ---- */
+@media (max-width:820px){
+  .layout{flex-direction:column;}
+  nav.sidebar{width:100%;position:sticky;top:var(--lh-h);z-index:10;background:var(--bg-elevated);max-height:none;border-right:none;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:12px;gap:4px;}
+  .sidebar .lslabel{display:none;}
+  .cat-link{width:auto;flex-shrink:0;border-left:none;border-bottom:2px solid transparent;border-radius:6px;padding:7px 12px;}
+  .cat-link .perm{display:none;}
+  .cat-link.active{border-bottom-color:var(--amber);}
+  .category-section{scroll-margin-top:calc(var(--lh-h) + 72px);}
+  header.hero{padding:24px 18px 20px;}
+  main.content{padding:8px 16px 50px;}
+  .termbar{margin:10px 10px 0;}
+  .wrap{margin:0 10px;}
+  .seitenfuss{padding:18px;}
+  .lm-box{padding:22px 18px;}
+}
+@media (prefers-reduced-motion:reduce){
+  h1 .cursor{animation:none;}
+  *{transition:none !important;scroll-behavior:auto !important;}
+}
+@media print{
+  .lh-nav,nav.sidebar,.controls,.lernmodus{display:none !important;}
+  .category-section{break-inside:avoid-page;}
+}
+</style>
+<style>
+/* Schicht-Nummer vor dem Kartentitel */
+.layer-badge{display:inline-block;min-width:22px;text-align:center;background:var(--amber-soft);color:var(--amber);border-radius:5px;padding:1px 7px;font-family:var(--mono);font-weight:600;margin-right:6px;}
 </style>
 </head>
 <body>
 <nav class="lh-nav" aria-label="Lernhilfen"><span class="lh-ttl">lernhilfen/</span><a href="index.html">Übersicht</a><a href="linux-auf-einem-blatt.html">Linux</a><a href="subnetting-vlsm-auf-einem-blatt.html">Subnetting</a><a href="osi-modell-auf-einem-blatt.html" aria-current="page">OSI</a><a href="routing-auf-einem-blatt.html">Routing</a><a href="switching-auf-einem-blatt.html">Switching</a></nav>
-<script>(function(){var n=document.querySelector(".lh-nav"),c=n&&n.querySelector("[aria-current]");if(c&&n.scrollWidth>n.clientWidth)n.scrollLeft=Math.max(0,c.offsetLeft-60);})();</script>
 
+<div class="termbar">
+  <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
+  <span class="path">nicandro@debian:~$ open osi-modell-auf-einem-blatt.sh</span>
+</div>
 
-<header>
-  <h1>OSI-Modell <span>auf einem Blatt</span></h1>
-  <div class="sub">Die 7 Schichten der Datenkommunikation - Namen, Aufgaben, Protokolle, Adressen, Geräte</div>
-  <div class="toolbar">
-    <input type="text" id="search" placeholder="Suchen... (z.B. Router, Port, Layer 3)">
-    <button class="mode-btn active" id="btn-lesen" onclick="setMode('lesen')">Lesen</button>
-    <button class="mode-btn" id="btn-lernen" onclick="setMode('lernen')">Lernen</button>
-  </div>
-</header>
-
-<main>
-
-<div id="read-view">
-
-  <div class="category" data-cat="uebersicht">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Übersicht <small>Alle 7 Schichten auf einen Blick</small></div>
-      <div class="chevron">▶</div>
+<div class="wrap">
+  <header class="hero">
+    <h1><span class="prompt">$</span> osi --auf-einem-blatt<span class="cursor"></span></h1>
+    <p class="subtitle">Die 7 Schichten der Datenkommunikation - Namen, Aufgaben, Protokolle, Adressen, Geräte</p>
+    <div class="meta-row">
+      <span><b data-stat="kapitel">0</b> Kapitel</span>
+      <span><b data-stat="lernen">0</b> Lernkarten</span>
+      <span id="statVisible" class="hidden"><b id="statVisibleNum">0</b> Treffer</span>
     </div>
-    <div class="cat-body">
-      <div class="osi-svg-wrap">
+    <div class="controls">
+      <div class="search-box">
+        <span class="glyph">/</span>
+        <input id="searchInput" type="search" placeholder="z. B. &#x27;Router&#x27;, &#x27;Port&#x27;, &#x27;Layer 3&#x27; …" autocomplete="off" aria-label="Suchen">
+        <span class="hint">ESC</span>
+      </div>
+
+      <button class="btn primary" id="lernBtn" type="button">◆ Lernmodus</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Kapitel">
+      <div class="lslabel">-- kapitel --</div>
+    </nav>
+    <main class="content" id="content">
+      <section class="category-section" id="uebersicht" data-nav="Übersicht">
+        <div class="category-head"><h2>Übersicht</h2><span class="path">Alle 7 Schichten auf einen Blick</span></div>
+
+      <div class="schaubild">
       <svg viewBox="0 0 680 470" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>OSI-Modell - 7 Schichten</title>
         <desc>Die 7 Schichten des OSI-Modells von Anwendung bis Bitübertragung mit Protokollen und Geräten</desc>
 
-        <text x="40" y="24" fill="#8b97a8" font-size="12" font-family="Segoe UI, Roboto, sans-serif">Anwendungsorientiert</text>
-        <rect x="40" y="32" width="600" height="46" rx="6" fill="#202836" stroke="#e0a840" stroke-width="1"/>
-        <g transform="translate(52,42)" stroke="#e0a840" stroke-width="1.4" fill="none">
+        <text x="40" y="24" fill="#93a1b8" font-size="12" font-family="IBM Plex Sans, Segoe UI, sans-serif">Anwendungsorientiert</text>
+        <rect x="40" y="32" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <g transform="translate(52,42)" stroke="#e3a458" stroke-width="1.4" fill="none">
           <rect x="0" y="0" width="24" height="18" rx="2"/>
           <line x1="0" y1="5" x2="24" y2="5"/>
-          <circle cx="3.5" cy="2.5" r="0.8" fill="#e0a840" stroke="none"/>
-          <circle cx="6.5" cy="2.5" r="0.8" fill="#e0a840" stroke="none"/>
+          <circle cx="3.5" cy="2.5" r="0.8" fill="#e3a458" stroke="none"/>
+          <circle cx="6.5" cy="2.5" r="0.8" fill="#e3a458" stroke="none"/>
         </g>
-        <text x="90" y="51" fill="#e0a840" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">7 · Anwendung / Application</text>
-        <text x="90" y="68" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">HTTP, FTP, SMTP, DNS · Proxy, Gateway</text>
+        <text x="90" y="51" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 · Anwendung / Application</text>
+        <text x="90" y="68" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">HTTP, FTP, SMTP, DNS · Proxy, Gateway</text>
 
-        <rect x="40" y="84" width="600" height="46" rx="6" fill="#202836" stroke="#e0a840" stroke-width="1"/>
-        <g transform="translate(52,94)" stroke="#e0a840" stroke-width="1.4" fill="none">
+        <rect x="40" y="84" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <g transform="translate(52,94)" stroke="#e3a458" stroke-width="1.4" fill="none">
           <rect x="0" y="0" width="24" height="18" rx="2"/>
           <path d="M2 15 L8 8 L12 12 L17 5 L22 11"/>
           <circle cx="6" cy="5" r="2"/>
         </g>
-        <text x="90" y="103" fill="#e0a840" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">6 · Darstellung / Presentation</text>
-        <text x="90" y="120" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">TLS, SSL, JPEG, ASCII</text>
+        <text x="90" y="103" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 · Darstellung / Presentation</text>
+        <text x="90" y="120" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">TLS, SSL, JPEG, ASCII</text>
 
-        <rect x="40" y="136" width="600" height="46" rx="6" fill="#202836" stroke="#e0a840" stroke-width="1"/>
-        <g transform="translate(52,146)" stroke="#e0a840" stroke-width="1.4" fill="none">
+        <rect x="40" y="136" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <g transform="translate(52,146)" stroke="#e3a458" stroke-width="1.4" fill="none">
           <circle cx="5" cy="9" r="4"/>
           <circle cx="19" cy="9" r="4"/>
           <line x1="9" y1="9" x2="15" y2="9" stroke-dasharray="2 2"/>
         </g>
-        <text x="90" y="155" fill="#e0a840" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">5 · Sitzung / Session</text>
-        <text x="90" y="172" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">NetBIOS, RPC</text>
+        <text x="90" y="155" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 · Sitzung / Session</text>
+        <text x="90" y="172" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">NetBIOS, RPC</text>
 
-        <line x1="340" y1="184" x2="340" y2="200" stroke="#2c3646" stroke-width="1"/>
-        <text x="40" y="216" fill="#8b97a8" font-size="12" font-family="Segoe UI, Roboto, sans-serif">Transportorientiert</text>
+        <line x1="340" y1="184" x2="340" y2="200" stroke="#2a3444" stroke-width="1"/>
+        <text x="40" y="216" fill="#93a1b8" font-size="12" font-family="IBM Plex Sans, Segoe UI, sans-serif">Transportorientiert</text>
 
-        <rect x="40" y="224" width="600" height="46" rx="6" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <g transform="translate(52,234)" stroke="#6fbf8b" stroke-width="1.4" fill="none">
+        <rect x="40" y="224" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,234)" stroke="#7fae70" stroke-width="1.4" fill="none">
           <rect x="0" y="2" width="10" height="14" rx="1.5"/>
           <rect x="13" y="2" width="10" height="14" rx="1.5"/>
           <line x1="4" y1="6" x2="6" y2="6"/>
           <line x1="17" y1="6" x2="19" y2="6"/>
         </g>
-        <text x="90" y="243" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">4 · Transport</text>
-        <text x="90" y="260" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">TCP, UDP · Ports · Firewall</text>
+        <text x="90" y="243" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 · Transport</text>
+        <text x="90" y="260" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP, UDP · Ports · Firewall</text>
 
-        <rect x="40" y="276" width="600" height="46" rx="6" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <g transform="translate(52,286)" stroke="#6fbf8b" stroke-width="1.4" fill="none">
+        <rect x="40" y="276" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,286)" stroke="#7fae70" stroke-width="1.4" fill="none">
           <rect x="4" y="4" width="16" height="10" rx="2"/>
           <line x1="7" y1="4" x2="7" y2="1"/>
           <line x1="12" y1="4" x2="12" y2="0"/>
           <line x1="17" y1="4" x2="17" y2="1"/>
           <line x1="12" y1="14" x2="12" y2="18"/>
         </g>
-        <text x="90" y="295" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">3 · Vermittlung / Network</text>
-        <text x="90" y="312" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">IP, ICMP · IP-Adressen · Router</text>
+        <text x="90" y="295" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 · Vermittlung / Network</text>
+        <text x="90" y="312" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">IP, ICMP · IP-Adressen · Router</text>
 
-        <rect x="40" y="328" width="600" height="46" rx="6" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <g transform="translate(52,338)" stroke="#6fbf8b" stroke-width="1.4" fill="none">
+        <rect x="40" y="328" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,338)" stroke="#7fae70" stroke-width="1.4" fill="none">
           <rect x="1" y="4" width="22" height="10" rx="1.5"/>
           <line x1="5" y1="14" x2="5" y2="17"/>
           <line x1="12" y1="14" x2="12" y2="17"/>
@@ -299,478 +375,661 @@
           <line x1="12" y1="4" x2="12" y2="1"/>
           <line x1="19" y1="4" x2="19" y2="1"/>
         </g>
-        <text x="90" y="347" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">2 · Sicherung / Data Link</text>
-        <text x="90" y="364" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">Ethernet, ARP · MAC-Adressen · Switch</text>
+        <text x="90" y="347" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 · Sicherung / Data Link</text>
+        <text x="90" y="364" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Ethernet, ARP · MAC-Adressen · Switch</text>
 
-        <rect x="40" y="380" width="600" height="46" rx="6" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <g transform="translate(52,391)" stroke="#6fbf8b" stroke-width="1.4" fill="none">
+        <rect x="40" y="380" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <g transform="translate(52,391)" stroke="#7fae70" stroke-width="1.4" fill="none">
           <path d="M1 9 Q6 2 12 9 T23 9"/>
-          <circle cx="1" cy="9" r="1.4" fill="#6fbf8b" stroke="none"/>
-          <circle cx="23" cy="9" r="1.4" fill="#6fbf8b" stroke="none"/>
+          <circle cx="1" cy="9" r="1.4" fill="#7fae70" stroke="none"/>
+          <circle cx="23" cy="9" r="1.4" fill="#7fae70" stroke="none"/>
         </g>
-        <text x="90" y="399" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">1 · Bitübertragung / Physical</text>
-        <text x="90" y="416" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">Hub, Kabel</text>
+        <text x="90" y="399" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 · Bitübertragung / Physical</text>
+        <text x="90" y="416" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Hub, Kabel</text>
 
-        <text x="340" y="452" fill="#c9a24d" font-size="12" font-style="italic" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">A - P - S - T - N - D - P · Alle Prüfer Suchen Tests Nach Der Pause</text>
+        <text x="340" y="452" fill="#cc9f3f" font-size="12" font-style="italic" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">A - P - S - T - N - D - P · Alle Prüfer Suchen Tests Nach Der Pause</text>
       </svg>
       </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="category" data-cat="kapselung">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Kapselung <small>Wie Daten durch die Schichten wandern</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <div class="osi-svg-wrap">
+      <section class="category-section" id="kapselung" data-nav="Kapselung">
+        <div class="category-head"><h2>Kapselung</h2><span class="path">Wie Daten durch die Schichten wandern</span></div>
+
+      <div class="schaubild">
       <svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>Kapselung der Daten durch die Schichten</title>
         <desc>Beim Senden fügt jede Schicht einen eigenen Header hinzu, beim Empfänger werden sie wieder entfernt</desc>
 
-        <text x="40" y="24" fill="#e0a840" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">Daten</text>
-        <text x="130" y="24" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">Schicht 7-5</text>
-        <rect x="220" y="8" width="420" height="28" rx="5" fill="#202836" stroke="#e0a840" stroke-width="1"/>
-        <text x="430" y="26" fill="#dfe6ef" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Nutzdaten</text>
+        <text x="40" y="24" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Daten</text>
+        <text x="130" y="24" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 7-5</text>
+        <rect x="220" y="8" width="420" height="28" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="430" y="26" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
 
-        <line x1="340" y1="40" x2="340" y2="54" stroke="#2c3646" stroke-width="1"/>
-        <text x="350" y="50" fill="#8b97a8" font-size="10" font-style="italic" font-family="Segoe UI, Roboto, sans-serif">kapselt</text>
+        <line x1="340" y1="40" x2="340" y2="54" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="50" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">kapselt</text>
 
-        <text x="40" y="72" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">Segment</text>
-        <text x="130" y="72" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">Schicht 4</text>
-        <rect x="220" y="56" width="60" height="28" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="250" y="74" fill="#6fbf8b" font-size="10" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">TCP</text>
-        <rect x="282" y="56" width="358" height="28" rx="5" fill="#202836" stroke="#2c3646" stroke-width="1"/>
-        <text x="461" y="74" fill="#dfe6ef" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Nutzdaten</text>
+        <text x="40" y="72" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Segment</text>
+        <text x="130" y="72" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 4</text>
+        <rect x="220" y="56" width="60" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="250" y="74" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP</text>
+        <rect x="282" y="56" width="358" height="28" rx="5" fill="#1a222e" stroke="#2a3444" stroke-width="1"/>
+        <text x="461" y="74" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
 
-        <line x1="340" y1="88" x2="340" y2="102" stroke="#2c3646" stroke-width="1"/>
-        <text x="350" y="98" fill="#8b97a8" font-size="10" font-style="italic" font-family="Segoe UI, Roboto, sans-serif">kapselt</text>
+        <line x1="340" y1="88" x2="340" y2="102" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="98" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">kapselt</text>
 
-        <text x="40" y="120" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">Paket</text>
-        <text x="130" y="120" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">Schicht 3</text>
-        <rect x="220" y="104" width="55" height="28" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="247" y="122" fill="#6fbf8b" font-size="10" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">IP</text>
-        <rect x="277" y="104" width="55" height="28" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="304" y="122" fill="#6fbf8b" font-size="10" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">TCP</text>
-        <rect x="334" y="104" width="306" height="28" rx="5" fill="#202836" stroke="#2c3646" stroke-width="1"/>
-        <text x="487" y="122" fill="#dfe6ef" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Nutzdaten</text>
+        <text x="40" y="120" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Paket</text>
+        <text x="130" y="120" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 3</text>
+        <rect x="220" y="104" width="55" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="247" y="122" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">IP</text>
+        <rect x="277" y="104" width="55" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="304" y="122" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP</text>
+        <rect x="334" y="104" width="306" height="28" rx="5" fill="#1a222e" stroke="#2a3444" stroke-width="1"/>
+        <text x="487" y="122" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
 
-        <line x1="340" y1="136" x2="340" y2="150" stroke="#2c3646" stroke-width="1"/>
-        <text x="350" y="146" fill="#8b97a8" font-size="10" font-style="italic" font-family="Segoe UI, Roboto, sans-serif">kapselt</text>
+        <line x1="340" y1="136" x2="340" y2="150" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="146" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">kapselt</text>
 
-        <text x="40" y="168" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">Frame</text>
-        <text x="130" y="168" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">Schicht 2</text>
-        <rect x="220" y="152" width="65" height="28" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="252" y="170" fill="#6fbf8b" font-size="9" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Ethernet</text>
-        <rect x="287" y="152" width="50" height="28" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="312" y="170" fill="#6fbf8b" font-size="10" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">IP</text>
-        <rect x="339" y="152" width="50" height="28" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="364" y="170" fill="#6fbf8b" font-size="10" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">TCP</text>
-        <rect x="391" y="152" width="199" height="28" rx="5" fill="#202836" stroke="#2c3646" stroke-width="1"/>
-        <text x="490" y="170" fill="#dfe6ef" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Nutzdaten</text>
-        <rect x="592" y="152" width="48" height="28" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="616" y="170" fill="#6fbf8b" font-size="9" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">FCS</text>
+        <text x="40" y="168" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Frame</text>
+        <text x="130" y="168" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 2</text>
+        <rect x="220" y="152" width="65" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="252" y="170" fill="#7fae70" font-size="9" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Ethernet</text>
+        <rect x="287" y="152" width="50" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="312" y="170" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">IP</text>
+        <rect x="339" y="152" width="50" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="364" y="170" fill="#7fae70" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP</text>
+        <rect x="391" y="152" width="199" height="28" rx="5" fill="#1a222e" stroke="#2a3444" stroke-width="1"/>
+        <text x="490" y="170" fill="#e6eaf0" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Nutzdaten</text>
+        <rect x="592" y="152" width="48" height="28" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="616" y="170" fill="#7fae70" font-size="9" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">FCS</text>
 
-        <line x1="340" y1="184" x2="340" y2="198" stroke="#2c3646" stroke-width="1"/>
-        <text x="350" y="194" fill="#8b97a8" font-size="10" font-style="italic" font-family="Segoe UI, Roboto, sans-serif">wandelt in</text>
+        <line x1="340" y1="184" x2="340" y2="198" stroke="#2a3444" stroke-width="1"/>
+        <text x="350" y="194" fill="#93a1b8" font-size="10" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">wandelt in</text>
 
-        <text x="40" y="216" fill="#6fbf8b" font-size="14" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">Bits</text>
-        <text x="130" y="216" fill="#8b97a8" font-size="11" font-family="Segoe UI, Roboto, sans-serif">Schicht 1</text>
-        <path d="M220 208 h20 v-6 h10 v12 h10 v-12 h10 v12 h10 v-6 h20 v-6 h10 v12 h10 v-12 h10 v12 h10 v-6 h20" fill="none" stroke="#6fbf8b" stroke-width="1.4"/>
-        <text x="480" y="212" fill="#8b97a8" font-size="10" font-family="Segoe UI, Roboto, sans-serif">01001011 01110100 ...</text>
+        <text x="40" y="216" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">Bits</text>
+        <text x="130" y="216" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Schicht 1</text>
+        <path d="M220 208 h20 v-6 h10 v12 h10 v-12 h10 v12 h10 v-6 h20 v-6 h10 v12 h10 v-12 h10 v12 h10 v-6 h20" fill="none" stroke="#7fae70" stroke-width="1.4"/>
+        <text x="480" y="212" fill="#93a1b8" font-size="10" font-family="IBM Plex Sans, Segoe UI, sans-serif">01001011 01110100 ...</text>
 
-        <text x="340" y="248" fill="#c9a24d" font-size="11" text-anchor="middle" font-style="italic" font-family="Segoe UI, Roboto, sans-serif">Beim Empfänger läuft der Vorgang umgekehrt ab (Entkapselung)</text>
-        <text x="340" y="266" fill="#8b97a8" font-size="10" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">jede Schicht liest nur ihren eigenen Header, entfernt ihn und reicht den Rest nach oben weiter</text>
+        <text x="340" y="248" fill="#cc9f3f" font-size="11" text-anchor="middle" font-style="italic" font-family="IBM Plex Sans, Segoe UI, sans-serif">Beim Empfänger läuft der Vorgang umgekehrt ab (Entkapselung)</text>
+        <text x="340" y="266" fill="#93a1b8" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">jede Schicht liest nur ihren eigenen Header, entfernt ihn und reicht den Rest nach oben weiter</text>
       </svg>
       </div>
-      <div class="card searchable" data-terms="kapselung encapsulation header pdu segment paket frame bits">
+      <div class="card" data-search="kapselung encapsulation header pdu segment paket frame bits">
         <h4>PDU je Schicht</h4>
         <p>Jede Schicht hat ihre eigene Bezeichnung für die Dateneinheit (PDU - Protocol Data Unit): Schicht 4 Segment, Schicht 3 Paket, Schicht 2 Frame, Schicht 1 Bits. Schicht 5-7 arbeiten meist einfach mit "Daten".</p>
       </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="category" data-cat="tcpip-vergleich">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">OSI vs. TCP/IP <small>Gegenüberstellung</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <div class="osi-svg-wrap">
+      <section class="category-section" id="tcpip-vergleich" data-nav="OSI vs. TCP/IP">
+        <div class="category-head"><h2>OSI vs. TCP/IP</h2><span class="path">Gegenüberstellung</span></div>
+
+      <div class="schaubild">
       <svg viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>OSI-Modell im Vergleich zum TCP/IP-Modell</title>
         <desc>Die 7 OSI-Schichten links, rechts die 4 zusammengefassten TCP/IP-Schichten</desc>
 
-        <text x="60" y="20" fill="#8b97a8" font-size="12" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">OSI (7 Schichten)</text>
-        <text x="440" y="20" fill="#8b97a8" font-size="12" font-weight="600" font-family="Segoe UI, Roboto, sans-serif">TCP/IP (4 Schichten)</text>
+        <text x="60" y="20" fill="#93a1b8" font-size="12" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">OSI (7 Schichten)</text>
+        <text x="440" y="20" fill="#93a1b8" font-size="12" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP/IP (4 Schichten)</text>
 
-        <rect x="60" y="30" width="180" height="34" rx="5" fill="#202836" stroke="#e0a840" stroke-width="1"/>
-        <text x="150" y="51" fill="#e0a840" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">7 Anwendung</text>
-        <rect x="60" y="68" width="180" height="34" rx="5" fill="#202836" stroke="#e0a840" stroke-width="1"/>
-        <text x="150" y="89" fill="#e0a840" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">6 Darstellung</text>
-        <rect x="60" y="106" width="180" height="34" rx="5" fill="#202836" stroke="#e0a840" stroke-width="1"/>
-        <text x="150" y="127" fill="#e0a840" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">5 Sitzung</text>
+        <rect x="60" y="30" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="150" y="51" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 Anwendung</text>
+        <rect x="60" y="68" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="150" y="89" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 Darstellung</text>
+        <rect x="60" y="106" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
+        <text x="150" y="127" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 Sitzung</text>
 
-        <rect x="60" y="150" width="180" height="34" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="150" y="171" fill="#6fbf8b" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">4 Transport</text>
+        <rect x="60" y="150" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="171" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 Transport</text>
 
-        <rect x="60" y="188" width="180" height="34" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="150" y="209" fill="#6fbf8b" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">3 Vermittlung</text>
+        <rect x="60" y="188" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="209" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 Vermittlung</text>
 
-        <rect x="60" y="226" width="180" height="34" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="150" y="247" fill="#6fbf8b" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">2 Sicherung</text>
-        <rect x="60" y="264" width="180" height="34" rx="5" fill="#202836" stroke="#6fbf8b" stroke-width="1"/>
-        <text x="150" y="285" fill="#6fbf8b" font-size="12" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">1 Bitübertragung</text>
+        <rect x="60" y="226" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="247" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 Sicherung</text>
+        <rect x="60" y="264" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
+        <text x="150" y="285" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 Bitübertragung</text>
 
-        <path d="M240 47 C 320 47, 320 76, 400 76" fill="none" stroke="#2c3646" stroke-width="1"/>
-        <path d="M240 85 C 320 85, 320 76, 400 76" fill="none" stroke="#2c3646" stroke-width="1"/>
-        <path d="M240 123 C 320 123, 320 76, 400 76" fill="none" stroke="#2c3646" stroke-width="1"/>
-        <rect x="400" y="30" width="220" height="92" rx="5" fill="#202836" stroke="#8b97a8" stroke-width="1"/>
-        <text x="510" y="80" fill="#dfe6ef" font-size="13" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Application</text>
+        <path d="M240 47 C 320 47, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <path d="M240 85 C 320 85, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <path d="M240 123 C 320 123, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="30" width="220" height="92" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="80" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Application</text>
 
-        <path d="M240 167 L 400 167" fill="none" stroke="#2c3646" stroke-width="1"/>
-        <rect x="400" y="150" width="220" height="34" rx="5" fill="#202836" stroke="#8b97a8" stroke-width="1"/>
-        <text x="510" y="171" fill="#dfe6ef" font-size="13" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Transport</text>
+        <path d="M240 167 L 400 167" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="150" width="220" height="34" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="171" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Transport</text>
 
-        <path d="M240 205 L 400 205" fill="none" stroke="#2c3646" stroke-width="1"/>
-        <rect x="400" y="188" width="220" height="34" rx="5" fill="#202836" stroke="#8b97a8" stroke-width="1"/>
-        <text x="510" y="209" fill="#dfe6ef" font-size="13" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Internet</text>
+        <path d="M240 205 L 400 205" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="188" width="220" height="34" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="209" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Internet</text>
 
-        <path d="M240 243 C 320 243, 320 280, 400 280" fill="none" stroke="#2c3646" stroke-width="1"/>
-        <path d="M240 281 C 320 281, 320 280, 400 280" fill="none" stroke="#2c3646" stroke-width="1"/>
-        <rect x="400" y="226" width="220" height="72" rx="5" fill="#202836" stroke="#8b97a8" stroke-width="1"/>
-        <text x="510" y="266" fill="#dfe6ef" font-size="13" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">Network Access</text>
+        <path d="M240 243 C 320 243, 320 280, 400 280" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <path d="M240 281 C 320 281, 320 280, 400 280" fill="none" stroke="#2a3444" stroke-width="1"/>
+        <rect x="400" y="226" width="220" height="72" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
+        <text x="510" y="266" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Network Access</text>
 
-        <text x="340" y="332" fill="#8b97a8" font-size="10" text-anchor="middle" font-family="Segoe UI, Roboto, sans-serif">TCP/IP fasst OSI-Schicht 5-7 zu "Application" und Schicht 1-2 zu "Network Access" zusammen</text>
+        <text x="340" y="332" fill="#93a1b8" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP/IP fasst OSI-Schicht 5-7 zu "Application" und Schicht 1-2 zu "Network Access" zusammen</text>
       </svg>
       </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="category" data-cat="geraete-vergleich">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Geräte-Vergleich <small>Router, Switch, Firewall</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <div class="card searchable" data-terms="router switch firewall vergleich verwechslung unterschied layer">
+      <section class="category-section" id="geraete-vergleich" data-nav="Geräte-Vergleich">
+        <div class="category-head"><h2>Geräte-Vergleich</h2><span class="path">Router, Switch, Firewall</span></div>
+
+      <div class="card" data-search="router switch firewall vergleich verwechslung unterschied layer">
         <h4>Router</h4>
-        <p><span class="formula">Layer 3</span> verbindet unterschiedliche Netzwerke, leitet Pakete anhand der Ziel-IP-Adresse weiter.</p>
+        <p><span class="formel">Layer 3</span> verbindet unterschiedliche Netzwerke, leitet Pakete anhand der Ziel-IP-Adresse weiter.</p>
       </div>
-      <div class="card searchable" data-terms="router switch firewall vergleich verwechslung unterschied layer">
+      <div class="card" data-search="router switch firewall vergleich verwechslung unterschied layer">
         <h4>Switch</h4>
-        <p><span class="formula">Layer 2</span> verbindet Geräte innerhalb desselben Netzwerks, leitet Frames anhand der MAC-Adresse weiter.</p>
+        <p><span class="formel">Layer 2</span> verbindet Geräte innerhalb desselben Netzwerks, leitet Frames anhand der MAC-Adresse weiter.</p>
       </div>
-      <div class="card searchable" data-terms="router switch firewall vergleich verwechslung unterschied layer">
+      <div class="card" data-search="router switch firewall vergleich verwechslung unterschied layer">
         <h4>Firewall</h4>
-        <p><span class="formula">Layer 3/4</span> (klassischer Paketfilter) prüft und filtert Datenverkehr nach IP-Adresse und Port. Eine Application-Firewall/WAF arbeitet zusätzlich auf <span class="formula">Layer 7</span>.</p>
+        <p><span class="formel">Layer 3/4</span> (klassischer Paketfilter) prüft und filtert Datenverkehr nach IP-Adresse und Port. Eine Application-Firewall/WAF arbeitet zusätzlich auf <span class="formel">Layer 7</span>.</p>
         <div class="merksatz">Merksatz: Switch verbindet im Netz, Router verbindet Netze, Firewall kontrolliert, was durchdarf.</div>
       </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="category" data-cat="grundlagen">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Grundlagen <small>Was ist das OSI-Modell</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <div class="card searchable" data-terms="osi referenzmodell 7 schichten iso">
+      <section class="category-section" id="grundlagen" data-nav="Grundlagen">
+        <div class="category-head"><h2>Grundlagen</h2><span class="path">Was ist das OSI-Modell</span></div>
+
+      <div class="card" data-search="osi referenzmodell 7 schichten iso">
         <h4>OSI-Referenzmodell</h4>
         <p>Schichtenmodell mit 7 Ebenen zur Beschreibung der Netzwerkkommunikation. Jede Schicht übernimmt eine klar abgegrenzte Aufgabe und nutzt die Dienste der darunterliegenden Schicht.</p>
         <div class="merksatz">Merksatz: Je höher die Schicht, desto näher am Anwender. Je tiefer, desto näher an der Hardware.</div>
       </div>
-      <div class="card searchable" data-terms="anwendungsorientiert transportorientiert obere untere schichten gruppierung">
+      <div class="card" data-search="anwendungsorientiert transportorientiert obere untere schichten gruppierung">
         <h4>Zwei Gruppen</h4>
         <p>Schicht 5-7: anwendungsorientiert (Daten, Formate, Sitzungen)</p>
         <p>Schicht 1-4: transportorientiert (Übertragung, Adressierung, Wegfindung)</p>
       </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="category" data-cat="schichten">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Die 7 Schichten <small>Layer 7 bis 1</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
+      <section class="category-section" id="schichten" data-nav="Die 7 Schichten">
+        <div class="category-head"><h2>Die 7 Schichten</h2><span class="path">Layer 7 bis 1</span></div>
 
-      <h4 class="sub-head">Anwendungsorientiert</h4>
-
-      <div class="card searchable" data-terms="layer 7 anwendung application http ftp smtp dns proxy gateway url hostname">
+      <div class="group">
+        <div class="group-name">Anwendungsorientiert</div>
+      <div class="card" data-search="layer 7 anwendung application http ftp smtp dns proxy gateway url hostname">
         <h4><span class="layer-badge">7</span>Anwendung / Application</h4>
         <p>TCP/IP-Schicht: Application</p>
         <p>Schnittstelle zum Nutzer. Stellt Funktionen für Anwendungen bereit, ermöglicht die Verbindung zu den unteren Schichten. Hier findet die Dateneingabe und -ausgabe statt.</p>
-        <p><span class="formula">Protokolle: HTTP, FTP, SMTP, DNS</span></p>
-        <p><span class="formula">Adressen: URLs, Hostnamen</span></p>
-        <p><span class="formula">Geräte: Proxy, Gateway</span></p>
+        <p><span class="formel">Protokolle: HTTP, FTP, SMTP, DNS</span></p>
+        <p><span class="formel">Adressen: URLs, Hostnamen</span></p>
+        <p><span class="formel">Geräte: Proxy, Gateway</span></p>
       </div>
 
-      <div class="card searchable" data-terms="layer 6 darstellung presentation tls ssl jpeg ascii verschlüsselung kompression">
+      <div class="card" data-search="layer 6 darstellung presentation tls ssl jpeg ascii verschlüsselung kompression">
         <h4><span class="layer-badge">6</span>Darstellung / Presentation</h4>
         <p>TCP/IP-Schicht: Application</p>
         <p>Datenformatierung. Bereitet die Daten so auf, dass sie dem Nutzer angezeigt werden können. Zwei Anwendungen verwenden dabei üblicherweise die gleiche Kodierung.</p>
-        <p><span class="formula">Protokolle: TLS, SSL, JPEG, ASCII</span></p>
+        <p><span class="formel">Protokolle: TLS, SSL, JPEG, ASCII</span></p>
       </div>
 
-      <div class="card searchable" data-terms="layer 5 sitzung session netbios rpc sitzungsaufbau synchronisation">
+      <div class="card" data-search="layer 5 sitzung session netbios rpc sitzungsaufbau synchronisation">
         <h4><span class="layer-badge">5</span>Sitzung / Session</h4>
         <p>TCP/IP-Schicht: Application</p>
         <p>Sitzungssteuerung. Ermöglicht Verbindungen zwischen Endsystemen. Die Zeit zwischen Öffnen und Schließen der Kommunikation wird als Sitzung bezeichnet.</p>
-        <p><span class="formula">Protokolle: NetBIOS, RPC</span></p>
+        <p><span class="formel">Protokolle: NetBIOS, RPC</span></p>
       </div>
-
-      <h4 class="sub-head">Transportorientiert</h4>
-
-      <div class="card searchable" data-terms="layer 4 transport tcp udp port firewall segmentierung flusskontrolle">
+      </div>
+      <div class="group">
+        <div class="group-name">Transportorientiert</div>
+      <div class="card" data-search="layer 4 transport tcp udp port firewall segmentierung flusskontrolle">
         <h4><span class="layer-badge">4</span>Transport</h4>
         <p>TCP/IP-Schicht: Transport</p>
         <p>Adressierung von Anwendungen und Prozessen. End-to-End-Kommunikation zwischen zwei Geräten, Bindeglied zwischen transportorientierten und anwendungsorientierten Schichten. Zur Übertragung wird das Gesamtpaket in kleinere Bestandteile zerlegt.</p>
-        <p><span class="formula">Protokolle: TCP, UDP</span></p>
-        <p><span class="formula">Adressen: Ports</span></p>
-        <p><span class="formula">Geräte: Firewall</span></p>
+        <p><span class="formel">Protokolle: TCP, UDP</span></p>
+        <p><span class="formel">Adressen: Ports</span></p>
+        <p><span class="formel">Geräte: Firewall</span></p>
       </div>
 
-      <div class="card searchable" data-terms="layer 3 vermittlung network ip icmp router routing ip-adresse fragmente">
+      <div class="card" data-search="layer 3 vermittlung network ip icmp router routing ip-adresse fragmente">
         <h4><span class="layer-badge">3</span>Vermittlung / Network</h4>
         <p>TCP/IP-Schicht: Internet</p>
         <p>Routing. Reguliert den Datentransfer zwischen zwei verschiedenen Netzwerken - innerhalb eines Netzwerks fällt diese Schicht weg. Segmente aus Layer 4 werden in Fragmente aufgeteilt und beim Empfänger wieder zusammengefügt.</p>
-        <p><span class="formula">Protokolle: IP, ICMP</span></p>
-        <p><span class="formula">Adressen: IP-Adressen</span></p>
-        <p><span class="formula">Geräte: Router</span></p>
+        <p><span class="formel">Protokolle: IP, ICMP</span></p>
+        <p><span class="formel">Adressen: IP-Adressen</span></p>
+        <p><span class="formel">Geräte: Router</span></p>
       </div>
 
-      <div class="card searchable" data-terms="layer 2 sicherung datalink ethernet arp switch mac-adresse frames">
+      <div class="card" data-search="layer 2 sicherung datalink ethernet arp switch mac-adresse frames">
         <h4><span class="layer-badge">2</span>Sicherung / Data Link</h4>
         <p>TCP/IP-Schicht: Network</p>
         <p>Lokale Adressierung. Ermöglicht eine zuverlässige Verbindung zwischen Endgerät und Übertragungsmedium innerhalb desselben Netzes. Pakete aus Layer 3 werden in kleinere Teile zerlegt, sogenannte Frames.</p>
-        <p><span class="formula">Protokolle: Ethernet, ARP</span></p>
-        <p><span class="formula">Adressen: MAC-Adressen</span></p>
-        <p><span class="formula">Geräte: Switch</span></p>
+        <p><span class="formel">Protokolle: Ethernet, ARP</span></p>
+        <p><span class="formel">Adressen: MAC-Adressen</span></p>
+        <p><span class="formel">Geräte: Switch</span></p>
       </div>
 
-      <div class="card searchable" data-terms="layer 1 bitübertragung physical hub kabel signale hardware">
+      <div class="card" data-search="layer 1 bitübertragung physical hub kabel signale hardware">
         <h4><span class="layer-badge">1</span>Bitübertragung / Physical</h4>
         <p>TCP/IP-Schicht: Network</p>
         <p>Physische Übertragung. Elektrische, mechanische und funktionale Schnittstelle zum Übertragungsmedium - beinhaltet die Datenübertragung der beteiligten physischen Geräte wie Kabel und Switch.</p>
-        <p><span class="formula">Geräte: Hub, Kabel</span></p>
+        <p><span class="formel">Geräte: Hub, Kabel</span></p>
       </div>
 
-    </div>
-  </div>
+    
+      </div>
+      </section>
 
-  <div class="category" data-cat="glossar">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Begriffsübersicht <small>Glossar</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <table id="glossar-table">
+      <section class="category-section" id="glossar" data-nav="Glossar">
+        <div class="category-head"><h2>Glossar</h2><span class="path">Begriffsübersicht</span></div>
+
+      <div class="card" data-search="glossar osi schichtenmodell 7 ebenen tcp/ip vier schichten praxis segment layer 4 transport dateneinheit paket layer 3 vermittlung dateneinheit frame layer 2 sicherung dateneinheit mac-adresse eindeutig netzwerkkarte hardware ip-adresse logisch netzwerk übergreifend port anwendung prozess unterscheidung kapselung encapsulation header anfügen protokoll regelwerk kommunikation">
+        <div class="tbl-wrap"><table class="tbl zeilen" id="glossar-table">
         <tr><th>Begriff</th><th>Bedeutung</th></tr>
-        <tr class="searchable" data-terms="osi schichtenmodell 7 ebenen"><td>OSI-Modell</td><td>Schichtenmodell mit 7 Ebenen zur Beschreibung der Netzwerkkommunikation</td></tr>
-        <tr class="searchable" data-terms="tcp/ip vier schichten praxis"><td>TCP/IP-Modell</td><td>Praxisnaheres 4-Schichten-Modell, fasst mehrere OSI-Schichten zusammen</td></tr>
-        <tr class="searchable" data-terms="segment layer 4 transport dateneinheit"><td>Segment</td><td>Dateneinheit der Transportschicht (Layer 4)</td></tr>
-        <tr class="searchable" data-terms="paket layer 3 vermittlung dateneinheit"><td>Paket</td><td>Dateneinheit der Vermittlungsschicht (Layer 3)</td></tr>
-        <tr class="searchable" data-terms="frame layer 2 sicherung dateneinheit"><td>Frame</td><td>Dateneinheit der Sicherungsschicht (Layer 2)</td></tr>
-        <tr class="searchable" data-terms="mac-adresse eindeutig netzwerkkarte hardware"><td>MAC-Adresse</td><td>Eindeutige Hardware-Adresse der Netzwerkkarte, lokale Adressierung</td></tr>
-        <tr class="searchable" data-terms="ip-adresse logisch netzwerk übergreifend"><td>IP-Adresse</td><td>Logische Adresse zur netzübergreifenden Adressierung</td></tr>
-        <tr class="searchable" data-terms="port anwendung prozess unterscheidung"><td>Port</td><td>Adressiert eine bestimmte Anwendung bzw. einen Prozess auf einem Gerät</td></tr>
-        <tr class="searchable" data-terms="kapselung encapsulation header anfügen"><td>Kapselung</td><td>Anfügen von Header-Informationen der jeweiligen Schicht an die Daten</td></tr>
-        <tr class="searchable" data-terms="protokoll regelwerk kommunikation"><td>Protokoll</td><td>Regelwerk, das die Kommunikation auf einer bestimmten Schicht festlegt</td></tr>
-      </table>
-    </div>
-  </div>
+        <tr data-search="osi schichtenmodell 7 ebenen"><td>OSI-Modell</td><td>Schichtenmodell mit 7 Ebenen zur Beschreibung der Netzwerkkommunikation</td></tr>
+        <tr data-search="tcp/ip vier schichten praxis"><td>TCP/IP-Modell</td><td>Praxisnaheres 4-Schichten-Modell, fasst mehrere OSI-Schichten zusammen</td></tr>
+        <tr data-search="segment layer 4 transport dateneinheit"><td>Segment</td><td>Dateneinheit der Transportschicht (Layer 4)</td></tr>
+        <tr data-search="paket layer 3 vermittlung dateneinheit"><td>Paket</td><td>Dateneinheit der Vermittlungsschicht (Layer 3)</td></tr>
+        <tr data-search="frame layer 2 sicherung dateneinheit"><td>Frame</td><td>Dateneinheit der Sicherungsschicht (Layer 2)</td></tr>
+        <tr data-search="mac-adresse eindeutig netzwerkkarte hardware"><td>MAC-Adresse</td><td>Eindeutige Hardware-Adresse der Netzwerkkarte, lokale Adressierung</td></tr>
+        <tr data-search="ip-adresse logisch netzwerk übergreifend"><td>IP-Adresse</td><td>Logische Adresse zur netzübergreifenden Adressierung</td></tr>
+        <tr data-search="port anwendung prozess unterscheidung"><td>Port</td><td>Adressiert eine bestimmte Anwendung bzw. einen Prozess auf einem Gerät</td></tr>
+        <tr data-search="kapselung encapsulation header anfügen"><td>Kapselung</td><td>Anfügen von Header-Informationen der jeweiligen Schicht an die Daten</td></tr>
+        <tr data-search="protokoll regelwerk kommunikation"><td>Protokoll</td><td>Regelwerk, das die Kommunikation auf einer bestimmten Schicht festlegt</td></tr>
+      </table></div>
+      </div>
+      </section>
 
-  <div class="category" data-cat="eselsbruecke">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Eselsbrücke <small>Reihenfolge merken</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <div class="card searchable" data-terms="eselsbrücke merksatz apstndp alle prüfer suchen tests nach der pause">
+      <section class="category-section" id="eselsbruecke" data-nav="Eselsbrücke">
+        <div class="category-head"><h2>Eselsbrücke</h2><span class="path">Reihenfolge merken</span></div>
+
+      <div class="card" data-search="eselsbrücke merksatz apstndp alle prüfer suchen tests nach der pause">
         <h4>Alle Prüfer Suchen Tests Nach Der Pause</h4>
         <p>Erster Buchstabe je Wort = erster Buchstabe der Schicht, von oben (7) nach unten (1):</p>
         <p>
-          <span class="formula">A - Anwendung (7)</span>
-          <span class="formula">P - Präsentation (6)</span>
-          <span class="formula">S - Sitzung (5)</span>
-          <span class="formula">T - Transport (4)</span>
-          <span class="formula">N - Netzwerk/Vermittlung (3)</span>
-          <span class="formula">D - Datensicherung (2)</span>
-          <span class="formula">P - Physikalisch (1)</span>
+          <span class="formel">A - Anwendung (7)</span>
+          <span class="formel">P - Präsentation (6)</span>
+          <span class="formel">S - Sitzung (5)</span>
+          <span class="formel">T - Transport (4)</span>
+          <span class="formel">N - Netzwerk/Vermittlung (3)</span>
+          <span class="formel">D - Datensicherung (2)</span>
+          <span class="formel">P - Physikalisch (1)</span>
         </p>
         <div class="merksatz">Merksatz: A-P-S-T-N-D-P - jeder Prüfer sucht Tests nach der Pause.</div>
       </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="category" data-cat="ieee">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Wichtige Netzwerkstandards <small>IEEE</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <table id="ieee-table">
+      <section class="category-section" id="ieee" data-nav="Netzwerkstandards">
+        <div class="category-head"><h2>Wichtige Netzwerkstandards</h2><span class="path">IEEE</span></div>
+
+      <div class="card" data-search="ieee ieee 802.3 ethernet kabelgebunden lan kupfernetzwerk ieee 802.11 wlan wireless lan funknetzwerk wifi ieee 802.15 bluetooth wpan optional persönliche netzwerke ieee 802.1q vlan optional virtuelle netzwerke">
+        <div class="tbl-wrap"><table class="tbl zeilen" id="ieee-table">
         <tr><th>Standard</th><th>Name</th><th>Beschreibung</th></tr>
-        <tr class="searchable" data-terms="ieee 802.3 ethernet kabelgebunden lan kupfernetzwerk"><td>IEEE 802.3</td><td>Ethernet (kabelgebundenes LAN)</td><td>Das Standard-Kupfernetzwerk</td></tr>
-        <tr class="searchable" data-terms="ieee 802.11 wlan wireless lan funknetzwerk wifi"><td>IEEE 802.11</td><td>WLAN (Wireless LAN)</td><td>Funknetzwerk (Wi-Fi)</td></tr>
-        <tr class="searchable" data-terms="ieee 802.15 bluetooth wpan optional persönliche netzwerke"><td>IEEE 802.15 <em>(optional)</em></td><td>Bluetooth / WPAN</td><td>Persönliche Netzwerke</td></tr>
-        <tr class="searchable" data-terms="ieee 802.1q vlan optional virtuelle netzwerke"><td>IEEE 802.1Q <em>(optional)</em></td><td>VLAN</td><td>Virtuelle Netzwerke</td></tr>
-      </table>
-      <div class="card searchable" data-terms="switch mac 802.3 802.11 ap-bereich router ip-bereich schema">
+        <tr data-search="ieee 802.3 ethernet kabelgebunden lan kupfernetzwerk"><td>IEEE 802.3</td><td>Ethernet (kabelgebundenes LAN)</td><td>Das Standard-Kupfernetzwerk</td></tr>
+        <tr data-search="ieee 802.11 wlan wireless lan funknetzwerk wifi"><td>IEEE 802.11</td><td>WLAN (Wireless LAN)</td><td>Funknetzwerk (Wi-Fi)</td></tr>
+        <tr data-search="ieee 802.15 bluetooth wpan optional persönliche netzwerke"><td>IEEE 802.15 <em>(optional)</em></td><td>Bluetooth / WPAN</td><td>Persönliche Netzwerke</td></tr>
+        <tr data-search="ieee 802.1q vlan optional virtuelle netzwerke"><td>IEEE 802.1Q <em>(optional)</em></td><td>VLAN</td><td>Virtuelle Netzwerke</td></tr>
+      </table></div>
+      </div>
+      <div class="card" data-search="switch mac 802.3 802.11 ap-bereich router ip-bereich schema">
         <h4>Einordnung im Netzwerk</h4>
         <p>802.3 (Ethernet) und 802.11 (WLAN) liefern die physische/logische Anbindung der Endgeräte an Switch bzw. Access Point - Layer 1/2. VLAN (802.1Q) teilt ein physisches Netz logisch auf, ebenfalls Layer 2. Router und Firewall sitzen dahinter auf Layer 3/4.</p>
       </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="category" data-cat="hilfe">
-    <div class="cat-head" onclick="toggleCat(this)">
-      <div class="cat-title">Hilfe bei Bearbeitungsstillstand <small>Wenn's hakt</small></div>
-      <div class="chevron">▶</div>
-    </div>
-    <div class="cat-body">
-      <div class="card searchable" data-terms="schicht zuordnen unklar gerät protokoll">
+      <section class="category-section" id="hilfe" data-nav="Wenn's hakt">
+        <div class="category-head"><h2>Wenn's hakt</h2><span class="path">Hilfe bei Bearbeitungsstillstand</span></div>
+
+      <div class="card" data-search="schicht zuordnen unklar gerät protokoll">
         <h4>Zuordnung eines Geräts/Protokolls unklar</h4>
         <p>Fragen, auf welcher Adressart das Gerät arbeitet: MAC = Layer 2, IP = Layer 3, Port = Layer 4.</p>
       </div>
-      <div class="card searchable" data-terms="firewall mehrdeutig layer 3 4 7">
+      <div class="card" data-search="firewall mehrdeutig layer 3 4 7">
         <h4>Firewall wirkt mehrdeutig</h4>
         <p>Klassische Paketfilter-Firewall arbeitet auf Layer 3/4 (IP + Port). Application-Firewall/WAF auf Layer 7. Für eine einfache 1-Gerät-pro-Layer-Zuordnung: Router = Layer 3, Firewall = Layer 4.</p>
       </div>
-      <div class="card searchable" data-terms="tcp/ip osi unterschied verwechslung schichten">
+      <div class="card" data-search="tcp/ip osi unterschied verwechslung schichten">
         <h4>OSI und TCP/IP verwechselt</h4>
         <p>OSI hat 7 Schichten, TCP/IP nur 4. Schicht 5-7 des OSI-Modells entsprechen zusammen der Application-Schicht im TCP/IP-Modell.</p>
       </div>
-      <div class="card searchable" data-terms="reihenfolge schichten merken oben unten">
+      <div class="card" data-search="reihenfolge schichten merken oben unten">
         <h4>Reihenfolge der Schichten vergessen</h4>
         <p>Von oben (7) nach unten (1): Anwendung, Darstellung, Sitzung, Transport, Vermittlung, Sicherung, Bitübertragung.</p>
       </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- FLASHCARD MODE -->
-<div id="flash-wrap">
-  <div class="flash-progress" id="flash-progress"></div>
-  <div class="flashcard" id="flashcard" onclick="flipCard()">
-    <div class="flash-inner">
-      <div class="flash-face flash-front">
-        <div class="tag" id="flash-tag">Begriff</div>
-        <div class="q" id="flash-q">Frage</div>
-      </div>
-      <div class="flash-face flash-back">
-        <div class="a" id="flash-a">Antwort</div>
-        <div class="ex" id="flash-ex">Beispiel</div>
-      </div>
-    </div>
-  </div>
-  <div class="flash-hint">Klicken zum Umdrehen</div>
-  <div class="flash-controls">
-    <button onclick="prevCard()">← Zurück</button>
-    <button onclick="shuffleCards()">🔀 Mischen</button>
-    <button onclick="nextCard()">Weiter →</button>
+      </section>
+      <div class="no-results" id="noResults">Keine Treffer. Versuch's mit einem anderen Begriff.</div>
+    </main>
   </div>
 </div>
 
-</main>
-
-<footer>
-  OSI-Modell auf einem Blatt - Zusammenfassung eigener Formulierung auf Basis des im Unterricht erarbeiteten Miro-Boards.<br>
-  <span class="quelle">Kein Anspruch auf Vollständigkeit, kein Ersatz für die Original-Unterlagen.</span>
+<footer class="seitenfuss">
+  <span>© 2026 <a href="https://github.com/nicandr0" target="_blank" rel="noopener">Nicandro Marziale</a> – Design, Entwicklung und Formulierung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></span>
+  <span>OSI-Modell auf einem Blatt - Zusammenfassung eigener Formulierung auf Basis des im Unterricht erarbeiteten Miro-Boards.</span>
+  <span>Kein Anspruch auf Vollständigkeit, kein Ersatz für die Original-Unterlagen.</span>
 </footer>
 
-<div style="text-align:center;font:11px/1.6 ui-monospace,Consolas,monospace;color:#8b949e;padding:14px 16px 24px;">© 2026 <a href="https://github.com/nicandr0" style="color:inherit;">Nicandro Marziale</a> – Design, Entwicklung und Formulierung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener" style="color:inherit;">CC BY-NC-SA 4.0</a></div>
+<div class="lernmodus" id="lernmodus" role="dialog" aria-modal="true" aria-label="Lernmodus">
+  <div class="lm-box">
+    <button class="lm-close" type="button" aria-label="Schließen">×</button>
+    <div id="lmKarten">
+      <div class="lm-progress">Karte 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-card" id="lmCard" tabindex="0" role="button" aria-label="Karte umdrehen">
+        <div class="lm-cat" id="lmCat"></div>
+        <div class="lm-front" id="lmFront"></div>
+        <div id="lmBack" class="hidden">
+          <div class="lm-reveal" id="lmReveal"></div>
+          <div class="lm-extra" id="lmExtra"></div>
+        </div>
+        <div class="lm-flip-hint" id="lmFlipHint">Klicken zum Aufdecken</div>
+      </div>
+      <div class="lm-actions">
+        <button class="btn again" id="lmAgain" type="button">↺ nochmal üben</button>
+        <button class="btn know" id="lmKnow" type="button">✓ weiß ich</button>
+      </div>
+      <div class="lm-keys">Leertaste aufdecken · ← nochmal · → weiß ich · Esc schließen</div>
+    </div>
+    <div id="lmQuiz">
+      <div class="lm-progress">Frage 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-cat" id="lmQCat"></div>
+      <div class="lm-question" id="lmQuestion"></div>
+      <div class="lm-options" id="lmOptions"></div>
+      <div class="lm-hint">Es können mehrere Antworten richtig sein - Checkbox(en) auswählen und prüfen.</div>
+      <div class="lm-explain" id="lmExplain"></div>
+      <div class="lm-actions">
+        <button class="btn check" id="lmCheck" type="button">Prüfen</button>
+        <button class="btn next hidden" id="lmNext" type="button">Weiter →</button>
+      </div>
+    </div>
+    <div id="lmDone" class="lm-done hidden">
+      <h3>Runde fertig</h3>
+      <p id="lmDoneText"></p>
+      <button class="btn primary" id="lmRestart" type="button">Neue Runde starten</button>
+    </div>
+  </div>
+</div>
 
 <script>
-function toggleCat(head){ head.parentElement.classList.toggle('open'); }
-document.querySelector('.category').classList.add('open');
+/* Lernkarten */
+const KARTEN = [
+  {tag:'Grundlage', vorne:'Aus wie vielen Schichten besteht das OSI-Modell?', hinten:'7 Schichten', zusatz:'Von Anwendung (7) bis Bitübertragung (1)'},
+  {tag:'Grundlage', vorne:'Welche Schichten gelten als anwendungsorientiert?', hinten:'Schicht 5-7', zusatz:'Sitzung, Darstellung, Anwendung'},
+  {tag:'Grundlage', vorne:'Welche Schichten gelten als transportorientiert?', hinten:'Schicht 1-4', zusatz:'Bitübertragung, Sicherung, Vermittlung, Transport'},
+  {tag:'Layer 7', vorne:'Was macht die Anwendungsschicht (Layer 7)?', hinten:'Schnittstelle zum Nutzer', zusatz:'Protokolle: HTTP, FTP, SMTP, DNS - Geräte: Proxy, Gateway'},
+  {tag:'Layer 6', vorne:'Was macht die Darstellungsschicht (Layer 6)?', hinten:'Datenformatierung', zusatz:'z.B. Verschlüsselung, Kompression - TLS, SSL, JPEG, ASCII'},
+  {tag:'Layer 5', vorne:'Was macht die Sitzungsschicht (Layer 5)?', hinten:'Sitzungssteuerung', zusatz:'Auf- und Abbau von Verbindungen - NetBIOS, RPC'},
+  {tag:'Layer 4', vorne:'Was macht die Transportschicht (Layer 4)?', hinten:'Adressierung von Anwendungen/Prozessen', zusatz:'TCP, UDP - Adressen: Ports - Gerät: Firewall'},
+  {tag:'Layer 3', vorne:'Was macht die Vermittlungsschicht (Layer 3)?', hinten:'Routing zwischen Netzwerken', zusatz:'IP, ICMP - Adressen: IP-Adressen - Gerät: Router'},
+  {tag:'Layer 2', vorne:'Was macht die Sicherungsschicht (Layer 2)?', hinten:'Lokale Adressierung', zusatz:'Ethernet, ARP - Adressen: MAC-Adressen - Gerät: Switch'},
+  {tag:'Layer 1', vorne:'Was macht die Bitübertragungsschicht (Layer 1)?', hinten:'Physische Übertragung', zusatz:'Elektrische/mechanische Schnittstelle - Geräte: Hub, Kabel'},
+  {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 4?', hinten:'Segment', zusatz:'Wird auf Layer 3 in Fragmente/Pakete zerlegt'},
+  {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 3?', hinten:'Paket', zusatz:'Wird auf Layer 2 in Frames zerlegt'},
+  {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 2?', hinten:'Frame', zusatz:'Wird auf Layer 1 als Bitfolge übertragen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Router?', hinten:'Layer 3 - Vermittlung', zusatz:'Routet anhand von IP-Adressen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Switch?', hinten:'Layer 2 - Sicherung', zusatz:'Vermittelt anhand von MAC-Adressen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet eine klassische Firewall?', hinten:'Layer 3/4', zusatz:'Filtert nach IP-Adressen und Ports; Application-Firewalls arbeiten auf Layer 7'},
+  {tag:'TCP/IP', vorne:'Welche OSI-Schichten entsprechen der Application-Schicht im TCP/IP-Modell?', hinten:'Schicht 5, 6 und 7', zusatz:'Sitzung, Darstellung, Anwendung werden zusammengefasst'},
+  {tag:'Eselsbrücke', vorne:'Wie lautet die Eselsbrücke für die 7 OSI-Schichten (von oben nach unten)?', hinten:'Alle Prüfer Suchen Tests Nach Der Pause', zusatz:'A-P-S-T-N-D-P'},
+  {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt kabelgebundenes Ethernet?', hinten:'IEEE 802.3', zusatz:'Das Standard-Kupfernetzwerk'},
+  {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt WLAN?', hinten:'IEEE 802.11', zusatz:'Funknetzwerk (Wi-Fi)'},
+  {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt VLAN?', hinten:'IEEE 802.1Q', zusatz:'Virtuelle Netzwerke, optional'},
+  {tag:'Kapselung', vorne:'Wie heißt die Dateneinheit auf Layer 1?', hinten:'Bits', zusatz:'Frame wird in eine Bitfolge umgewandelt'},
+  {tag:'Kapselung', vorne:'Was passiert beim Empfänger mit den Headern?', hinten:'Sie werden Schicht für Schicht wieder entfernt', zusatz:'Entkapselung - jede Schicht liest nur ihren eigenen Header'},
+  {tag:'Geräte', vorne:'Was ist der Hauptunterschied zwischen Router und Switch?', hinten:'Router verbindet Netze, Switch verbindet Geräte im selben Netz', zusatz:'Router = Layer 3 / IP, Switch = Layer 2 / MAC'}
+];
+window.LH = { lernen: { art: 'karten', karten: KARTEN } };
+</script>
+<script>
+/* ==========================================================================
+   Lernhilfen FiSi – gemeinsames Verhalten aller Seiten
+   Wird von bauen.py NACH dem Seitenskript eingebettet. Eine Seite kann vorher
+   window.LH setzen:
+     LH.rechte       true = Kapitelleiste im Stil "ls -la" mit Rechten und Anzahl
+     LH.filter       function(card) -> true/false, zusätzlicher Filter zur Suche
+     LH.lernen       { art:'karten', karten:[...] | function, runde:Zahl,
+                       einheit:'Karten', hintenMono:bool, zusatzPrompt:bool }
+                     { art:'quiz', fragen:[{cat,q,opts,correct}] }
+     Karte:          { tag, vorne, hinten, zusatz }
+   ========================================================================== */
+(function(){
+  'use strict';
+  var LH = window.LH = window.LH || {};
+  var $ = function(s, r){ return (r || document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-const searchInput = document.getElementById('search');
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.trim().toLowerCase();
-  const items = document.querySelectorAll('.searchable');
-  let anyMatchPerCat = {};
-  items.forEach(el => {
-    const terms = (el.dataset.terms || '') + ' ' + el.textContent.toLowerCase();
-    const match = q === '' || terms.toLowerCase().includes(q);
-    el.classList.toggle('hidden', !match);
-    if(match){
-      const cat = el.closest('.category');
-      if(cat) anyMatchPerCat[cat.dataset.cat] = true;
+  /* ---- Lernhilfen-Leiste: auf dem Handy zur aktuellen Seite scrollen ---- */
+  var lhNav = $('.lh-nav'), lhCur = lhNav && $('[aria-current]', lhNav);
+  if(lhCur && lhNav.scrollWidth > lhNav.clientWidth) lhNav.scrollLeft = Math.max(0, lhCur.offsetLeft - 60);
+
+  /* ---- Kapitelleiste aus den Kapiteln erzeugen ---- */
+  var PERMS = ['drwxr-xr-x','drwxrwxr-x','drwxr-x---'];
+  var sidebar = $('#sidebar');
+  var sections = $$('.category-section');
+  var links = [];
+  sections.forEach(function(sec, i){
+    if(!sec.id) sec.id = 'k' + (i + 1);
+    var name = sec.dataset.nav || ($('h2', sec) ? $('h2', sec).textContent : sec.id);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cat-link';
+    b.dataset.target = sec.id;
+    var cnt = sec.dataset.count || $$('.card', sec).length;
+    b.innerHTML = (LH.rechte ? '<span class="perm">' + PERMS[i % PERMS.length] + '</span>' : '') +
+      '<span class="name"></span>' + (LH.rechte ? '<span class="cnt">' + cnt + '</span>' : '');
+    $('.name', b).textContent = name;
+    b.addEventListener('click', function(){ sec.scrollIntoView({behavior:'smooth', block:'start'}); });
+    if(sidebar) sidebar.appendChild(b);
+    links.push(b);
+  });
+
+  function followActive(link){
+    var nav = link && link.parentElement;
+    if(!nav || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollTo({left: Math.max(0, link.offsetLeft - 12), behavior:'smooth'});
+  }
+  function setActive(id){
+    var hit = null;
+    links.forEach(function(l){ var on = l.dataset.target === id; l.classList.toggle('active', on); if(on) hit = l; });
+    followActive(hit);
+  }
+  // aktives Kapitel: das letzte, dessen Anfang im oberen Drittel liegt; ganz unten immer das letzte
+  var aktiv = null, geplant = false;
+  function aktualisieren(){
+    geplant = false;
+    var sichtbar = sections.filter(function(s){ return !s.classList.contains('hidden'); });
+    if(!sichtbar.length) return;
+    var grenze = window.innerHeight * 0.3, act = sichtbar[0];
+    sichtbar.forEach(function(s){ if(s.getBoundingClientRect().top <= grenze) act = s; });
+    if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) act = sichtbar[sichtbar.length - 1];
+    if(act.id !== aktiv){ aktiv = act.id; setActive(act.id); }
+  }
+  window.addEventListener('scroll', function(){ if(!geplant){ geplant = true; requestAnimationFrame(aktualisieren); } }, {passive:true});
+  window.addEventListener('resize', aktualisieren);
+  aktualisieren();
+
+  /* ---- Kennzahlen im Kopfbereich ---- */
+  function lernPool(){
+    var l = LH.lernen; if(!l) return [];
+    var p = l.art === 'quiz' ? l.fragen : l.karten;
+    return (typeof p === 'function' ? p() : p) || [];
+  }
+  $$('[data-stat="kapitel"]').forEach(function(el){ el.textContent = sections.length; });
+  $$('[data-stat="lernen"]').forEach(function(el){ el.textContent = lernPool().length; });
+
+  /* ---- Selbsteinschätzung (nur im eigenen Browser gespeichert) ---- */
+  $$('.einschaetzung').forEach(function(box){
+    var key = box.dataset.schluessel || ('lh-einschaetzung-' + location.pathname);
+    var themen = [];
+    try { themen = JSON.parse(box.dataset.themen || '[]'); } catch(e) {}
+    var labels = {sicher:'sicher', unsicher:'unsicher', wiederholen:'bitte wiederholen'};
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { state = {}; }
+    function save(){ try { localStorage.setItem(key, JSON.stringify(state)); } catch(e) {} }
+    var html = '<p class="card-note">Zum Markieren anklicken. Die Auswahl wird nur in deinem Browser gespeichert und dient deiner eigenen Übersicht beim Lernen.</p>' +
+      '<div class="tbl-wrap"><table class="tbl"><tr><th>Thema</th><th>Einschätzung</th></tr>';
+    themen.forEach(function(t, i){
+      html += '<tr><td></td><td><div class="sc-actions">' + Object.keys(labels).map(function(k){
+        return '<button type="button" class="sc-btn ' + k + (state[i] === k ? ' active' : '') + '" data-row="' + i + '" data-state="' + k + '">' + labels[k] + '</button>';
+      }).join('') + '</div></td></tr>';
+    });
+    html += '</table></div><div style="margin-top:10px;"><button type="button" class="sc-btn sc-reset">Auswahl zurücksetzen</button></div>';
+    box.innerHTML = html;
+    $$('td:first-child', box).forEach(function(td, i){ td.textContent = themen[i]; });
+    box.addEventListener('click', function(e){
+      var b = e.target.closest('.sc-btn'); if(!b) return;
+      if(b.classList.contains('sc-reset')){ state = {}; save(); $$('.sc-btn.active', box).forEach(function(x){ x.classList.remove('active'); }); return; }
+      var row = b.dataset.row, was = b.classList.contains('active');
+      $$('.sc-btn[data-row="' + row + '"]', box).forEach(function(x){ x.classList.remove('active'); });
+      if(was){ delete state[row]; } else { b.classList.add('active'); state[row] = b.dataset.state; }
+      save();
+    });
+  });
+
+  /* ---- Suche ---- */
+  var searchInput = $('#searchInput');
+  var noResults = $('#noResults');
+  var statVisible = $('#statVisible'), statVisibleNum = $('#statVisibleNum');
+  function text(el){ return ((el.dataset.search || '') + ' ' + el.textContent).toLowerCase(); }
+  function runSearch(){
+    var q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    var f = typeof LH.filter === 'function' ? LH.filter : null;
+    var all = !q && !f;
+    var visible = 0;
+    sections.forEach(function(sec){
+      var secHit = false;
+      $$('.card', sec).forEach(function(card){
+        var hit;
+        var rows = $$('table.zeilen tr', card).filter(function(r){ return !$('th', r); });
+        if(all){
+          hit = true; rows.forEach(function(r){ r.classList.remove('hidden'); });
+        } else if(rows.length && q){
+          var rowHits = 0;
+          rows.forEach(function(r){ var m = text(r).indexOf(q) > -1; r.classList.toggle('hidden', !m); if(m) rowHits++; });
+          hit = rowHits > 0;
+          if(!hit && (card.dataset.search || '').toLowerCase().indexOf(q) > -1){ hit = true; rows.forEach(function(r){ r.classList.remove('hidden'); }); }
+        } else {
+          rows.forEach(function(r){ r.classList.remove('hidden'); });
+          hit = !q || text(card).indexOf(q) > -1;
+        }
+        if(hit && f) hit = f(card);
+        card.classList.toggle('hidden', !hit);
+        if(hit){ secHit = true; visible++; }
+      });
+      $$('.group', sec).forEach(function(g){ g.classList.toggle('hidden', !all && !$$('.card', g).some(function(c){ return !c.classList.contains('hidden'); })); });
+      $$('.schaubild', sec).forEach(function(s){
+        var m = all || (!f && q && text(s).indexOf(q) > -1);
+        s.classList.toggle('hidden', !m);
+        if(m) secHit = true;
+      });
+      sec.classList.toggle('hidden', !all && !secHit);
+    });
+    if(noResults) noResults.style.display = (!all && visible === 0) ? 'block' : 'none';
+    if(statVisible){ statVisible.classList.toggle('hidden', all); if(statVisibleNum) statVisibleNum.textContent = visible; }
+    aktualisieren();
+  }
+  LH.runSearch = runSearch;
+  if(searchInput){
+    searchInput.addEventListener('input', runSearch);
+    searchInput.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ searchInput.value = ''; runSearch(); searchInput.blur(); } });
+  }
+
+  /* ---- Lernmodus ---- */
+  var lm = $('#lernmodus'), lernBtn = $('#lernBtn');
+  if(!LH.lernen || !lm){ if(lernBtn) lernBtn.classList.add('hidden'); }
+  else {
+    var isQuiz = LH.lernen.art === 'quiz';
+    var actBox = $(isQuiz ? '#lmQuiz' : '#lmKarten'), doneBox = $('#lmDone');
+    $(isQuiz ? '#lmKarten' : '#lmQuiz').classList.add('hidden');
+    var deck = [], total = 0, good = 0, cur = null, revealed = false, checked = false;
+    function shuffle(a){ a = a.slice(); for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+    function progress(n){ $('.lm-progress', actBox).textContent = (isQuiz ? 'Frage ' : 'Karte ') + n + ' / ' + total; $('.lm-bar-fill', actBox).style.width = ((n - 1) / total * 100) + '%'; }
+    function finish(){
+      actBox.classList.add('hidden'); doneBox.classList.remove('hidden');
+      $('#lmDoneText').textContent = isQuiz
+        ? 'Du hast ' + good + ' von ' + total + ' Fragen richtig beantwortet.'
+        : 'Du hast ' + good + ' von ' + total + ' ' + (LH.lernen.einheit || 'Karten') + ' direkt gewusst.';
+    }
+    function start(){
+      var pool = lernPool();
+      deck = shuffle(pool);
+      if(!isQuiz && LH.lernen.runde) deck = deck.slice(0, LH.lernen.runde);
+      total = deck.length; good = 0;
+      actBox.classList.remove('hidden'); doneBox.classList.add('hidden');
+      next();
+    }
+    function next(){
+      if(!deck.length){ finish(); return; }
+      cur = deck.shift();
+      progress(total - deck.length);
+      if(isQuiz){
+        checked = false;
+        $('#lmQCat').textContent = cur.cat || '';
+        $('#lmQuestion').textContent = cur.q;
+        var opts = $('#lmOptions'); opts.innerHTML = '';
+        cur.opts.forEach(function(o, i){
+          var lab = document.createElement('label'); lab.className = 'lm-opt';
+          lab.innerHTML = '<input type="checkbox" value="' + i + '"><span></span>';
+          $('span', lab).textContent = o; opts.appendChild(lab);
+        });
+        $('#lmExplain').classList.remove('show'); $('#lmCheck').classList.remove('hidden'); $('#lmNext').classList.add('hidden');
+      } else {
+        revealed = false;
+        $('#lmCat').textContent = cur.tag || '';
+        $('#lmFront').textContent = cur.vorne;
+        var rv = $('#lmReveal'); rv.textContent = cur.hinten; rv.classList.toggle('mono', !!LH.lernen.hintenMono);
+        var ex = $('#lmExtra'); ex.classList.toggle('mono', !!LH.lernen.zusatzPrompt);
+        ex.innerHTML = '';
+        if(cur.zusatz){
+          if(LH.lernen.zusatzPrompt){ var p = document.createElement('span'); p.style.color = 'var(--amber)'; p.textContent = '$ '; ex.appendChild(p); }
+          ex.appendChild(document.createTextNode(cur.zusatz));
+        }
+        $('#lmBack').classList.add('hidden'); $('#lmFlipHint').classList.remove('hidden');
+      }
+    }
+    function flip(){ if(isQuiz) return; revealed = !revealed; $('#lmBack').classList.toggle('hidden', !revealed); $('#lmFlipHint').classList.toggle('hidden', revealed); }
+    function know(){ good++; next(); }
+    function again(){ deck.push(cur); next(); }
+    function check(){
+      if(checked) return; checked = true;
+      var boxes = $$('#lmOptions input');
+      var sel = boxes.filter(function(b){ return b.checked; }).map(function(b){ return +b.value; });
+      var ok = sel.length === cur.correct.length && cur.correct.every(function(v){ return sel.indexOf(v) > -1; });
+      boxes.forEach(function(b, i){
+        var o = b.closest('.lm-opt'); b.disabled = true;
+        if(cur.correct.indexOf(i) > -1) o.classList.add('correct'); else if(sel.indexOf(i) > -1) o.classList.add('wrong');
+      });
+      if(ok) good++;
+      var ex = $('#lmExplain');
+      ex.textContent = ok ? 'Richtig! Alle passenden Antworten wurden korrekt ausgewählt.' : 'Nicht ganz - grün markiert die richtigen Antworten, rot deine falsch ausgewählten.';
+      ex.classList.add('show'); $('#lmCheck').classList.add('hidden'); $('#lmNext').classList.remove('hidden');
+    }
+    function open(){ lm.classList.add('open'); start(); }
+    function close(){ lm.classList.remove('open'); if(lernBtn) lernBtn.focus(); }
+    if(lernBtn) lernBtn.addEventListener('click', open);
+    $$('.lm-close', lm).forEach(function(b){ b.addEventListener('click', close); });
+    lm.addEventListener('click', function(e){ if(e.target === lm) close(); });
+    $('#lmRestart').addEventListener('click', start);
+    var card = $('#lmCard');
+    card.addEventListener('click', flip);
+    card.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); flip(); } });
+    $('#lmKnow').addEventListener('click', function(e){ e.stopPropagation(); know(); });
+    $('#lmAgain').addEventListener('click', function(e){ e.stopPropagation(); again(); });
+    $('#lmCheck').addEventListener('click', check);
+    $('#lmNext').addEventListener('click', next);
+    document.addEventListener('keydown', function(e){
+      if(!lm.classList.contains('open')) return;
+      if(e.key === 'Escape'){ close(); return; }
+      if(isQuiz || doneBox.classList.contains('hidden') === false) return;
+      if(e.key === ' '){ e.preventDefault(); flip(); }
+      if(e.key === 'ArrowRight' && revealed) know();
+      if(e.key === 'ArrowLeft' && revealed) again();
+    });
+  }
+
+  /* ---- Taste "/" springt in die Suche ---- */
+  document.addEventListener('keydown', function(e){
+    if(lm && lm.classList.contains('open')) return;
+    if(e.key === '/' && searchInput && document.activeElement !== searchInput && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+      e.preventDefault(); searchInput.focus();
     }
   });
-  document.querySelectorAll('.category').forEach(cat => {
-    if(q === ''){ cat.classList.remove('hidden'); return; }
-    const has = anyMatchPerCat[cat.dataset.cat];
-    cat.classList.toggle('hidden', !has);
-    if(has) cat.classList.add('open');
-  });
-});
-
-function setMode(mode){
-  document.getElementById('btn-lesen').classList.toggle('active', mode === 'lesen');
-  document.getElementById('btn-lernen').classList.toggle('active', mode === 'lernen');
-  document.getElementById('read-view').classList.toggle('hidden', mode !== 'lesen');
-  document.getElementById('flash-wrap').classList.toggle('active', mode === 'lernen');
-  if(mode === 'lernen') renderCard();
-}
-
-const deck = [
-  {tag:'Grundlage', q:'Aus wie vielen Schichten besteht das OSI-Modell?', a:'7 Schichten', ex:'Von Anwendung (7) bis Bitübertragung (1)'},
-  {tag:'Grundlage', q:'Welche Schichten gelten als anwendungsorientiert?', a:'Schicht 5-7', ex:'Sitzung, Darstellung, Anwendung'},
-  {tag:'Grundlage', q:'Welche Schichten gelten als transportorientiert?', a:'Schicht 1-4', ex:'Bitübertragung, Sicherung, Vermittlung, Transport'},
-  {tag:'Layer 7', q:'Was macht die Anwendungsschicht (Layer 7)?', a:'Schnittstelle zum Nutzer', ex:'Protokolle: HTTP, FTP, SMTP, DNS - Geräte: Proxy, Gateway'},
-  {tag:'Layer 6', q:'Was macht die Darstellungsschicht (Layer 6)?', a:'Datenformatierung', ex:'z.B. Verschlüsselung, Kompression - TLS, SSL, JPEG, ASCII'},
-  {tag:'Layer 5', q:'Was macht die Sitzungsschicht (Layer 5)?', a:'Sitzungssteuerung', ex:'Auf- und Abbau von Verbindungen - NetBIOS, RPC'},
-  {tag:'Layer 4', q:'Was macht die Transportschicht (Layer 4)?', a:'Adressierung von Anwendungen/Prozessen', ex:'TCP, UDP - Adressen: Ports - Gerät: Firewall'},
-  {tag:'Layer 3', q:'Was macht die Vermittlungsschicht (Layer 3)?', a:'Routing zwischen Netzwerken', ex:'IP, ICMP - Adressen: IP-Adressen - Gerät: Router'},
-  {tag:'Layer 2', q:'Was macht die Sicherungsschicht (Layer 2)?', a:'Lokale Adressierung', ex:'Ethernet, ARP - Adressen: MAC-Adressen - Gerät: Switch'},
-  {tag:'Layer 1', q:'Was macht die Bitübertragungsschicht (Layer 1)?', a:'Physische Übertragung', ex:'Elektrische/mechanische Schnittstelle - Geräte: Hub, Kabel'},
-  {tag:'Dateneinheit', q:'Wie heißt die Dateneinheit auf Layer 4?', a:'Segment', ex:'Wird auf Layer 3 in Fragmente/Pakete zerlegt'},
-  {tag:'Dateneinheit', q:'Wie heißt die Dateneinheit auf Layer 3?', a:'Paket', ex:'Wird auf Layer 2 in Frames zerlegt'},
-  {tag:'Dateneinheit', q:'Wie heißt die Dateneinheit auf Layer 2?', a:'Frame', ex:'Wird auf Layer 1 als Bitfolge übertragen'},
-  {tag:'Geräte', q:'Auf welchem Layer arbeitet ein Router?', a:'Layer 3 - Vermittlung', ex:'Routet anhand von IP-Adressen'},
-  {tag:'Geräte', q:'Auf welchem Layer arbeitet ein Switch?', a:'Layer 2 - Sicherung', ex:'Vermittelt anhand von MAC-Adressen'},
-  {tag:'Geräte', q:'Auf welchem Layer arbeitet eine klassische Firewall?', a:'Layer 3/4', ex:'Filtert nach IP-Adressen und Ports; Application-Firewalls arbeiten auf Layer 7'},
-  {tag:'TCP/IP', q:'Welche OSI-Schichten entsprechen der Application-Schicht im TCP/IP-Modell?', a:'Schicht 5, 6 und 7', ex:'Sitzung, Darstellung, Anwendung werden zusammengefasst'},
-  {tag:'Eselsbrücke', q:'Wie lautet die Eselsbrücke für die 7 OSI-Schichten (von oben nach unten)?', a:'Alle Prüfer Suchen Tests Nach Der Pause', ex:'A-P-S-T-N-D-P'},
-  {tag:'IEEE', q:'Welcher IEEE-Standard beschreibt kabelgebundenes Ethernet?', a:'IEEE 802.3', ex:'Das Standard-Kupfernetzwerk'},
-  {tag:'IEEE', q:'Welcher IEEE-Standard beschreibt WLAN?', a:'IEEE 802.11', ex:'Funknetzwerk (Wi-Fi)'},
-  {tag:'IEEE', q:'Welcher IEEE-Standard beschreibt VLAN?', a:'IEEE 802.1Q', ex:'Virtuelle Netzwerke, optional'},
-  {tag:'Kapselung', q:'Wie heißt die Dateneinheit auf Layer 1?', a:'Bits', ex:'Frame wird in eine Bitfolge umgewandelt'},
-  {tag:'Kapselung', q:'Was passiert beim Empfänger mit den Headern?', a:'Sie werden Schicht für Schicht wieder entfernt', ex:'Entkapselung - jede Schicht liest nur ihren eigenen Header'},
-  {tag:'Geräte', q:'Was ist der Hauptunterschied zwischen Router und Switch?', a:'Router verbindet Netze, Switch verbindet Geräte im selben Netz', ex:'Router = Layer 3 / IP, Switch = Layer 2 / MAC'}
-];
-let order = deck.map((_,i)=>i);
-let idx = 0;
-let flipped = false;
-
-function renderCard(){
-  const d = deck[order[idx]];
-  document.getElementById('flash-tag').textContent = d.tag;
-  document.getElementById('flash-q').textContent = d.q;
-  document.getElementById('flash-a').textContent = d.a;
-  document.getElementById('flash-ex').textContent = d.ex;
-  document.getElementById('flash-progress').textContent = (idx+1) + ' / ' + order.length;
-  document.getElementById('flashcard').classList.remove('flipped');
-  flipped = false;
-}
-function flipCard(){
-  flipped = !flipped;
-  document.getElementById('flashcard').classList.toggle('flipped', flipped);
-}
-function nextCard(){ idx = (idx+1) % order.length; renderCard(); }
-function prevCard(){ idx = (idx-1+order.length) % order.length; renderCard(); }
-function shuffleCards(){
-  for(let i=order.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [order[i],order[j]] = [order[j],order[i]];
-  }
-  idx = 0;
-  renderCard();
-}
+})();
 </script>
 </body>
 </html>

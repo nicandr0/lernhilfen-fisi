@@ -1,85 +1,309 @@
 <!DOCTYPE html>
-<html lang="de" data-fach="Netzwerktechnik" data-thema="Switching" data-kapitel="Vorbereitung VIII">
+<!-- Diese Datei wird von bauen.py erzeugt. Nicht hier bearbeiten, sondern in _vorlage/ bzw. _inhalt/. -->
+<html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Switching auf einem Blatt</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>switching-auf-einem-blatt.sh</title>
+<meta name="description" content="VLANs, Trunks, STP, LAG, LACP, MLAG mit Lernkarten und Selbsteinschätzung">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--tx:#e6edf3;--mut:#8b949e;--blue:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--purple:#bc8cff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-:root:not([data-theme="dark"]){}
-@media print{:root{--bg:#fff;--card:#fff;--line:#bbb;--tx:#000;--mut:#444}.bar{display:none}details{break-inside:avoid}}
-*{box-sizing:border-box}
-html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + var(--lh-h))}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 14px 40px}
-main{max-width:860px;margin:0 auto}
-h1{font-size:1.5rem;margin:22px 0 4px}
-.sub{color:var(--mut);margin:0 0 14px}
-.bar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--lh-h));background:var(--bg);padding:8px 0;display:flex;gap:8px;z-index:5}
-input{flex:1;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:6px;padding:9px 12px;font:inherit}
-button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-details{background:var(--card);border:1px solid var(--line);border-radius:8px;margin:10px 0}
-summary{cursor:pointer;padding:11px 14px;font-weight:600;color:var(--blue)}
-.in{padding:2px 14px 12px}
-ul{margin:6px 0;padding-left:20px}
-li{margin:3px 0}
-.q{color:var(--mut);font-size:.9em}
-.box{border-left:4px solid;border-radius:4px;padding:8px 12px;margin:10px 0;background:rgba(255,255,255,.03)}
-.wichtig{border-color:var(--yellow)}.merk{border-color:var(--green)}.fehler{border-color:var(--red)}
-.box b{display:block;margin-bottom:2px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.chip{border-radius:999px;padding:6px 12px}
-.chip[data-s="0"]{color:var(--mut)}
-.chip[data-s="1"]{border-color:var(--green);color:var(--green)}
-.chip[data-s="2"]{border-color:var(--yellow);color:var(--yellow)}
-.chip[data-s="3"]{border-color:var(--red);color:var(--red)}
-.hide{display:none}
-.bar{flex-wrap:wrap}
-.bar button.on{border-color:var(--blue);color:var(--blue)}
-#cards{display:none}
-body.lernen #cards{display:block}
-body.lernen details{display:none}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:26px 18px;min-height:160px;cursor:pointer;text-align:center;font-size:1.1rem;display:flex;flex-direction:column;justify-content:center}
-.card small{color:var(--mut);margin-bottom:10px}
-.card.a{border-color:var(--green)}
-.nav{display:flex;justify-content:space-between;align-items:center;margin:10px 0;color:var(--mut)}
-.wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-th{color:var(--blue)}
-</style>
-<style id="lh-nav-css">
-/* Lernhilfen-Leiste: auf allen Seiten gleich, eigene Farben unabhängig vom Seitendesign.
-   Neue Lernhilfe? Link in ALLEN Dateien der Leiste nachtragen (siehe README). */
-:root{--lh-h:34px;}
-.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);box-sizing:border-box;
+/* ==========================================================================
+   Lernhilfen FiSi – gemeinsames Design (Terminal-Stil)
+   Wird von bauen.py in jede Seite eingebettet. Hier ändern, dann bauen.
+   ========================================================================== */
+:root{
+  --bg:#0d1117;
+  --bg-elevated:#131a23;
+  --surface:#1a222e;
+  --surface-hover:#212b3a;
+  --border:#2a3444;
+  --border-soft:#212a38;
+  --text-primary:#e6eaf0;
+  --text-secondary:#93a1b8;
+  --text-muted:#5c6b83;
+  --amber:#e3a458;
+  --amber-soft:rgba(227,164,88,0.14);
+  --amber-dim:rgba(227,164,88,0.35);
+  --gold:#cc9f3f;
+  --green:#7fae70;
+  --green-soft:rgba(127,174,112,0.14);
+  --red:#c77b6e;
+  --red-soft:rgba(199,123,110,0.14);
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --lh-h:34px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(227,164,88,0.06), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(127,174,112,0.05), transparent 55%),
+    var(--bg);
+  color:var(--text-primary);
+  font-family:var(--sans);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--amber-soft);color:var(--text-primary);}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:var(--surface-hover);}
+
+/* ---- Lernhilfen-Leiste (Links zu allen Lernhilfen, bleibt oben stehen) ---- */
+.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);
   display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;
   padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
-  background:#0d1117;border-bottom:1px solid #2a3444;
-  font:500 12px/1 ui-monospace,'JetBrains Mono',Consolas,monospace;}
+  background:#0d1117;border-bottom:1px solid var(--border);
+  font:500 12px/1 var(--mono);}
 .lh-nav::-webkit-scrollbar{display:none;}
-.lh-nav .lh-ttl{color:#5c6b83;padding-right:6px;}
-.lh-nav a{color:#93a1b8;text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
-.lh-nav a:hover{color:#e6eaf0;background:#1a222e;}
-.lh-nav a[aria-current="page"]{color:#e3a458;border-color:rgba(227,164,88,0.4);background:rgba(227,164,88,0.14);}
-.lh-nav a:focus-visible{outline:2px solid #e3a458;outline-offset:1px;}
-@media print{.lh-nav{display:none;}}
+.lh-nav .lh-ttl{color:var(--text-muted);padding-right:6px;}
+.lh-nav a{color:var(--text-secondary);text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
+.lh-nav a:hover{color:var(--text-primary);background:var(--surface);}
+.lh-nav a[aria-current="page"]{color:var(--amber);border-color:rgba(227,164,88,0.4);background:var(--amber-soft);}
+.lh-nav a:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+
+/* ---- Terminal-Rahmen ---- */
+.termbar{
+  max-width:1240px;margin:20px auto 0;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:10px 10px 0 0;
+  padding:10px 16px;
+  display:flex;align-items:center;gap:10px;
+}
+.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.dot.d1{background:#e37f6b;}
+.dot.d2{background:var(--amber);}
+.dot.d3{background:var(--green);}
+.termbar .path{margin-left:10px;color:var(--text-muted);font-family:var(--mono);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* overflow:clip statt hidden: kein eigener Scroll-Bereich, sonst bleibt die Kapitelleiste nicht stehen */
+.wrap{max-width:1240px;margin:0 auto;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--bg-elevated);overflow:hidden;overflow:clip;}
+
+/* ---- Kopfbereich ---- */
+header.hero{padding:34px 34px 26px;border-bottom:1px solid var(--border);background:linear-gradient(180deg, rgba(227,164,88,0.04), transparent 70%);}
+h1{font-family:var(--mono);font-weight:700;font-size:clamp(22px,3vw,30px);margin:0;color:var(--text-primary);letter-spacing:-0.01em;overflow-wrap:anywhere;}
+h1 .prompt{color:var(--green);}
+h1 .cursor{display:inline-block;width:9px;height:1.1em;background:var(--amber);margin-left:2px;vertical-align:-2px;animation:blink 1.1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+.subtitle{color:var(--text-secondary);font-size:14px;margin:8px 0 0;max-width:680px;line-height:1.55;}
+.meta-row{display:flex;gap:18px;color:var(--text-muted);font-family:var(--mono);font-size:12px;margin-top:14px;flex-wrap:wrap;}
+.meta-row span b{color:var(--amber);font-weight:600;}
+
+.controls{display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap;}
+.search-box{flex:1;min-width:240px;position:relative;}
+.search-box input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text-primary);font-family:var(--mono);font-size:14px;padding:11px 46px 11px 34px;border-radius:8px;outline:none;transition:border-color .15s, box-shadow .15s;}
+.search-box input:focus{border-color:var(--amber-dim);box-shadow:0 0 0 3px var(--amber-soft);}
+.search-box .glyph{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-family:var(--mono);pointer-events:none;}
+.search-box .hint{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:11px;font-family:var(--mono);pointer-events:none;}
+.btn{font-family:var(--mono);font-size:13px;font-weight:500;background:var(--surface);border:1px solid var(--border);color:var(--text-primary);padding:11px 16px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:hover{background:var(--surface-hover);border-color:var(--amber-dim);}
+.btn:focus-visible,.cat-link:focus-visible,.sc-btn:focus-visible,.lm-card:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+.btn.primary{background:var(--amber-soft);border-color:var(--amber-dim);color:var(--amber);}
+.btn.primary:hover{background:rgba(227,164,88,0.22);}
+.btn.an{background:rgba(204,159,63,0.16);border-color:var(--gold);color:var(--gold);}
+
+/* ---- Kapitelleiste (links, bleibt stehen) ---- */
+.layout{display:flex;}
+nav.sidebar{width:300px;flex-shrink:0;border-right:1px solid var(--border);padding:18px 0;max-height:calc(100vh - var(--lh-h) - 8px);overflow-y:auto;position:sticky;top:var(--lh-h);align-self:flex-start;}
+.sidebar .lslabel{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);padding:0 18px 8px;text-transform:uppercase;letter-spacing:.08em;}
+.cat-link{display:flex;align-items:center;gap:10px;width:100%;padding:8px 18px;background:none;border:none;cursor:pointer;text-align:left;font-family:var(--mono);font-size:12.5px;color:var(--text-secondary);border-left:2px solid transparent;transition:all .12s;}
+.cat-link .perm{color:var(--text-muted);opacity:.65;}
+.cat-link .name{color:inherit;flex:1;}
+.cat-link .cnt{color:var(--text-muted);font-size:11px;}
+.cat-link:hover{background:var(--surface);color:var(--text-primary);}
+.cat-link.active{background:var(--surface);color:var(--amber);border-left-color:var(--amber);}
+.cat-link.active .cnt{color:var(--amber);}
+
+/* ---- Inhalt ---- */
+main.content{flex:1;min-width:0;padding:8px 30px 60px;}
+.category-section{padding-top:26px;scroll-margin-top:calc(var(--lh-h) + 16px);}
+.category-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--border-soft);}
+.category-head h2{font-family:var(--mono);font-size:16px;margin:0;color:var(--text-primary);font-weight:600;text-wrap:balance;}
+.category-head .path{color:var(--text-muted);font-size:12px;font-family:var(--mono);}
+
+/* Gruppe = Zwischenüberschrift innerhalb eines Kapitels */
+.group{margin-top:24px;}
+.group-name{font-size:13.5px;font-weight:600;color:var(--amber);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;padding:3px 0 3px 10px;border-left:3px solid var(--gold);}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
+
+/* Karte */
+.card{background:var(--surface);border:1px solid var(--border-soft);border-left:3px solid var(--gold);border-radius:9px;padding:14px 16px;margin:12px 0;transition:border-color .15s;min-width:0;}
+.card:hover{border-color:var(--amber-dim);}
+.cards > .card{margin:0;}
+.card h4{margin:0 0 6px;font-family:var(--mono);font-size:13.5px;color:var(--amber);font-weight:600;}
+.card p{margin:0 0 6px;font-size:13.5px;color:var(--text-secondary);line-height:1.55;}
+.card p:last-child{margin-bottom:0;}
+.card ul,.card ol{margin:6px 0;padding-left:20px;}
+.card li{font-size:13.5px;color:var(--text-secondary);line-height:1.55;margin-bottom:5px;}
+.card li b,.card p b{color:var(--text-primary);}
+.card-note{font-size:12px;color:var(--text-muted);margin:2px 0 10px;}
+code{background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:.92em;color:#cbd6e4;}
+
+/* Merksatz und Hinweiskästen */
+.merksatz{margin-top:10px;padding:8px 12px;background:var(--green-soft);border-left:3px solid var(--green);border-radius:6px;color:var(--green);font-size:12.5px;font-style:italic;}
+.hinweis{margin-top:10px;padding:9px 12px;border-left:3px solid var(--amber);border-radius:6px;background:var(--amber-soft);font-size:13px;color:var(--text-secondary);line-height:1.55;}
+.hinweis b{display:block;font-family:var(--mono);font-size:12px;color:var(--amber);margin-bottom:2px;}
+.hinweis.merk{border-left-color:var(--green);background:var(--green-soft);}
+.hinweis.merk b{color:var(--green);}
+.hinweis.fehler{border-left-color:var(--red);background:var(--red-soft);}
+.hinweis.fehler b{color:var(--red);}
+
+/* Formel-/Wert-Etikett */
+.formel{display:inline-block;background:var(--amber-soft);color:var(--amber);padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:.86em;margin:2px 4px 2px 0;}
+
+/* Nummerierte Rechenschritte */
+.schritte{list-style:none;counter-reset:schritt;padding-left:0 !important;margin:8px 0;}
+.schritte li{counter-increment:schritt;position:relative;padding:5px 0 5px 34px;}
+.schritte li::before{content:counter(schritt);position:absolute;left:0;top:4px;width:22px;height:22px;border-radius:50%;background:var(--amber-soft);color:var(--amber);font:600 11px/22px var(--mono);text-align:center;}
+
+/* Tabellen */
+.tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:4px 0;}
+.tbl th,.tbl td{border:1px solid var(--border-soft);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.5;}
+.tbl th{background:var(--amber-soft);color:var(--amber);font-family:var(--mono);font-weight:600;font-size:12px;}
+.tbl td{color:var(--text-secondary);}
+.tbl td:first-child{color:var(--text-primary);font-weight:500;}
+.tbl.zahlen th,.tbl.zahlen td{text-align:center;font-variant-numeric:tabular-nums;}
+.tbl.zahlen td:first-child{color:var(--text-secondary);font-weight:400;}
+
+/* Schaubilder (SVG) */
+.schaubild{margin:4px 0 10px;overflow-x:auto;}
+.schaubild svg{display:block;width:100%;min-width:460px;max-width:760px;height:auto;margin:0 auto;}
+
+/* Selbsteinschätzung */
+.sc-btn{font-family:var(--mono);font-size:11.5px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:5px 9px;border-radius:6px;cursor:pointer;white-space:nowrap;}
+.sc-btn:hover{border-color:var(--amber-dim);}
+.sc-btn.sicher.active{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.sc-btn.unsicher.active{background:var(--amber-soft);border-color:var(--amber);color:var(--amber);}
+.sc-btn.wiederholen.active{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.sc-actions{display:flex;gap:6px;flex-wrap:wrap;}
+
+mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0 1px;}
+.no-results{text-align:center;padding:60px 20px;color:var(--text-muted);font-family:var(--mono);font-size:13px;display:none;}
+.hidden{display:none !important;}
+
+/* ---- Lernmodus (Lernkarten oder Quiz) ---- */
+.lernmodus{position:fixed;inset:0;background:rgba(8,11,16,0.82);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+.lernmodus.open{display:flex;}
+.lm-box{width:100%;max-width:600px;max-height:calc(100vh - 40px);overflow-y:auto;background:var(--bg-elevated);border:1px solid var(--border);border-radius:14px;padding:28px;position:relative;}
+.lm-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1;padding:4px;}
+.lm-close:hover{color:var(--text-primary);}
+.lm-progress{font-family:var(--mono);font-size:12px;color:var(--text-muted);margin-bottom:6px;}
+.lm-bar{height:4px;background:var(--surface);border-radius:2px;overflow:hidden;margin-bottom:22px;}
+.lm-bar-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--green));transition:width .25s;}
+.lm-cat{font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;}
+/* Lernkarten */
+.lm-card{min-height:190px;border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;gap:14px;}
+.lm-front{font-size:17px;color:var(--text-primary);line-height:1.5;}
+.lm-reveal{font-size:16px;font-weight:600;color:var(--green);line-height:1.5;}
+.lm-reveal.mono{font-family:var(--mono);font-size:20px;font-weight:700;}
+.lm-extra{margin-top:10px;font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.lm-extra.mono{font-family:var(--mono);}
+.lm-flip-hint{font-family:var(--mono);font-size:11px;color:var(--text-muted);}
+.lm-actions{display:flex;gap:10px;margin-top:18px;}
+.lm-actions .btn{flex:1;text-align:center;justify-content:center;}
+.btn.again{border-color:rgba(227,164,88,0.4);color:var(--amber);}
+.btn.know{border-color:rgba(127,174,112,0.4);color:var(--green);}
+.btn.again:hover{background:var(--amber-soft);}
+.btn.know:hover{background:var(--green-soft);}
+.lm-keys{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);text-align:center;margin-top:12px;}
+/* Quiz */
+.lm-question{font-size:16px;color:var(--text-primary);line-height:1.5;margin:8px 0 16px;}
+.lm-options{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.lm-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;transition:border-color .15s;}
+.lm-opt:hover{border-color:var(--amber-dim);}
+.lm-opt input{margin-top:2px;accent-color:var(--amber);flex-shrink:0;}
+.lm-opt span{font-size:13.5px;color:var(--text-secondary);line-height:1.5;}
+.lm-opt.correct{border-color:var(--green);background:var(--green-soft);}
+.lm-opt.correct span{color:var(--green);}
+.lm-opt.wrong{border-color:var(--red);background:var(--red-soft);}
+.lm-opt.wrong span{color:var(--red);}
+.lm-hint{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:14px;}
+.lm-explain{font-size:12.5px;color:var(--text-secondary);background:var(--surface);border-left:3px solid var(--amber);border-radius:6px;padding:10px 12px;margin-bottom:16px;display:none;}
+.lm-explain.show{display:block;}
+.btn.check{border-color:var(--amber-dim);color:var(--amber);}
+.btn.check:hover{background:var(--amber-soft);}
+.btn.next{border-color:rgba(127,174,112,0.4);color:var(--green);}
+.btn.next:hover{background:var(--green-soft);}
+/* Ende einer Runde */
+.lm-done{text-align:center;padding:20px 0;}
+.lm-done h3{font-family:var(--mono);color:var(--amber);margin:0 0 8px;}
+.lm-done p{color:var(--text-secondary);font-size:13.5px;margin:0 0 18px;}
+
+/* ---- Fußzeile ---- */
+.seitenfuss{max-width:1240px;margin:0 auto;padding:18px 34px 28px;font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--text-muted);display:flex;gap:10px 18px;flex-wrap:wrap;justify-content:space-between;}
+.seitenfuss a{color:var(--amber);text-decoration:none;}
+.seitenfuss a:hover{text-decoration:underline;}
+
+/* ---- Handy ---- */
+@media (max-width:820px){
+  .layout{flex-direction:column;}
+  nav.sidebar{width:100%;position:sticky;top:var(--lh-h);z-index:10;background:var(--bg-elevated);max-height:none;border-right:none;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:12px;gap:4px;}
+  .sidebar .lslabel{display:none;}
+  .cat-link{width:auto;flex-shrink:0;border-left:none;border-bottom:2px solid transparent;border-radius:6px;padding:7px 12px;}
+  .cat-link .perm{display:none;}
+  .cat-link.active{border-bottom-color:var(--amber);}
+  .category-section{scroll-margin-top:calc(var(--lh-h) + 72px);}
+  header.hero{padding:24px 18px 20px;}
+  main.content{padding:8px 16px 50px;}
+  .termbar{margin:10px 10px 0;}
+  .wrap{margin:0 10px;}
+  .seitenfuss{padding:18px;}
+  .lm-box{padding:22px 18px;}
+}
+@media (prefers-reduced-motion:reduce){
+  h1 .cursor{animation:none;}
+  *{transition:none !important;scroll-behavior:auto !important;}
+}
+@media print{
+  .lh-nav,nav.sidebar,.controls,.lernmodus{display:none !important;}
+  .category-section{break-inside:avoid-page;}
+}
 </style>
+
 </head>
 <body>
-<nav class="lh-nav" aria-label="Lernhilfen" style="margin:0 -14px"><span class="lh-ttl">lernhilfen/</span><a href="index.html">Übersicht</a><a href="linux-auf-einem-blatt.html">Linux</a><a href="subnetting-vlsm-auf-einem-blatt.html">Subnetting</a><a href="osi-modell-auf-einem-blatt.html">OSI</a><a href="routing-auf-einem-blatt.html">Routing</a><a href="switching-auf-einem-blatt.html" aria-current="page">Switching</a></nav>
-<script>(function(){var n=document.querySelector(".lh-nav"),c=n&&n.querySelector("[aria-current]");if(c&&n.scrollWidth>n.clientWidth)n.scrollLeft=Math.max(0,c.offsetLeft-60);})();</script>
+<nav class="lh-nav" aria-label="Lernhilfen"><span class="lh-ttl">lernhilfen/</span><a href="index.html">Übersicht</a><a href="linux-auf-einem-blatt.html">Linux</a><a href="subnetting-vlsm-auf-einem-blatt.html">Subnetting</a><a href="osi-modell-auf-einem-blatt.html">OSI</a><a href="routing-auf-einem-blatt.html">Routing</a><a href="switching-auf-einem-blatt.html" aria-current="page">Switching</a></nav>
 
-<main>
-<h1>Switching auf einem Blatt</h1>
-<p class="sub">Netzwerktechnik Vorbereitung VIII: VLANs, STP, LAG, MLAG</p>
-<div class="bar">
-<input id="s" type="search" placeholder="Suchen (z. B. Trunk, Root, LACP)" aria-label="Suche">
-<button id="lesen" class="on">Lesen</button><button id="lernen">Lernen</button><button id="open">Alle auf</button><button id="close">Alle zu</button>
+<div class="termbar">
+  <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
+  <span class="path">nicandro@debian:~$ open switching-auf-einem-blatt.sh</span>
 </div>
-<div id="cards"><div class="card" id="card" tabindex="0" role="button"></div><div class="nav"><button id="prev">Zurück</button><span id="cnt"></span><button id="next">Weiter</button></div></div>
 
-<details><summary>1. Grundlagen</summary><div class="in">
+<div class="wrap">
+  <header class="hero">
+    <h1><span class="prompt">$</span> switching --auf-einem-blatt<span class="cursor"></span></h1>
+    <p class="subtitle">Netzwerktechnik Vorbereitung VIII: VLANs, STP, LAG, MLAG</p>
+    <div class="meta-row">
+      <span><b data-stat="kapitel">0</b> Kapitel</span>
+      <span><b data-stat="lernen">0</b> Lernkarten</span>
+      <span id="statVisible" class="hidden"><b id="statVisibleNum">0</b> Treffer</span>
+    </div>
+    <div class="controls">
+      <div class="search-box">
+        <span class="glyph">/</span>
+        <input id="searchInput" type="search" placeholder="z. B. &#x27;Trunk&#x27;, &#x27;Root&#x27;, &#x27;LACP&#x27; …" autocomplete="off" aria-label="Suchen">
+        <span class="hint">ESC</span>
+      </div>
+
+      <button class="btn primary" id="lernBtn" type="button">◆ Lernmodus</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Kapitel">
+      <div class="lslabel">-- kapitel --</div>
+    </nav>
+    <main class="content" id="content">
+      <section class="category-section" id="s1" data-nav="1. Grundlagen">
+        <div class="category-head"><h2>1. Grundlagen</h2></div>
+        <div class="card">
 <ul>
 <li>Aufgabe: Geräte im LAN verbinden, Frames gezielt anhand der Ziel-MAC an den richtigen Port weiterleiten</li>
 <li>Hub vs. Switch: Hub (Layer 1) gibt alles an alle Ports weiter, Switch lernt MACs und leitet gezielt weiter</li>
@@ -94,10 +318,13 @@ th{color:var(--blue)}
 <li>Forwarding: Weiterleitung an den Zielport</li>
 <li>MAC-Address-Table: Zuordnung MAC > Port, Einträge altern ab</li>
 </ul>
-<div class="box wichtig"><b>Wichtig</b>Ein Switch führt nicht nur Kabel zusammen, er leitet gezielt anhand gelernter Informationen weiter.</div>
-</div></details>
+<div class="hinweis"><b>Wichtig</b>Ein Switch führt nicht nur Kabel zusammen, er leitet gezielt anhand gelernter Informationen weiter.</div>
+        </div>
+      </section>
 
-<details><summary>2. VLANs: Grundidee</summary><div class="in">
+      <section class="category-section" id="s2" data-nav="2. VLANs: Grundidee">
+        <div class="category-head"><h2>2. VLANs: Grundidee</h2></div>
+        <div class="card">
 <ul>
 <li>VLAN = Virtual LAN, logisches Netz auf gemeinsamer physischer Hardware (IEEE 802.1Q, ID 1-4094)</li>
 <li>1 VLAN = 1 Broadcast-Domain (meist 1 IP-Subnetz)</li>
@@ -107,10 +334,13 @@ th{color:var(--blue)}
 <li>Sicherheit: Geräte nicht im selben Netz</li>
 <li>Verwaltung: Umzug per Konfiguration statt Umverkabeln</li>
 </ul>
-<div class="box wichtig"><b>Ziel</b>Ein physisch gemeinsames Netz wird logisch in getrennte Bereiche aufgeteilt.</div>
-</div></details>
+<div class="hinweis"><b>Ziel</b>Ein physisch gemeinsames Netz wird logisch in getrennte Bereiche aufgeteilt.</div>
+        </div>
+      </section>
 
-<details><summary>3. Access Port und Trunk Port</summary><div class="in">
+      <section class="category-section" id="s3" data-nav="3. Access Port und Trunk Port">
+        <div class="category-head"><h2>3. Access Port und Trunk Port</h2></div>
+        <div class="card">
 <ul>
 <li>Access Port: gehört zu genau 1 VLAN, Frames untagged, für Endgeräte (PC, Drucker, Server)</li>
 <li>Trunk Port: transportiert mehrere VLANs, Frames tagged, zwischen Switches oder zu Router/Firewall</li>
@@ -119,10 +349,13 @@ th{color:var(--blue)}
 <li>Untagged: ohne Tag, VLAN ergibt sich aus dem Port. Tagged: VLAN-ID im Frame</li>
 <li>Native VLAN: das eine untagged VLAN am Trunk, muss auf beiden Seiten passen</li>
 </ul>
-<div class="box wichtig"><b>Wichtig</b>VLAN muss auf beiden Switches existieren und im Trunk erlaubt sein, sonst kommt es nicht durch.</div>
-</div></details>
+<div class="hinweis"><b>Wichtig</b>VLAN muss auf beiden Switches existieren und im Trunk erlaubt sein, sonst kommt es nicht durch.</div>
+        </div>
+      </section>
 
-<details><summary>4. VLANs in der Praxis</summary><div class="in">
+      <section class="category-section" id="s4" data-nav="4. VLANs in der Praxis">
+        <div class="category-head"><h2>4. VLANs in der Praxis</h2></div>
+        <div class="card">
 <ul>
 <li>Strukturierung: Netz in Bereiche gegliedert, Subnetze planbar</li>
 <li>Benutzer: getrennt von Servern und Verwaltung</li>
@@ -133,20 +366,26 @@ th{color:var(--blue)}
 <li>Broadcast bleibt im eigenen VLAN, dadurch kleinere Broadcast-Domains</li>
 <li>Keine vollständige Sicherheit: trennt nur Layer 2, Regeln erst durch Firewall/ACL, Fehlkonfiguration möglich. Trotzdem ein wichtiger Baustein</li>
 </ul>
-<div class="box wichtig"><b>Ziel</b>VLANs sind ein Struktur- und Planungsthema, nicht nur Konfiguration.</div>
-</div></details>
+<div class="hinweis"><b>Ziel</b>VLANs sind ein Struktur- und Planungsthema, nicht nur Konfiguration.</div>
+        </div>
+      </section>
 
-<details><summary>5. Kommunikation zwischen VLANs</summary><div class="in">
+      <section class="category-section" id="s5" data-nav="5. Kommunikation zwischen VLANs">
+        <div class="category-head"><h2>5. Kommunikation zwischen VLANs</h2></div>
+        <div class="card">
 <ul>
 <li>Direkt nicht möglich: eigene Broadcast-Domain und eigenes Subnetz</li>
 <li>Nötig: Layer-3-Instanz (Router, L3-Switch mit SVI, Router-on-a-Stick, Firewall)</li>
 <li>Jedes VLAN braucht ein Gateway, Endgeräte nutzen es als Standardgateway</li>
 <li>Am Übergang lassen sich Regeln setzen (ACL/Firewall)</li>
 </ul>
-<div class="box wichtig"><b>Wichtig</b>VLANs trennen Layer-2-Bereiche, Kommunikation dazwischen funktioniert nicht automatisch.</div>
-</div></details>
+<div class="hinweis"><b>Wichtig</b>VLANs trennen Layer-2-Bereiche, Kommunikation dazwischen funktioniert nicht automatisch.</div>
+        </div>
+      </section>
 
-<details><summary>6. STP: Grundidee</summary><div class="in">
+      <section class="category-section" id="s6" data-nav="6. STP: Grundidee">
+        <div class="category-head"><h2>6. STP: Grundidee</h2></div>
+        <div class="card">
 <ul>
 <li>Redundante Wege sind sinnvoll, erzeugen aber Schleifen</li>
 <li>Layer-2-Loop: Frames kreisen im Kreis, Ethernet hat kein TTL, sie laufen nie von selbst aus</li>
@@ -155,10 +394,13 @@ th{color:var(--blue)}
 <li>MAC-Table Instability: dieselbe MAC wechselt ständig zwischen Ports</li>
 <li>Ohne Schutzmechanismus wird aus Redundanz ein Ausfall</li>
 </ul>
-<div class="box wichtig"><b>Ziel</b>STP blockiert nicht unnötig, sondern hält ein redundantes L2-Netz betriebsfähig und stabil.</div>
-</div></details>
+<div class="hinweis"><b>Ziel</b>STP blockiert nicht unnötig, sondern hält ein redundantes L2-Netz betriebsfähig und stabil.</div>
+        </div>
+      </section>
 
-<details><summary>7. STP: Funktionsprinzip</summary><div class="in">
+      <section class="category-section" id="s7" data-nav="7. STP: Funktionsprinzip">
+        <div class="category-head"><h2>7. STP: Funktionsprinzip</h2></div>
+        <div class="card">
 <ul>
 <li>Bei mehreren Wegen wählt STP einen aktiven Weg und blockiert die übrigen</li>
 <li>Nicht jeder Pfad aktiv, sonst Loop</li>
@@ -168,10 +410,13 @@ th{color:var(--blue)}
 <li>Blocking: Port leitet keine Nutzdaten weiter. Forwarding: Port leitet normal weiter</li>
 <li>Ausfall: Topologie wird neu berechnet, geblockter Port geht in Forwarding (RSTP deutlich schneller)</li>
 </ul>
-<div class="box merk"><b>Merke</b>Geblockte Links sind Reserve für den Ausfall.</div>
-</div></details>
+<div class="hinweis merk"><b>Merke</b>Geblockte Links sind Reserve für den Ausfall.</div>
+        </div>
+      </section>
 
-<details><summary>8. LAG: Link Aggregation</summary><div class="in">
+      <section class="category-section" id="s8" data-nav="8. LAG: Link Aggregation">
+        <div class="category-head"><h2>8. LAG: Link Aggregation</h2></div>
+        <div class="card">
 <ul>
 <li>LAG: mehrere physische Links werden zu einem logischen Bündel-Link zusammengefasst (Port-Channel)</li>
 <li>Bandbreite: Kapazität summiert sich</li>
@@ -180,19 +425,25 @@ th{color:var(--blue)}
 <li>STP sieht 1 Link, daher kein Loop und kein Blocking</li>
 <li>Nicht einfach mehr Kabel = schneller: ein einzelner Datenstrom bleibt auf einem Link, Verteilung hängt vom Hash ab, Einstellungen (Speed, Duplex, VLANs) müssen passen</li>
 </ul>
-</div></details>
+        </div>
+      </section>
 
-<details><summary>9. Statisches LAG und LACP</summary><div class="in">
+      <section class="category-section" id="s9" data-nav="9. Statisches LAG und LACP">
+        <div class="category-head"><h2>9. Statisches LAG und LACP</h2></div>
+        <div class="card">
 <ul>
 <li>Statisch möglich: fest konfiguriert, keine Aushandlung, keine Prüfung</li>
 <li>LACP (IEEE 802.3ad): Bündel wird ausgehandelt und überwacht, Fehlkonfiguration fällt auf</li>
 <li>Beide Seiten müssen zusammenpassen (Modus, Ports, Speed, VLANs)</li>
 <li>Bei falscher Einrichtung: Paketverlust, Ports fallen raus, MAC-Flapping, im schlimmsten Fall Loop</li>
 </ul>
-<div class="box wichtig"><b>Wichtig</b>Link-Bündelung muss koordiniert werden.</div>
-</div></details>
+<div class="hinweis"><b>Wichtig</b>Link-Bündelung muss koordiniert werden.</div>
+        </div>
+      </section>
 
-<details><summary>10. MLAG</summary><div class="in">
+      <section class="category-section" id="s10" data-nav="10. MLAG">
+        <div class="category-head"><h2>10. MLAG</h2></div>
+        <div class="card">
 <ul>
 <li>MLAG = Multi-Chassis Link Aggregation: LAG, das auf zwei getrennten Switches endet</li>
 <li>Normales LAG endet auf einem Gerät, MLAG auf zwei, die für die Gegenseite wie ein Gerät wirken</li>
@@ -201,10 +452,13 @@ th{color:var(--blue)}
 <li>Verfügbarkeit: Switch-Ausfall oder Wartung wird abgefangen</li>
 <li>Die zwei Switches stimmen sich über einen Peer-Link ab (herstellerspezifisch, z. B. vPC)</li>
 </ul>
-<div class="box wichtig"><b>Ziel</b>Redundanz erreichen, ohne einen klassischen Layer-2-Loop zu erzeugen.</div>
-</div></details>
+<div class="hinweis"><b>Ziel</b>Redundanz erreichen, ohne einen klassischen Layer-2-Loop zu erzeugen.</div>
+        </div>
+      </section>
 
-<details><summary>11. STP, LAG und MLAG im Vergleich</summary><div class="in">
+      <section class="category-section" id="s11" data-nav="11. STP, LAG und MLAG im Vergleich">
+        <div class="category-head"><h2>11. STP, LAG und MLAG im Vergleich</h2></div>
+        <div class="card">
 <ul>
 <li>STP löst: Schleifen bei redundanten Wegen</li>
 <li>LAG löst: mehr Kapazität und Ausfallschutz auf Linkebene zwischen zwei Geräten</li>
@@ -212,19 +466,25 @@ th{color:var(--blue)}
 <li>Ergänzung: MLAG im Design, STP bleibt als Sicherheitsnetz gegen Fehlverkabelung</li>
 <li>Nicht austauschbar: unterschiedliche Probleme, obwohl alle mit Redundanz zu tun haben</li>
 </ul>
-<div class="box merk"><b>Merke</b>STP schützt vor Schleifen, LAG bündelt Verbindungen, MLAG erweitert diese Idee auf mehrere Geräte.</div>
-</div></details>
+<div class="hinweis merk"><b>Merke</b>STP schützt vor Schleifen, LAG bündelt Verbindungen, MLAG erweitert diese Idee auf mehrere Geräte.</div>
+        </div>
+      </section>
 
-<details><summary>12. Typische Fehlerbilder</summary><div class="in">
-<div class="box fehler"><b>Falsche VLAN-Zuordnung / Gerät im falschen VLAN</b>Falsche IP-Adresse, Netz nicht erreichbar, Gerät landet im falschen Bereich.</div>
-<div class="box fehler"><b>Trunk transportiert nicht die erwarteten VLANs</b>VLAN nicht erlaubt oder nicht angelegt, Native VLAN unterschiedlich.</div>
-<div class="box fehler"><b>Kommunikation zwischen VLANs geht nicht</b>Kein Gateway/Routing, falsches Standardgateway, Firewall-Regel.</div>
-<div class="box fehler"><b>Loop im Layer-2-Netz</b>Broadcast Storm, MAC-Flapping, Netz extrem langsam oder down.</div>
-<div class="box fehler"><b>Falsche oder unvollständige LAG-Konfiguration</b>Nur eine Seite gebündelt, Parameter passen nicht, Ports suspended, Paketverlust.</div>
-<div class="box fehler"><b>Unklare Redundanz / Fehlverhalten bei mehrfachem Pfad</b>Unklar, welcher Pfad aktiv ist, STP-Root ungeplant, Umschaltung dauert.</div>
-</div></details>
+      <section class="category-section" id="s12" data-nav="12. Typische Fehlerbilder">
+        <div class="category-head"><h2>12. Typische Fehlerbilder</h2></div>
+        <div class="card">
+<div class="hinweis fehler"><b>Falsche VLAN-Zuordnung / Gerät im falschen VLAN</b>Falsche IP-Adresse, Netz nicht erreichbar, Gerät landet im falschen Bereich.</div>
+<div class="hinweis fehler"><b>Trunk transportiert nicht die erwarteten VLANs</b>VLAN nicht erlaubt oder nicht angelegt, Native VLAN unterschiedlich.</div>
+<div class="hinweis fehler"><b>Kommunikation zwischen VLANs geht nicht</b>Kein Gateway/Routing, falsches Standardgateway, Firewall-Regel.</div>
+<div class="hinweis fehler"><b>Loop im Layer-2-Netz</b>Broadcast Storm, MAC-Flapping, Netz extrem langsam oder down.</div>
+<div class="hinweis fehler"><b>Falsche oder unvollständige LAG-Konfiguration</b>Nur eine Seite gebündelt, Parameter passen nicht, Ports suspended, Paketverlust.</div>
+<div class="hinweis fehler"><b>Unklare Redundanz / Fehlverhalten bei mehrfachem Pfad</b>Unklar, welcher Pfad aktiv ist, STP-Root ungeplant, Umschaltung dauert.</div>
+        </div>
+      </section>
 
-<details><summary>13. Switching in der Praxis</summary><div class="in">
+      <section class="category-section" id="s13" data-nav="13. Switching in der Praxis">
+        <div class="category-head"><h2>13. Switching in der Praxis</h2></div>
+        <div class="card">
 <ul>
 <li>Nur verbinden reicht nicht: Segmentierung, Loop-Schutz, Ausfallsicherheit und Bandbreite müssen geplant sein</li>
 <li>VLANs: Struktur und Segmentierung</li>
@@ -232,10 +492,14 @@ th{color:var(--blue)}
 <li>LAG und MLAG: Leistung und Hochverfügbarkeit</li>
 <li>Viele Fehler in Firmennetzen sind VLAN-, Trunk-, STP- oder LAG-Fehler</li>
 </ul>
-<div class="box wichtig"><b>Ziel</b>Switching ist deutlich mehr als das Weiterleiten von Frames.</div>
-</div></details>
+<div class="hinweis"><b>Ziel</b>Switching ist deutlich mehr als das Weiterleiten von Frames.</div>
+        </div>
+      </section>
 
-<details><summary>Glossar</summary><div class="in wrap"><table>
+      <section class="category-section" id="glossar" data-nav="Glossar">
+        <div class="category-head"><h2>Glossar</h2></div>
+        <div class="card">
+<div class="tbl-wrap"><table class="tbl zeilen">
 <tr><th>Begriff</th><th>Kurz erklärt</th></tr>
 <tr><td>MAC-Address-Table</td><td>Zuordnung MAC > Port, vom Switch gelernt</td></tr>
 <tr><td>Frame</td><td>Datenpaket auf Layer 2</td></tr>
@@ -251,46 +515,353 @@ th{color:var(--blue)}
 <tr><td>LACP</td><td>Protokoll zum Aushandeln eines LAG (802.3ad)</td></tr>
 <tr><td>MLAG</td><td>LAG über zwei Switches, Gegenseite sieht ein Gerät</td></tr>
 <tr><td>Peer-Link</td><td>Verbindung zwischen den MLAG-Switches zum Abgleich</td></tr>
-</table></div></details>
+</table></div>
+        </div>
+      </section>
 
-<details><summary>Hilfe bei Bearbeitungsstillstand</summary><div class="in">
+      <section class="category-section" id="hilfe" data-nav="Wenn's hakt">
+        <div class="category-head"><h2>Wenn's hakt</h2><span class="path">Hilfe bei Bearbeitungsstillstand</span></div>
+        <div class="card">
 <ul>
 <li>Bei VLAN-Problemen: Weg des Frames Port für Port verfolgen (Access, Trunk, Access) und je Station das VLAN prüfen</li>
 <li>Bei fehlender Verbindung zwischen VLANs: erst prüfen, ob Layer 2 im VLAN funktioniert, dann Gateway und Routing</li>
 <li>Bei Loop-Verdacht: Symptome prüfen (Storm, MAC-Flapping), Verkabelung kontrollieren, Root Bridge feststellen</li>
 <li>Bei LAG: beide Seiten vergleichen (Modus, Ports, Speed, VLANs)</li>
 <li>Bei Begriffschaos: Merksatz nutzen. STP schützt vor Schleifen, LAG bündelt Links, MLAG erweitert das auf mehrere Geräte</li>
-</ul></div></details>
+</ul>
+        </div>
+      </section>
 
-<details open><summary>14. Eigene Einschätzung</summary><div class="in">
-<p class="q">Chip antippen: sicher, unsicher, bitte wiederholen, zurück auf neutral.</p>
-<div class="chips" id="chips"></div>
-</div></details>
-</main>
+      <section class="category-section" id="einschaetzung" data-nav="14. Eigene Einschätzung">
+        <div class="category-head"><h2>14. Eigene Einschätzung</h2></div>
+        <div class="card">
+<div class="einschaetzung" data-schluessel="switching-selbsteinschaetzung" data-themen='["Switch/MAC/Forwarding", "VLAN Grundidee", "Access vs. Trunk", "Tagged/Untagged", "Inter-VLAN-Routing", "STP/Loops", "Root Bridge/Blocking", "LAG", "LACP vs. statisch", "MLAG", "STP vs. LAG vs. MLAG", "Fehlerbilder"]'></div>
+        </div>
+      </section>
+      <div class="no-results" id="noResults">Keine Treffer. Versuch's mit einem anderen Begriff.</div>
+    </main>
+  </div>
+</div>
+
+<footer class="seitenfuss">
+  <span>© 2026 <a href="https://github.com/nicandr0" target="_blank" rel="noopener">Nicandro Marziale</a> – Design, Entwicklung und Formulierung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></span>
+  <span>Lernhilfe Netzwerktechnik - Switching (Vorbereitung VIII)</span>
+</footer>
+
+<div class="lernmodus" id="lernmodus" role="dialog" aria-modal="true" aria-label="Lernmodus">
+  <div class="lm-box">
+    <button class="lm-close" type="button" aria-label="Schließen">×</button>
+    <div id="lmKarten">
+      <div class="lm-progress">Karte 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-card" id="lmCard" tabindex="0" role="button" aria-label="Karte umdrehen">
+        <div class="lm-cat" id="lmCat"></div>
+        <div class="lm-front" id="lmFront"></div>
+        <div id="lmBack" class="hidden">
+          <div class="lm-reveal" id="lmReveal"></div>
+          <div class="lm-extra" id="lmExtra"></div>
+        </div>
+        <div class="lm-flip-hint" id="lmFlipHint">Klicken zum Aufdecken</div>
+      </div>
+      <div class="lm-actions">
+        <button class="btn again" id="lmAgain" type="button">↺ nochmal üben</button>
+        <button class="btn know" id="lmKnow" type="button">✓ weiß ich</button>
+      </div>
+      <div class="lm-keys">Leertaste aufdecken · ← nochmal · → weiß ich · Esc schließen</div>
+    </div>
+    <div id="lmQuiz">
+      <div class="lm-progress">Frage 1 / 1</div>
+      <div class="lm-bar"><div class="lm-bar-fill"></div></div>
+      <div class="lm-cat" id="lmQCat"></div>
+      <div class="lm-question" id="lmQuestion"></div>
+      <div class="lm-options" id="lmOptions"></div>
+      <div class="lm-hint">Es können mehrere Antworten richtig sein - Checkbox(en) auswählen und prüfen.</div>
+      <div class="lm-explain" id="lmExplain"></div>
+      <div class="lm-actions">
+        <button class="btn check" id="lmCheck" type="button">Prüfen</button>
+        <button class="btn next hidden" id="lmNext" type="button">Weiter →</button>
+      </div>
+    </div>
+    <div id="lmDone" class="lm-done hidden">
+      <h3>Runde fertig</h3>
+      <p id="lmDoneText"></p>
+      <button class="btn primary" id="lmRestart" type="button">Neue Runde starten</button>
+    </div>
+  </div>
+</div>
+
 <script>
-var T=["Switch/MAC/Forwarding","VLAN Grundidee","Access vs. Trunk","Tagged/Untagged","Inter-VLAN-Routing","STP/Loops","Root Bridge/Blocking","LAG","LACP vs. statisch","MLAG","STP vs. LAG vs. MLAG","Fehlerbilder"];
-var L=["","sicher","unsicher","bitte wiederholen"];
-var c=document.getElementById("chips");
-T.forEach(function(t){var b=document.createElement("button");b.className="chip";b.dataset.s=0;b.textContent=t;
-b.onclick=function(){var s=(+b.dataset.s+1)%4;b.dataset.s=s;b.textContent=t+(s?": "+L[s]:"")};c.appendChild(b)});
-var ds=[].slice.call(document.querySelectorAll("details"));
-document.getElementById("s").oninput=function(e){var q=e.target.value.toLowerCase();
-ds.forEach(function(d){var m=!q||d.textContent.toLowerCase().indexOf(q)>-1;d.classList.toggle("hide",!m);if(q&&m)d.open=true})};
-document.getElementById("open").onclick=function(){ds.forEach(function(d){d.open=true})};
-document.getElementById("close").onclick=function(){ds.forEach(function(d){d.open=false})};
-var C=[["Was macht ein Switch?","Leitet Frames gezielt anhand der Ziel-MAC an den passenden Port weiter (Layer 2)."],["Hub vs. Switch?","Hub gibt alles an alle Ports, Switch lernt MACs und leitet gezielt."],["Was ist ein VLAN?","Logisches Netz auf gemeinsamer Hardware, 1 VLAN = 1 Broadcast-Domain."],["Access vs. Trunk?","Access: 1 VLAN, untagged, Endgeräte. Trunk: mehrere VLANs, tagged, zwischen Switches."],["Warum kein Verkehr zwischen VLANs?","Eigene Broadcast-Domain, Layer-3 (Router, SVI, Firewall) nötig."],["Was ist ein Layer-2-Loop?","Frames kreisen, kein TTL: Broadcast Storm, MAC-Table Instability."],["Was macht STP?","Wählt Root Bridge, baut loopfreien Baum, blockiert redundante Ports als Reserve."],["Was macht LAG?","Mehrere Links als 1 logischer Link: Bandbreite, Redundanz, Lastverteilung per Hash."],["Statisch vs. LACP?","Statisch: keine Aushandlung. LACP: Bündel wird ausgehandelt und geprüft."],["Was ist MLAG?","LAG über zwei Switches: alle Links aktiv, Switch-Ausfall abgefangen, kein Loop."],["STP, LAG, MLAG in einem Satz?","STP schützt vor Schleifen, LAG bündelt Verbindungen, MLAG erweitert das auf mehrere Geräte."]];
-var ci=0,fl=false,cd=document.getElementById("card");
-function show(){cd.className="card"+(fl?" a":"");cd.innerHTML="<small>"+(fl?"Antwort":"Frage")+"</small>"+C[ci][fl?1:0];document.getElementById("cnt").textContent=(ci+1)+" / "+C.length}
-cd.onclick=function(){fl=!fl;show()};
-cd.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();cd.click()}};
-document.getElementById("prev").onclick=function(){ci=(ci+C.length-1)%C.length;fl=false;show()};
-document.getElementById("next").onclick=function(){ci=(ci+1)%C.length;fl=false;show()};
-function mode(l){document.body.classList.toggle("lernen",l);document.getElementById("lesen").classList.toggle("on",!l);document.getElementById("lernen").classList.toggle("on",l)}
-document.getElementById("lesen").onclick=function(){mode(false)};
-document.getElementById("lernen").onclick=function(){mode(true)};
-show();
+/* Lernkarten */
+const KARTEN = [
+  {tag:'', vorne:"Was macht ein Switch?", hinten:"Leitet Frames gezielt anhand der Ziel-MAC an den passenden Port weiter (Layer 2)."},
+  {tag:'', vorne:"Hub vs. Switch?", hinten:"Hub gibt alles an alle Ports, Switch lernt MACs und leitet gezielt."},
+  {tag:'', vorne:"Was ist ein VLAN?", hinten:"Logisches Netz auf gemeinsamer Hardware, 1 VLAN = 1 Broadcast-Domain."},
+  {tag:'', vorne:"Access vs. Trunk?", hinten:"Access: 1 VLAN, untagged, Endgeräte. Trunk: mehrere VLANs, tagged, zwischen Switches."},
+  {tag:'', vorne:"Warum kein Verkehr zwischen VLANs?", hinten:"Eigene Broadcast-Domain, Layer-3 (Router, SVI, Firewall) nötig."},
+  {tag:'', vorne:"Was ist ein Layer-2-Loop?", hinten:"Frames kreisen, kein TTL: Broadcast Storm, MAC-Table Instability."},
+  {tag:'', vorne:"Was macht STP?", hinten:"Wählt Root Bridge, baut loopfreien Baum, blockiert redundante Ports als Reserve."},
+  {tag:'', vorne:"Was macht LAG?", hinten:"Mehrere Links als 1 logischer Link: Bandbreite, Redundanz, Lastverteilung per Hash."},
+  {tag:'', vorne:"Statisch vs. LACP?", hinten:"Statisch: keine Aushandlung. LACP: Bündel wird ausgehandelt und geprüft."},
+  {tag:'', vorne:"Was ist MLAG?", hinten:"LAG über zwei Switches: alle Links aktiv, Switch-Ausfall abgefangen, kein Loop."},
+  {tag:'', vorne:"STP, LAG, MLAG in einem Satz?", hinten:"STP schützt vor Schleifen, LAG bündelt Verbindungen, MLAG erweitert das auf mehrere Geräte."}
+];
+window.LH = { lernen: { art: 'karten', karten: KARTEN } };
 </script>
+<script>
+/* ==========================================================================
+   Lernhilfen FiSi – gemeinsames Verhalten aller Seiten
+   Wird von bauen.py NACH dem Seitenskript eingebettet. Eine Seite kann vorher
+   window.LH setzen:
+     LH.rechte       true = Kapitelleiste im Stil "ls -la" mit Rechten und Anzahl
+     LH.filter       function(card) -> true/false, zusätzlicher Filter zur Suche
+     LH.lernen       { art:'karten', karten:[...] | function, runde:Zahl,
+                       einheit:'Karten', hintenMono:bool, zusatzPrompt:bool }
+                     { art:'quiz', fragen:[{cat,q,opts,correct}] }
+     Karte:          { tag, vorne, hinten, zusatz }
+   ========================================================================== */
+(function(){
+  'use strict';
+  var LH = window.LH = window.LH || {};
+  var $ = function(s, r){ return (r || document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-<div style="text-align:center;font:11px/1.6 ui-monospace,Consolas,monospace;color:#8b949e;padding:14px 16px 24px;">© 2026 <a href="https://github.com/nicandr0" style="color:inherit;">Nicandro Marziale</a> – Design, Entwicklung und Formulierung · Lizenz: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de" target="_blank" rel="noopener" style="color:inherit;">CC BY-NC-SA 4.0</a></div>
+  /* ---- Lernhilfen-Leiste: auf dem Handy zur aktuellen Seite scrollen ---- */
+  var lhNav = $('.lh-nav'), lhCur = lhNav && $('[aria-current]', lhNav);
+  if(lhCur && lhNav.scrollWidth > lhNav.clientWidth) lhNav.scrollLeft = Math.max(0, lhCur.offsetLeft - 60);
+
+  /* ---- Kapitelleiste aus den Kapiteln erzeugen ---- */
+  var PERMS = ['drwxr-xr-x','drwxrwxr-x','drwxr-x---'];
+  var sidebar = $('#sidebar');
+  var sections = $$('.category-section');
+  var links = [];
+  sections.forEach(function(sec, i){
+    if(!sec.id) sec.id = 'k' + (i + 1);
+    var name = sec.dataset.nav || ($('h2', sec) ? $('h2', sec).textContent : sec.id);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cat-link';
+    b.dataset.target = sec.id;
+    var cnt = sec.dataset.count || $$('.card', sec).length;
+    b.innerHTML = (LH.rechte ? '<span class="perm">' + PERMS[i % PERMS.length] + '</span>' : '') +
+      '<span class="name"></span>' + (LH.rechte ? '<span class="cnt">' + cnt + '</span>' : '');
+    $('.name', b).textContent = name;
+    b.addEventListener('click', function(){ sec.scrollIntoView({behavior:'smooth', block:'start'}); });
+    if(sidebar) sidebar.appendChild(b);
+    links.push(b);
+  });
+
+  function followActive(link){
+    var nav = link && link.parentElement;
+    if(!nav || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollTo({left: Math.max(0, link.offsetLeft - 12), behavior:'smooth'});
+  }
+  function setActive(id){
+    var hit = null;
+    links.forEach(function(l){ var on = l.dataset.target === id; l.classList.toggle('active', on); if(on) hit = l; });
+    followActive(hit);
+  }
+  // aktives Kapitel: das letzte, dessen Anfang im oberen Drittel liegt; ganz unten immer das letzte
+  var aktiv = null, geplant = false;
+  function aktualisieren(){
+    geplant = false;
+    var sichtbar = sections.filter(function(s){ return !s.classList.contains('hidden'); });
+    if(!sichtbar.length) return;
+    var grenze = window.innerHeight * 0.3, act = sichtbar[0];
+    sichtbar.forEach(function(s){ if(s.getBoundingClientRect().top <= grenze) act = s; });
+    if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) act = sichtbar[sichtbar.length - 1];
+    if(act.id !== aktiv){ aktiv = act.id; setActive(act.id); }
+  }
+  window.addEventListener('scroll', function(){ if(!geplant){ geplant = true; requestAnimationFrame(aktualisieren); } }, {passive:true});
+  window.addEventListener('resize', aktualisieren);
+  aktualisieren();
+
+  /* ---- Kennzahlen im Kopfbereich ---- */
+  function lernPool(){
+    var l = LH.lernen; if(!l) return [];
+    var p = l.art === 'quiz' ? l.fragen : l.karten;
+    return (typeof p === 'function' ? p() : p) || [];
+  }
+  $$('[data-stat="kapitel"]').forEach(function(el){ el.textContent = sections.length; });
+  $$('[data-stat="lernen"]').forEach(function(el){ el.textContent = lernPool().length; });
+
+  /* ---- Selbsteinschätzung (nur im eigenen Browser gespeichert) ---- */
+  $$('.einschaetzung').forEach(function(box){
+    var key = box.dataset.schluessel || ('lh-einschaetzung-' + location.pathname);
+    var themen = [];
+    try { themen = JSON.parse(box.dataset.themen || '[]'); } catch(e) {}
+    var labels = {sicher:'sicher', unsicher:'unsicher', wiederholen:'bitte wiederholen'};
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { state = {}; }
+    function save(){ try { localStorage.setItem(key, JSON.stringify(state)); } catch(e) {} }
+    var html = '<p class="card-note">Zum Markieren anklicken. Die Auswahl wird nur in deinem Browser gespeichert und dient deiner eigenen Übersicht beim Lernen.</p>' +
+      '<div class="tbl-wrap"><table class="tbl"><tr><th>Thema</th><th>Einschätzung</th></tr>';
+    themen.forEach(function(t, i){
+      html += '<tr><td></td><td><div class="sc-actions">' + Object.keys(labels).map(function(k){
+        return '<button type="button" class="sc-btn ' + k + (state[i] === k ? ' active' : '') + '" data-row="' + i + '" data-state="' + k + '">' + labels[k] + '</button>';
+      }).join('') + '</div></td></tr>';
+    });
+    html += '</table></div><div style="margin-top:10px;"><button type="button" class="sc-btn sc-reset">Auswahl zurücksetzen</button></div>';
+    box.innerHTML = html;
+    $$('td:first-child', box).forEach(function(td, i){ td.textContent = themen[i]; });
+    box.addEventListener('click', function(e){
+      var b = e.target.closest('.sc-btn'); if(!b) return;
+      if(b.classList.contains('sc-reset')){ state = {}; save(); $$('.sc-btn.active', box).forEach(function(x){ x.classList.remove('active'); }); return; }
+      var row = b.dataset.row, was = b.classList.contains('active');
+      $$('.sc-btn[data-row="' + row + '"]', box).forEach(function(x){ x.classList.remove('active'); });
+      if(was){ delete state[row]; } else { b.classList.add('active'); state[row] = b.dataset.state; }
+      save();
+    });
+  });
+
+  /* ---- Suche ---- */
+  var searchInput = $('#searchInput');
+  var noResults = $('#noResults');
+  var statVisible = $('#statVisible'), statVisibleNum = $('#statVisibleNum');
+  function text(el){ return ((el.dataset.search || '') + ' ' + el.textContent).toLowerCase(); }
+  function runSearch(){
+    var q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    var f = typeof LH.filter === 'function' ? LH.filter : null;
+    var all = !q && !f;
+    var visible = 0;
+    sections.forEach(function(sec){
+      var secHit = false;
+      $$('.card', sec).forEach(function(card){
+        var hit;
+        var rows = $$('table.zeilen tr', card).filter(function(r){ return !$('th', r); });
+        if(all){
+          hit = true; rows.forEach(function(r){ r.classList.remove('hidden'); });
+        } else if(rows.length && q){
+          var rowHits = 0;
+          rows.forEach(function(r){ var m = text(r).indexOf(q) > -1; r.classList.toggle('hidden', !m); if(m) rowHits++; });
+          hit = rowHits > 0;
+          if(!hit && (card.dataset.search || '').toLowerCase().indexOf(q) > -1){ hit = true; rows.forEach(function(r){ r.classList.remove('hidden'); }); }
+        } else {
+          rows.forEach(function(r){ r.classList.remove('hidden'); });
+          hit = !q || text(card).indexOf(q) > -1;
+        }
+        if(hit && f) hit = f(card);
+        card.classList.toggle('hidden', !hit);
+        if(hit){ secHit = true; visible++; }
+      });
+      $$('.group', sec).forEach(function(g){ g.classList.toggle('hidden', !all && !$$('.card', g).some(function(c){ return !c.classList.contains('hidden'); })); });
+      $$('.schaubild', sec).forEach(function(s){
+        var m = all || (!f && q && text(s).indexOf(q) > -1);
+        s.classList.toggle('hidden', !m);
+        if(m) secHit = true;
+      });
+      sec.classList.toggle('hidden', !all && !secHit);
+    });
+    if(noResults) noResults.style.display = (!all && visible === 0) ? 'block' : 'none';
+    if(statVisible){ statVisible.classList.toggle('hidden', all); if(statVisibleNum) statVisibleNum.textContent = visible; }
+    aktualisieren();
+  }
+  LH.runSearch = runSearch;
+  if(searchInput){
+    searchInput.addEventListener('input', runSearch);
+    searchInput.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ searchInput.value = ''; runSearch(); searchInput.blur(); } });
+  }
+
+  /* ---- Lernmodus ---- */
+  var lm = $('#lernmodus'), lernBtn = $('#lernBtn');
+  if(!LH.lernen || !lm){ if(lernBtn) lernBtn.classList.add('hidden'); }
+  else {
+    var isQuiz = LH.lernen.art === 'quiz';
+    var actBox = $(isQuiz ? '#lmQuiz' : '#lmKarten'), doneBox = $('#lmDone');
+    $(isQuiz ? '#lmKarten' : '#lmQuiz').classList.add('hidden');
+    var deck = [], total = 0, good = 0, cur = null, revealed = false, checked = false;
+    function shuffle(a){ a = a.slice(); for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+    function progress(n){ $('.lm-progress', actBox).textContent = (isQuiz ? 'Frage ' : 'Karte ') + n + ' / ' + total; $('.lm-bar-fill', actBox).style.width = ((n - 1) / total * 100) + '%'; }
+    function finish(){
+      actBox.classList.add('hidden'); doneBox.classList.remove('hidden');
+      $('#lmDoneText').textContent = isQuiz
+        ? 'Du hast ' + good + ' von ' + total + ' Fragen richtig beantwortet.'
+        : 'Du hast ' + good + ' von ' + total + ' ' + (LH.lernen.einheit || 'Karten') + ' direkt gewusst.';
+    }
+    function start(){
+      var pool = lernPool();
+      deck = shuffle(pool);
+      if(!isQuiz && LH.lernen.runde) deck = deck.slice(0, LH.lernen.runde);
+      total = deck.length; good = 0;
+      actBox.classList.remove('hidden'); doneBox.classList.add('hidden');
+      next();
+    }
+    function next(){
+      if(!deck.length){ finish(); return; }
+      cur = deck.shift();
+      progress(total - deck.length);
+      if(isQuiz){
+        checked = false;
+        $('#lmQCat').textContent = cur.cat || '';
+        $('#lmQuestion').textContent = cur.q;
+        var opts = $('#lmOptions'); opts.innerHTML = '';
+        cur.opts.forEach(function(o, i){
+          var lab = document.createElement('label'); lab.className = 'lm-opt';
+          lab.innerHTML = '<input type="checkbox" value="' + i + '"><span></span>';
+          $('span', lab).textContent = o; opts.appendChild(lab);
+        });
+        $('#lmExplain').classList.remove('show'); $('#lmCheck').classList.remove('hidden'); $('#lmNext').classList.add('hidden');
+      } else {
+        revealed = false;
+        $('#lmCat').textContent = cur.tag || '';
+        $('#lmFront').textContent = cur.vorne;
+        var rv = $('#lmReveal'); rv.textContent = cur.hinten; rv.classList.toggle('mono', !!LH.lernen.hintenMono);
+        var ex = $('#lmExtra'); ex.classList.toggle('mono', !!LH.lernen.zusatzPrompt);
+        ex.innerHTML = '';
+        if(cur.zusatz){
+          if(LH.lernen.zusatzPrompt){ var p = document.createElement('span'); p.style.color = 'var(--amber)'; p.textContent = '$ '; ex.appendChild(p); }
+          ex.appendChild(document.createTextNode(cur.zusatz));
+        }
+        $('#lmBack').classList.add('hidden'); $('#lmFlipHint').classList.remove('hidden');
+      }
+    }
+    function flip(){ if(isQuiz) return; revealed = !revealed; $('#lmBack').classList.toggle('hidden', !revealed); $('#lmFlipHint').classList.toggle('hidden', revealed); }
+    function know(){ good++; next(); }
+    function again(){ deck.push(cur); next(); }
+    function check(){
+      if(checked) return; checked = true;
+      var boxes = $$('#lmOptions input');
+      var sel = boxes.filter(function(b){ return b.checked; }).map(function(b){ return +b.value; });
+      var ok = sel.length === cur.correct.length && cur.correct.every(function(v){ return sel.indexOf(v) > -1; });
+      boxes.forEach(function(b, i){
+        var o = b.closest('.lm-opt'); b.disabled = true;
+        if(cur.correct.indexOf(i) > -1) o.classList.add('correct'); else if(sel.indexOf(i) > -1) o.classList.add('wrong');
+      });
+      if(ok) good++;
+      var ex = $('#lmExplain');
+      ex.textContent = ok ? 'Richtig! Alle passenden Antworten wurden korrekt ausgewählt.' : 'Nicht ganz - grün markiert die richtigen Antworten, rot deine falsch ausgewählten.';
+      ex.classList.add('show'); $('#lmCheck').classList.add('hidden'); $('#lmNext').classList.remove('hidden');
+    }
+    function open(){ lm.classList.add('open'); start(); }
+    function close(){ lm.classList.remove('open'); if(lernBtn) lernBtn.focus(); }
+    if(lernBtn) lernBtn.addEventListener('click', open);
+    $$('.lm-close', lm).forEach(function(b){ b.addEventListener('click', close); });
+    lm.addEventListener('click', function(e){ if(e.target === lm) close(); });
+    $('#lmRestart').addEventListener('click', start);
+    var card = $('#lmCard');
+    card.addEventListener('click', flip);
+    card.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); flip(); } });
+    $('#lmKnow').addEventListener('click', function(e){ e.stopPropagation(); know(); });
+    $('#lmAgain').addEventListener('click', function(e){ e.stopPropagation(); again(); });
+    $('#lmCheck').addEventListener('click', check);
+    $('#lmNext').addEventListener('click', next);
+    document.addEventListener('keydown', function(e){
+      if(!lm.classList.contains('open')) return;
+      if(e.key === 'Escape'){ close(); return; }
+      if(isQuiz || doneBox.classList.contains('hidden') === false) return;
+      if(e.key === ' '){ e.preventDefault(); flip(); }
+      if(e.key === 'ArrowRight' && revealed) know();
+      if(e.key === 'ArrowLeft' && revealed) again();
+    });
+  }
+
+  /* ---- Taste "/" springt in die Suche ---- */
+  document.addEventListener('keydown', function(e){
+    if(lm && lm.classList.contains('open')) return;
+    if(e.key === '/' && searchInput && document.activeElement !== searchInput && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+      e.preventDefault(); searchInput.focus();
+    }
+  });
+})();
+</script>
 </body>
 </html>
