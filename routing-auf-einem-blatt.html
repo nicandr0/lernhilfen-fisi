@@ -61,7 +61,7 @@ body{
 .dot.d3{background:var(--green);}
 .termbar .path{margin-left:10px;color:var(--text-muted);font-family:var(--mono);font-size:12.5px;}
 
-.wrap{max-width:1240px;margin:0 auto;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--bg-elevated);overflow:hidden;}
+.wrap{max-width:1240px;margin:0 auto;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--bg-elevated);overflow:hidden;overflow:clip;}
 
 header.hero{padding:34px 34px 26px;border-bottom:1px solid var(--border);background:linear-gradient(180deg, rgba(227,164,88,0.04), transparent 70%);}
 .hero-top{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:14px;}
@@ -84,7 +84,7 @@ h1 .cursor{display:inline-block;width:9px;height:1.1em;background:var(--amber);m
 .btn.primary:hover{background:rgba(227,164,88,0.22);}
 
 .layout{display:flex;}
-nav.sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);padding:18px 0;max-height:calc(100vh - 40px);overflow-y:auto;position:sticky;top:0;align-self:flex-start;}
+nav.sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);padding:18px 0;max-height:calc(100vh - var(--lh-h) - 8px);overflow-y:auto;position:sticky;top:var(--lh-h);align-self:flex-start;}
 .sidebar .lslabel{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);padding:0 18px 8px;text-transform:uppercase;letter-spacing:.08em;}
 .cat-link{display:flex;align-items:center;gap:10px;width:100%;padding:8px 18px;background:none;border:none;cursor:pointer;text-align:left;font-family:var(--mono);font-size:12.5px;color:var(--text-secondary);border-left:2px solid transparent;transition:all .12s;}
 .cat-link .name{color:inherit;flex:1;}
@@ -92,7 +92,7 @@ nav.sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);paddi
 .cat-link.active{background:var(--surface);color:var(--amber);border-left-color:var(--amber);}
 
 main.content{flex:1;min-width:0;padding:8px 30px 60px;}
-.category-section{padding-top:26px;scroll-margin-top:16px;}
+.category-section{padding-top:26px;scroll-margin-top:calc(var(--lh-h) + 16px);}
 .category-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--border-soft);}
 .category-head h2{font-family:var(--mono);font-size:16px;margin:0;color:var(--text-primary);font-weight:600;}
 
@@ -159,17 +159,39 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 
 @media (max-width:820px){
   .layout{flex-direction:column;}
-  nav.sidebar{width:100%;position:static;max-height:none;border-right:none;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:12px;gap:4px;}
+  nav.sidebar{width:100%;position:sticky;top:var(--lh-h);z-index:10;background:var(--bg-elevated);max-height:none;border-right:none;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:12px;gap:4px;}
   .sidebar .lslabel{display:none;}
-  .cat-link{flex-shrink:0;border-left:none;border-bottom:2px solid transparent;border-radius:6px;padding:7px 12px;}
+  .cat-link{width:auto;flex-shrink:0;border-left:none;border-bottom:2px solid transparent;border-radius:6px;padding:7px 12px;}
+  .cat-link .perm{display:none;}
+  .category-section{scroll-margin-top:calc(var(--lh-h) + 72px);}
   .cat-link.active{border-bottom-color:var(--amber);}
   main.content{padding:8px 16px 50px;}
   .termbar{margin:10px 10px 0;}
 }
 @media (prefers-reduced-motion:reduce){h1 .cursor{animation:none;}}
 </style>
+<style id="lh-nav-css">
+/* Lernhilfen-Leiste: auf allen Seiten gleich, eigene Farben unabhängig vom Seitendesign.
+   Neue Lernhilfe? Link in ALLEN Dateien der Leiste nachtragen (siehe README). */
+:root{--lh-h:34px;}
+.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);box-sizing:border-box;
+  display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;
+  padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  background:#0d1117;border-bottom:1px solid #2a3444;
+  font:500 12px/1 ui-monospace,'JetBrains Mono',Consolas,monospace;}
+.lh-nav::-webkit-scrollbar{display:none;}
+.lh-nav .lh-ttl{color:#5c6b83;padding-right:6px;}
+.lh-nav a{color:#93a1b8;text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
+.lh-nav a:hover{color:#e6eaf0;background:#1a222e;}
+.lh-nav a[aria-current="page"]{color:#e3a458;border-color:rgba(227,164,88,0.4);background:rgba(227,164,88,0.14);}
+.lh-nav a:focus-visible{outline:2px solid #e3a458;outline-offset:1px;}
+@media print{.lh-nav{display:none;}}
+</style>
 </head>
 <body>
+<nav class="lh-nav" aria-label="Lernhilfen"><span class="lh-ttl">lernhilfen/</span><a href="index.html">Übersicht</a><a href="linux-auf-einem-blatt.html">Linux</a><a href="subnetting-vlsm-auf-einem-blatt.html">Subnetting</a><a href="osi-modell-auf-einem-blatt.html">OSI</a><a href="routing-auf-einem-blatt.html" aria-current="page">Routing</a><a href="switching-auf-einem-blatt.html">Switching</a></nav>
+<script>(function(){var n=document.querySelector(".lh-nav"),c=n&&n.querySelector("[aria-current]");if(c&&n.scrollWidth>n.clientWidth)n.scrollLeft=Math.max(0,c.offsetLeft-60);})();</script>
+
 
 <div class="termbar">
   <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
@@ -468,7 +490,16 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 const sections = Array.from(document.querySelectorAll('.category-section'));
 const links = Array.from(document.querySelectorAll('.cat-link'));
 document.getElementById('statTotal').textContent = sections.length;
-function setActive(id){ links.forEach(l => l.classList.toggle('active', l.dataset.target === id)); }
+function setActive(id){
+  links.forEach(l => l.classList.toggle('active', l.dataset.target === id));
+  followActive(links.find(l => l.dataset.target === id));
+}
+/* Handy: waagerechte Kapitelleiste zum aktiven Kapitel mitscrollen */
+function followActive(link){
+  const nav = link && link.parentElement;
+  if(!nav || nav.scrollWidth <= nav.clientWidth) return;
+  nav.scrollTo({left: Math.max(0, link.offsetLeft - 12), behavior:'smooth'});
+}
 const observer = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{ if(e.isIntersecting) setActive(e.target.dataset.cat); });
 }, {rootMargin:'-10% 0px -75% 0px'});
@@ -724,8 +755,10 @@ lernmodus.addEventListener('click', (e)=>{ if(e.target === lernmodus) lernmodus.
 document.getElementById('lmRestart').addEventListener('click', startLernmodus);
 
 document.addEventListener('keydown', (e)=>{
-  if(!lernmodus.classList.contains('open')) return;
-  if(e.key === 'Escape'){ lernmodus.classList.remove('open'); }
+  if(lernmodus.classList.contains('open')){
+    if(e.key === 'Escape'){ lernmodus.classList.remove('open'); }
+    return;
+  }
   if(e.key === '/' && document.activeElement !== searchInput){ e.preventDefault(); searchInput.focus(); }
 });
 </script>

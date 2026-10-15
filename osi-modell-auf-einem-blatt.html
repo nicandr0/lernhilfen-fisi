@@ -30,7 +30,7 @@
     padding: 28px 24px 18px;
     border-bottom: 1px solid var(--border);
     position: sticky;
-    top: 0;
+    top: var(--lh-h);
     background: rgba(16,20,26,0.92);
     backdrop-filter: blur(6px);
     z-index: 20;
@@ -188,8 +188,28 @@
     padding: 1px 7px; font-family: 'Consolas', monospace; font-weight: 600; margin-right: 6px;
   }
 </style>
+<style id="lh-nav-css">
+/* Lernhilfen-Leiste: auf allen Seiten gleich, eigene Farben unabhängig vom Seitendesign.
+   Neue Lernhilfe? Link in ALLEN Dateien der Leiste nachtragen (siehe README). */
+:root{--lh-h:34px;}
+.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);box-sizing:border-box;
+  display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;
+  padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  background:#0d1117;border-bottom:1px solid #2a3444;
+  font:500 12px/1 ui-monospace,'JetBrains Mono',Consolas,monospace;}
+.lh-nav::-webkit-scrollbar{display:none;}
+.lh-nav .lh-ttl{color:#5c6b83;padding-right:6px;}
+.lh-nav a{color:#93a1b8;text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
+.lh-nav a:hover{color:#e6eaf0;background:#1a222e;}
+.lh-nav a[aria-current="page"]{color:#e3a458;border-color:rgba(227,164,88,0.4);background:rgba(227,164,88,0.14);}
+.lh-nav a:focus-visible{outline:2px solid #e3a458;outline-offset:1px;}
+@media print{.lh-nav{display:none;}}
+</style>
 </head>
 <body>
+<nav class="lh-nav" aria-label="Lernhilfen"><span class="lh-ttl">lernhilfen/</span><a href="index.html">Übersicht</a><a href="linux-auf-einem-blatt.html">Linux</a><a href="subnetting-vlsm-auf-einem-blatt.html">Subnetting</a><a href="osi-modell-auf-einem-blatt.html" aria-current="page">OSI</a><a href="routing-auf-einem-blatt.html">Routing</a><a href="switching-auf-einem-blatt.html">Switching</a></nav>
+<script>(function(){var n=document.querySelector(".lh-nav"),c=n&&n.querySelector("[aria-current]");if(c&&n.scrollWidth>n.clientWidth)n.scrollLeft=Math.max(0,c.offsetLeft-60);})();</script>
+
 
 <header>
   <h1>OSI-Modell <span>auf einem Blatt</span></h1>

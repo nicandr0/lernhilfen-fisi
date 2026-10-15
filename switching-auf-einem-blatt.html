@@ -9,12 +9,12 @@
 :root:not([data-theme="dark"]){}
 @media print{:root{--bg:#fff;--card:#fff;--line:#bbb;--tx:#000;--mut:#444}.bar{display:none}details{break-inside:avoid}}
 *{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + var(--lh-h))}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 14px 40px}
 main{max-width:860px;margin:0 auto}
 h1{font-size:1.5rem;margin:22px 0 4px}
 .sub{color:var(--mut);margin:0 0 14px}
-.bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:8px 0;display:flex;gap:8px;z-index:5}
+.bar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--lh-h));background:var(--bg);padding:8px 0;display:flex;gap:8px;z-index:5}
 input{flex:1;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:6px;padding:9px 12px;font:inherit}
 button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
@@ -48,8 +48,28 @@ table{width:100%;border-collapse:collapse}
 th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
 th{color:var(--blue)}
 </style>
+<style id="lh-nav-css">
+/* Lernhilfen-Leiste: auf allen Seiten gleich, eigene Farben unabhängig vom Seitendesign.
+   Neue Lernhilfe? Link in ALLEN Dateien der Leiste nachtragen (siehe README). */
+:root{--lh-h:34px;}
+.lh-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--lh-h);box-sizing:border-box;
+  display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;
+  padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  background:#0d1117;border-bottom:1px solid #2a3444;
+  font:500 12px/1 ui-monospace,'JetBrains Mono',Consolas,monospace;}
+.lh-nav::-webkit-scrollbar{display:none;}
+.lh-nav .lh-ttl{color:#5c6b83;padding-right:6px;}
+.lh-nav a{color:#93a1b8;text-decoration:none;padding:5px 9px;border-radius:5px;border:1px solid transparent;}
+.lh-nav a:hover{color:#e6eaf0;background:#1a222e;}
+.lh-nav a[aria-current="page"]{color:#e3a458;border-color:rgba(227,164,88,0.4);background:rgba(227,164,88,0.14);}
+.lh-nav a:focus-visible{outline:2px solid #e3a458;outline-offset:1px;}
+@media print{.lh-nav{display:none;}}
+</style>
 </head>
 <body>
+<nav class="lh-nav" aria-label="Lernhilfen" style="margin:0 -14px"><span class="lh-ttl">lernhilfen/</span><a href="index.html">Übersicht</a><a href="linux-auf-einem-blatt.html">Linux</a><a href="subnetting-vlsm-auf-einem-blatt.html">Subnetting</a><a href="osi-modell-auf-einem-blatt.html">OSI</a><a href="routing-auf-einem-blatt.html">Routing</a><a href="switching-auf-einem-blatt.html" aria-current="page">Switching</a></nav>
+<script>(function(){var n=document.querySelector(".lh-nav"),c=n&&n.querySelector("[aria-current]");if(c&&n.scrollWidth>n.clientWidth)n.scrollLeft=Math.max(0,c.offsetLeft-60);})();</script>
+
 <main>
 <h1>Switching auf einem Blatt</h1>
 <p class="sub">Netzwerktechnik Vorbereitung VIII: VLANs, STP, LAG, MLAG</p>
