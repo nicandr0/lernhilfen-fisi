@@ -106,6 +106,23 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 .no-results{text-align:center;padding:60px 20px;color:var(--text-muted);font-family:var(--mono);font-size:13px;display:none;}
 .hidden{display:none !important;}
 
+/* ---- Tabellen, Selbsteinschätzung, Wenn's hakt ---- */
+.tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:4px 0;}
+.tbl th,.tbl td{border:1px solid var(--border-soft);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.5;}
+.tbl th{background:var(--amber-soft);color:var(--amber);font-family:var(--mono);font-weight:600;font-size:12px;}
+.tbl td{color:var(--text-secondary);}
+.tbl td:first-child{color:var(--text-primary);font-weight:500;}
+.card-note{font-size:12px;color:var(--text-muted);margin:2px 0 10px;}
+.sc-btn{font-family:var(--mono);font-size:11.5px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);padding:5px 9px;border-radius:6px;cursor:pointer;white-space:nowrap;}
+.sc-btn:hover{border-color:var(--amber-dim);}
+.sc-btn.sicher.active{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.sc-btn.unsicher.active{background:var(--amber-soft);border-color:var(--amber);color:var(--amber);}
+.sc-btn.wiederholen.active{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.sc-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.card h4{margin:0 0 6px;font-family:var(--mono);font-size:13.5px;color:var(--amber);font-weight:600;}
+.card p{margin:0;font-size:13.5px;color:var(--text-secondary);line-height:1.55;}
+
 /* ---- Lernmodus Quiz overlay ---- */
 .lernmodus{position:fixed;inset:0;background:rgba(8,11,16,0.82);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
 .lernmodus.open{display:flex;}
@@ -194,6 +211,8 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       <button class="cat-link" data-target="c11"><span class="name">11. Fehlerbilder</span></button>
       <button class="cat-link" data-target="c12"><span class="name">12. Routing in der Praxis</span></button>
       <button class="cat-link" data-target="c13"><span class="name">13. Eigene Einschätzung</span></button>
+      <button class="cat-link" data-target="c14"><span class="name">Glossar</span></button>
+      <button class="cat-link" data-target="c15"><span class="name">Wenn's hakt</span></button>
     </nav>
 
     <main class="content" id="content">
@@ -291,6 +310,16 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 
       <section class="category-section" id="c8" data-cat="c8">
         <div class="category-head"><h2>8. Static vs. Dynamic Routes vergleichen</h2></div>
+        <div class="card" data-search="vergleich statisch dynamisch tabelle kontrolle komplexität overhead änderungen static dynamic">
+          <div class="tbl-wrap"><table class="tbl">
+            <tr><th>Kriterium</th><th>Static Routes</th><th>Dynamic Routes</th></tr>
+            <tr><td>Kontrolle</td><td>leicht zu kontrollieren, vorhersehbar</td><td>weniger direkte Kontrolle</td></tr>
+            <tr><td>Reaktion auf Änderungen</td><td>keine automatische Anpassung</td><td>reagiert automatisch</td></tr>
+            <tr><td>Komplexität</td><td>einfacher</td><td>komplexer (Protokoll verstehen und betreuen)</td></tr>
+            <tr><td>Overhead</td><td>gering, keine Protokoll-Last</td><td>Router tauschen laufend Informationen aus</td></tr>
+            <tr><td>Sinnvoll bei</td><td>kleinen, stabilen Netzen</td><td>großen, wachsenden oder wechselnden Netzen</td></tr>
+          </table></div>
+        </div>
         <div class="card" data-search="vergleich statisch dynamisch vorteile nachteile">
           <ul>
             <li><b>Vorteile static:</b> leicht zu kontrollieren, vorhersehbar, geringer Overhead</li>
@@ -353,15 +382,51 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 
       <section class="category-section" id="c13" data-cat="c13">
         <div class="category-head"><h2>13. Eigene Einschätzung</h2></div>
-        <div class="card" data-search="einschätzung sicher unsicher wiederholen">
-          <ul>
-            <li>ANDing-Prinzip - <span style="color:var(--green)">sicher</span></li>
-            <li>Default Route - <span style="color:var(--green)">sicher</span></li>
-            <li>Unterschied static vs. dynamic - <span style="color:var(--green)">sicher</span></li>
-            <li>Spezifischere Route / Präfixvergleich - <span style="color:var(--amber)">unsicher</span></li>
-            <li>Komplette Routing-Tabellen selbst lesen/analysieren - <span style="color:var(--amber)">unsicher</span></li>
-            <li>Konkrete Fehlersuche in der Praxis - <span style="color:var(--red)">bitte wiederholen</span></li>
-          </ul>
+        <div class="card" data-search="einschätzung selbsteinschätzung sicher unsicher wiederholen">
+          <p class="card-note">Zum Markieren anklicken. Die Auswahl wird nur in deinem Browser gespeichert und dient deiner eigenen Übersicht beim Lernen.</p>
+          <div class="tbl-wrap"><table class="tbl" id="scTable">
+            <tr><th>Thema</th><th>Einschätzung</th></tr>
+          </table></div>
+          <div style="margin-top:10px;"><button class="sc-btn" id="scReset">Auswahl zurücksetzen</button></div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c14" data-cat="c14">
+        <div class="category-head"><h2>Glossar</h2></div>
+        <div class="card" data-search="glossar begriffe routing anding default route next hop static route dynamic route routing-tabelle präfix standardgateway interface">
+          <div class="tbl-wrap"><table class="tbl">
+            <tr><th>Begriff</th><th>Bedeutung</th></tr>
+            <tr><td>Routing</td><td>Weiterleitung von Paketen zwischen unterschiedlichen Netzen</td></tr>
+            <tr><td>ANDing</td><td>Bitweise UND-Verknüpfung von IP-Adresse und Subnetzmaske, Ergebnis ist die Netzwerkadresse</td></tr>
+            <tr><td>Standardgateway</td><td>Router-Interface im eigenen Netz, an das ein Host Pakete für fremde Netze übergibt</td></tr>
+            <tr><td>Default Route</td><td>Standardroute ("Gateway of Last Resort"), greift, wenn kein genauerer Eintrag zum Zielnetz passt</td></tr>
+            <tr><td>Routing-Tabelle</td><td>Liste mit Zielnetz, Präfix, Next Hop und ausgehendem Interface</td></tr>
+            <tr><td>Präfix</td><td>Länge der Netzmaske (z. B. /24), bestimmt, wie genau eine Route ist</td></tr>
+            <tr><td>Next Hop</td><td>IP-Adresse des nächsten Routers auf dem Weg zum Ziel</td></tr>
+            <tr><td>Ausgehendes Interface</td><td>Schnittstelle, über die das Paket den Router verlässt</td></tr>
+            <tr><td>Static Route</td><td>Manuell eingetragener, fester Weg in der Routing-Tabelle</td></tr>
+            <tr><td>Dynamic Route</td><td>Automatisch über ein Routing-Protokoll gelernter Weg</td></tr>
+          </table></div>
+        </div>
+      </section>
+
+      <section class="category-section" id="c15" data-cat="c15">
+        <div class="category-head"><h2>Wenn's hakt</h2></div>
+        <div class="card" data-search="anding unklar rechnung rechenweg ip subnetzmaske hakt">
+          <h4>ANDing-Rechnung unklar</h4>
+          <p>Nicht am Rechenweg festbeißen, sondern auf den Zweck schauen: ANDing liefert die Netzwerkadresse, damit Quell- und Zielnetz verglichen werden können.</p>
+        </div>
+        <div class="card" data-search="static dynamic verwechselt unterschied eselsbrücke hakt">
+          <h4>Static und Dynamic verwechselt</h4>
+          <p>Eselsbrücke: Static = der Administrator trägt den Weg selbst ein (fest). Dynamic = die Router tauschen sich untereinander automatisch aus (beweglich).</p>
+        </div>
+        <div class="card" data-search="default route wann greift zielnetz unbekannt hakt">
+          <h4>Wann genau greift die Default Route?</h4>
+          <p>Erst, wenn kein anderer, spezifischerer Eintrag in der Routing-Tabelle zum Zielnetz passt. Sie ist die letzte Instanz, nicht die erste Wahl.</p>
+        </div>
+        <div class="card" data-search="next hop interface verwechselt wohin wodurch hakt">
+          <h4>Next Hop und Interface verwechselt</h4>
+          <p>Next Hop = <b>wohin</b> (IP-Adresse des nächsten Routers). Interface = <b>wodurch</b> (die eigene Schnittstelle, über die das Paket den Router verlässt).</p>
         </div>
       </section>
 
@@ -436,6 +501,45 @@ function runSearch(){
   noResults.style.display = visibleCount === 0 ? 'block' : 'none';
 }
 searchInput.addEventListener('input', runSearch);
+
+/* ---- Selbsteinschätzung (nur lokal im Browser gespeichert) ---- */
+const SC_KEY = 'routing-selbsteinschaetzung';
+const scTopics = [
+  'Grundidee und Aufgabe von Routing',
+  'Lokale Zustellung vs. Weiterleitung ans Gateway',
+  'Rolle von ANDing bei der Netzbestimmung',
+  'Bedeutung der Default Route',
+  'Routing-Tabelle lesen',
+  'Unterschied statische vs. dynamische Routen',
+  'Spezifischere Route (Präfixvergleich)',
+  'Next Hop und Interface',
+  'Typische Fehlerbilder erkennen'
+];
+const scLabels = {sicher:'sicher', unsicher:'unsicher', wiederholen:'bitte wiederholen'};
+let scState = {};
+try { scState = JSON.parse(localStorage.getItem(SC_KEY)) || {}; } catch(e) { scState = {}; }
+function scSave(){ try { localStorage.setItem(SC_KEY, JSON.stringify(scState)); } catch(e) {} }
+const scTable = document.getElementById('scTable');
+scTopics.forEach((topic, i) => {
+  const row = document.createElement('tr');
+  const btns = Object.keys(scLabels).map(k =>
+    `<button class="sc-btn ${k}${scState[i]===k?' active':''}" data-row="${i}" data-state="${k}">${scLabels[k]}</button>`).join('');
+  row.innerHTML = `<td>${topic}</td><td><div class="sc-actions">${btns}</div></td>`;
+  scTable.appendChild(row);
+});
+scTable.addEventListener('click', e => {
+  const b = e.target.closest('.sc-btn');
+  if(!b) return;
+  const row = b.dataset.row;
+  const wasActive = b.classList.contains('active');
+  scTable.querySelectorAll(`.sc-btn[data-row="${row}"]`).forEach(x => x.classList.remove('active'));
+  if(wasActive){ delete scState[row]; } else { b.classList.add('active'); scState[row] = b.dataset.state; }
+  scSave();
+});
+document.getElementById('scReset').addEventListener('click', () => {
+  scState = {}; scSave();
+  scTable.querySelectorAll('.sc-btn.active').forEach(x => x.classList.remove('active'));
+});
 
 /* ---- Lernmodus: Quiz mit Checkboxen ---- */
 const QUIZ = [
