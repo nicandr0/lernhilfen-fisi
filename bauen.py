@@ -9,7 +9,7 @@ Aufbau:
     _vorlage/basis.js         gemeinsames Verhalten (Kapitelleiste, Suche, Lernmodus)
     _vorlage/seite.html       Gerüst einer Lernhilfe
     _vorlage/uebersicht.html  Gerüst der Startseite
-    _vorlage/lernhilfen.json  Liste aller Lernhilfen (Leiste oben + Startseite)
+    _vorlage/lernhilfen.json  Liste aller Lernhilfen (Leiste oben + Startseite), je mit "stand" (JJJJ-MM-TT)
     _vorlage/begriffe.json    Fachbegriffe in mehreren Sprachen; im Inhalt [[schluessel]],
                               in SVG [[svg:schluessel]], in Lernkarten-Texten ebenfalls [[schluessel]]
     _inhalt/<id>.html         Inhalt je Lernhilfe, in Blöcke geteilt:
@@ -79,6 +79,12 @@ def begriffe_einsetzen(text, wb, name):
     return BEGRIFF.sub(ersetzen, text)
 
 
+def datum(iso):
+    """2026-10-15 -> 15.10.2026"""
+    j, m, t = iso.split('-')
+    return f'{t}.{m}.{j}'
+
+
 def leiste(liste, aktuell):
     links = ['<a href="index.html"' + (' aria-current="page"' if aktuell == 'index.html' else '') + '>Übersicht</a>']
     for lh in liste:
@@ -136,12 +142,13 @@ def bauen():
             'SKRIPT': skript,
             'BASIS_JS': basis,
             'FUSS': b.get('fuss', ''),
+            'STAND': datum(lh['stand']),
         }
         ergebnis[lh['datei']] = fuellen(seite, werte, quelle.name)
 
     karten = '\n'.join(
         f'      <a class="lernhilfe" href="{lh["datei"]}"><b>{html.escape(lh["befehl"])}</b>'
-        f'<small>{html.escape(lh["beschreibung"])}</small></a>' for lh in liste)
+        f'<small>{html.escape(lh["beschreibung"])}</small><span class="stand">aktualisiert {datum(lh["stand"])}</span></a>' for lh in liste)
     ergebnis['index.html'] = fuellen(lesen(VORLAGE / 'uebersicht.html'), {
         'STYLES': styles, 'LHNAV': leiste(liste, 'index.html'),
         'ANZAHL': str(len(liste)), 'KARTEN': karten}, 'uebersicht.html')

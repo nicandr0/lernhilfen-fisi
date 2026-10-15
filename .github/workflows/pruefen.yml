@@ -1,0 +1,13 @@
+# Prüft bei jedem Push, ob die fertigen HTML-Dateien zum Stand von _vorlage/ und _inhalt/ passen.
+# Rot heißt: vergessen, "python3 bauen.py" auszuführen, oder eine fertige Datei wurde direkt bearbeitet.
+name: Seiten prüfen
+on:
+  push:
+  pull_request:
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fertige Seiten mit den Vorlagen vergleichen
+        run: python3 bauen.py --pruefen

@@ -4,34 +4,39 @@
     "datei": "linux-auf-einem-blatt.html",
     "nav": "Linux",
     "befehl": "linux --auf-einem-blatt",
-    "beschreibung": "272 Befehle und Pfade mit Beispielen und Tipps, Lernkarten, Filter für LPI Linux Essentials 010, Docker und LXD für Fortgeschrittene"
+    "beschreibung": "272 Befehle und Pfade mit Beispielen und Tipps, Lernkarten, Filter für LPI Linux Essentials 010, Docker und LXD für Fortgeschrittene",
+    "stand": "2026-10-15"
   },
   {
     "id": "subnetting",
     "datei": "subnetting-vlsm-auf-einem-blatt.html",
     "nav": "Subnetting",
     "befehl": "subnetting --vlsm",
-    "beschreibung": "IPv4, klassisches Subnetting, VLSM mit Rechenrezepten, Glossar und Lernkarten"
+    "beschreibung": "IPv4, klassisches Subnetting, VLSM mit Rechenrezepten, Glossar und Lernkarten",
+    "stand": "2026-10-15"
   },
   {
     "id": "osi",
     "datei": "osi-modell-auf-einem-blatt.html",
     "nav": "OSI",
     "befehl": "osi --auf-einem-blatt",
-    "beschreibung": "Die 7 Schichten mit Aufgaben, Protokollen, Adressen und Geräten, Vergleich mit TCP/IP, Kapselung, Lernkarten"
+    "beschreibung": "Die 7 Schichten mit Aufgaben, Protokollen, Adressen und Geräten, Vergleich mit TCP/IP, Kapselung, Fachbegriffe Deutsch/Englisch, Lernkarten mit Vokabeln",
+    "stand": "2026-10-15"
   },
   {
     "id": "routing",
     "datei": "routing-auf-einem-blatt.html",
     "nav": "Routing",
     "befehl": "routing --auf-einem-blatt",
-    "beschreibung": "ANDing, Default Route, statisch vs. dynamisch, Fehlerbilder, Glossar, Quiz mit 15 Fragen, Selbsteinschätzung"
+    "beschreibung": "ANDing, Default Route, statisch vs. dynamisch, Fehlerbilder, Glossar, Quiz mit 15 Fragen, Selbsteinschätzung",
+    "stand": "2026-10-15"
   },
   {
     "id": "switching",
     "datei": "switching-auf-einem-blatt.html",
     "nav": "Switching",
     "befehl": "switching --auf-einem-blatt",
-    "beschreibung": "VLANs, Trunks, STP, LAG, LACP, MLAG mit Lernkarten und Selbsteinschätzung"
+    "beschreibung": "VLANs, Trunks, STP, LAG, LACP, MLAG mit Lernkarten und Selbsteinschätzung",
+    "stand": "2026-10-15"
   }
 ]

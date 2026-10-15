@@ -6,11 +6,11 @@ Interaktive Lernhilfen aus meiner Umschulung zum Fachinformatiker Systemintegrat
 
 | Lernhilfe | Inhalt | Grundlage |
 |---|---|---|
-| [Linux auf einem Blatt](linux-auf-einem-blatt.html) | 272 Befehle und wichtige Pfade mit Beispielen und Tipps, Lernmodus, Filter **LPI 010** für die Prüfung Linux Essentials (010-160), Kategorie für Fortgeschrittene (Docker, LXD) | Befehlsauswahl angelehnt an [„Linux auf einem Blatt“](https://helmbold.de/artikel/linux-blatt/) von Christian Helmbold (2012), ergänzt um Befehle aus dem Ubuntu CLI cheat sheet (Canonical, 2025); Beschreibungen, Beispiele, Tipps und Gruppierung in eigener Formulierung |
+| [Linux auf einem Blatt](linux-auf-einem-blatt.html) | 272 Befehle und wichtige Pfade mit Beispielen und Tipps, Lernkarten, Filter **LPI 010** für die Prüfung Linux Essentials (010-160), Kategorie für Fortgeschrittene (Docker, LXD) | Befehlsauswahl angelehnt an [„Linux auf einem Blatt“](https://helmbold.de/artikel/linux-blatt/) von Christian Helmbold (2012), ergänzt um Befehle aus dem Ubuntu CLI cheat sheet (Canonical, 2025); Beschreibungen, Beispiele, Tipps und Gruppierung in eigener Formulierung |
 | [Subnetting & VLSM](subnetting-vlsm-auf-einem-blatt.html) | IPv4-Grundlagen, klassisches Subnetting, VLSM, Rechenrezepte, Glossar, Lernkarten | eigene Zusammenfassung nach Unterricht und Übungsaufgaben |
-| [OSI-Modell](osi-modell-auf-einem-blatt.html) | 7 Schichten mit Aufgaben, Protokollen, Adressen und Geräten, Vergleich mit TCP/IP, Kapselung, Lernkarten | eigene Zusammenfassung nach dem im Unterricht erarbeiteten Miro-Board |
+| [OSI-Modell](osi-modell-auf-einem-blatt.html) | 7 Schichten mit Aufgaben, Protokollen, Adressen und Geräten, Vergleich mit TCP/IP, Kapselung, Fachbegriffe Deutsch/Englisch umschaltbar, Lernkarten mit Vokabeln | eigene Zusammenfassung nach dem im Unterricht erarbeiteten Miro-Board |
 | [Routing](routing-auf-einem-blatt.html) | ANDing, Default Route, Routing-Tabelle, statisch vs. dynamisch, Fehlerbilder, Glossar, „Wenn's hakt“, Quiz, Selbsteinschätzung | eigene Zusammenfassung nach Unterricht |
-| [Switching](switching-auf-einem-blatt.html) | VLANs, Access/Trunk, STP, LAG, LACP, MLAG, Fehlerbilder, Lernkarten | eigene Zusammenfassung nach Unterricht |
+| [Switching](switching-auf-einem-blatt.html) | VLANs, Access/Trunk, STP, LAG, LACP, MLAG, Fehlerbilder, Glossar, Lernkarten, Selbsteinschätzung | eigene Zusammenfassung nach Unterricht |
 
 ## Aufbau und Bearbeitung
 
@@ -31,7 +31,8 @@ bauen.py                  setzt alles zu den fertigen HTML-Dateien zusammen
 - Neue Lernhilfe: Inhaltsdatei in `_inhalt/` anlegen (Aufbau wie die vorhandenen), Eintrag in `_vorlage/lernhilfen.json`, dann `python3 bauen.py`. Leiste und Startseite enthalten sie danach automatisch.
 - Fachbegriffe: im Inhalt `[[schluessel]]` schreiben (in SVG-Schaubildern `[[svg:schluessel]]`), den Begriff in `_vorlage/begriffe.json` pflegen. Die Seite bekommt dann automatisch die Auswahl „Sprachen“, die Suche findet den Begriff in allen Sprachen. Schlüssel mit `.lang` (volle Bezeichnung) können in den Seiten-Metadaten unter `vokabeln` als Vokabelkarten eingetragen werden.
 - Neue Sprache: in `_vorlage/begriffe.json` unter `sprachen` eintragen und bei den Begriffen ergänzen. Erklärtexte bleiben deutsch.
-- Vor jedem Commit: `python3 bauen.py --pruefen` meldet, ob die fertigen Dateien zum Stand der Vorlagen passen.
+- Inhalt geändert: in `_vorlage/lernhilfen.json` bei der Lernhilfe `stand` auf das heutige Datum setzen und einen Eintrag in [CHANGELOG.md](CHANGELOG.md) schreiben. Nach dem Push den Stand als Tag markieren (`git tag 2026-10-15 && git push --tags`).
+- Vor jedem Commit: `python3 bauen.py --pruefen` meldet, ob die fertigen Dateien zum Stand der Vorlagen passen. GitHub prüft das bei jedem Push zusätzlich automatisch (`.github/workflows/pruefen.yml`); ein rotes Kreuz heißt: vergessen zu bauen oder eine fertige Datei direkt bearbeitet.
 - Die fertigen HTML-Dateien nicht direkt bearbeiten, sie werden beim nächsten Bauen überschrieben.
 
 Nur Python-Standardbibliothek nötig, keine weiteren Pakete.
