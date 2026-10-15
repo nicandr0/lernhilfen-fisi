@@ -22,12 +22,15 @@ _vorlage/basis.js         Kapitelleiste, Suche, Lernmodus (Lernkarten oder Quiz)
 _vorlage/seite.html       Gerüst einer Lernhilfe
 _vorlage/uebersicht.html  Gerüst der Startseite
 _vorlage/lernhilfen.json  Liste aller Lernhilfen (Leiste oben und Startseite)
+_vorlage/begriffe.json    Fachbegriffe in mehreren Sprachen (umschaltbar, Vokabelkarten)
 _inhalt/<id>.html         Inhalt je Lernhilfe
 bauen.py                  setzt alles zu den fertigen HTML-Dateien zusammen
 ```
 
 - Design ändern: `_vorlage/styles.css` bearbeiten, dann `python3 bauen.py`.
 - Neue Lernhilfe: Inhaltsdatei in `_inhalt/` anlegen (Aufbau wie die vorhandenen), Eintrag in `_vorlage/lernhilfen.json`, dann `python3 bauen.py`. Leiste und Startseite enthalten sie danach automatisch.
+- Fachbegriffe: im Inhalt `[[schluessel]]` schreiben (in SVG-Schaubildern `[[svg:schluessel]]`), den Begriff in `_vorlage/begriffe.json` pflegen. Die Seite bekommt dann automatisch die Auswahl „Sprachen“, die Suche findet den Begriff in allen Sprachen. Schlüssel mit `.lang` (volle Bezeichnung) können in den Seiten-Metadaten unter `vokabeln` als Vokabelkarten eingetragen werden.
+- Neue Sprache: in `_vorlage/begriffe.json` unter `sprachen` eintragen und bei den Begriffen ergänzen. Erklärtexte bleiben deutsch.
 - Vor jedem Commit: `python3 bauen.py --pruefen` meldet, ob die fertigen Dateien zum Stand der Vorlagen passen.
 - Die fertigen HTML-Dateien nicht direkt bearbeiten, sie werden beim nächsten Bauen überschrieben.
 

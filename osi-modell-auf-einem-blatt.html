@@ -8,7 +8,9 @@
 <meta name="description" content="Die 7 Schichten mit Aufgaben, Protokollen, Adressen und Geräten, Vergleich mit TCP/IP, Kapselung, Lernkarten">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Schriften nicht blockierend laden: Suche und Lernmodus funktionieren sofort, auch wenn Google Fonts langsam oder gesperrt ist -->
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 /* ==========================================================================
    Lernhilfen FiSi – gemeinsames Design (Terminal-Stil)
@@ -265,6 +267,17 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
   .lh-nav,nav.sidebar,.controls,.lernmodus{display:none !important;}
   .category-section{break-inside:avoid-page;}
 }
+
+/* ---- Sprachauswahl für Fachbegriffe ---- */
+.sprachwahl{position:relative;}
+.sprach-menue{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:220px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,0.5);}
+.sprach-titel{font-family:var(--mono);font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin:2px 4px 8px;}
+.sprach-option{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:13.5px;color:var(--text-secondary);}
+.sprach-option:hover{background:var(--surface);color:var(--text-primary);}
+.sprach-option input{accent-color:var(--amber);}
+.sprach-code{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--amber);min-width:22px;}
+.sprach-hinweis{font-size:11.5px;color:var(--text-muted);margin:8px 4px 2px;}
+@media (max-width:820px){.sprach-menue{right:auto;left:0;}}
 </style>
 <style>
 /* Schicht-Nummer vor dem Kartentitel */
@@ -295,6 +308,14 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
         <span class="hint">ESC</span>
       </div>
 
+      <div class="sprachwahl">
+        <button class="btn" id="sprachBtn" type="button" aria-expanded="false" aria-controls="sprachMenue" title="Sprachen der Fachbegriffe">Sprachen ▾</button>
+        <div class="sprach-menue hidden" id="sprachMenue">
+          <div class="sprach-titel">Fachbegriffe anzeigen in</div>
+          <div id="sprachListe"></div>
+          <div class="sprach-hinweis">Erklärtexte bleiben deutsch.</div>
+        </div>
+      </div>
       <button class="btn primary" id="lernBtn" type="button">◆ Lernmodus</button>
     </div>
   </header>
@@ -320,7 +341,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
           <circle cx="3.5" cy="2.5" r="0.8" fill="#e3a458" stroke="none"/>
           <circle cx="6.5" cy="2.5" r="0.8" fill="#e3a458" stroke="none"/>
         </g>
-        <text x="90" y="51" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 · Anwendung / Application</text>
+        <text x="90" y="51" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 · <tspan class="begriff" data-begriff="osi.7">Anwendung / Application</tspan></text>
         <text x="90" y="68" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">HTTP, FTP, SMTP, DNS · Proxy, Gateway</text>
 
         <rect x="40" y="84" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
@@ -329,7 +350,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
           <path d="M2 15 L8 8 L12 12 L17 5 L22 11"/>
           <circle cx="6" cy="5" r="2"/>
         </g>
-        <text x="90" y="103" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 · Darstellung / Presentation</text>
+        <text x="90" y="103" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 · <tspan class="begriff" data-begriff="osi.6">Darstellung / Presentation</tspan></text>
         <text x="90" y="120" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">TLS, SSL, JPEG, ASCII</text>
 
         <rect x="40" y="136" width="600" height="46" rx="6" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
@@ -338,7 +359,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
           <circle cx="19" cy="9" r="4"/>
           <line x1="9" y1="9" x2="15" y2="9" stroke-dasharray="2 2"/>
         </g>
-        <text x="90" y="155" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 · Sitzung / Session</text>
+        <text x="90" y="155" fill="#e3a458" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 · <tspan class="begriff" data-begriff="osi.5">Sitzung / Session</tspan></text>
         <text x="90" y="172" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">NetBIOS, RPC</text>
 
         <line x1="340" y1="184" x2="340" y2="200" stroke="#2a3444" stroke-width="1"/>
@@ -351,7 +372,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
           <line x1="4" y1="6" x2="6" y2="6"/>
           <line x1="17" y1="6" x2="19" y2="6"/>
         </g>
-        <text x="90" y="243" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 · Transport</text>
+        <text x="90" y="243" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 · <tspan class="begriff" data-begriff="osi.4">Transport</tspan></text>
         <text x="90" y="260" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP, UDP · Ports · Firewall</text>
 
         <rect x="40" y="276" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
@@ -362,7 +383,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
           <line x1="17" y1="4" x2="17" y2="1"/>
           <line x1="12" y1="14" x2="12" y2="18"/>
         </g>
-        <text x="90" y="295" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 · Vermittlung / Network</text>
+        <text x="90" y="295" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 · <tspan class="begriff" data-begriff="osi.3">Vermittlung / Network</tspan></text>
         <text x="90" y="312" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">IP, ICMP · IP-Adressen · Router</text>
 
         <rect x="40" y="328" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
@@ -375,7 +396,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
           <line x1="12" y1="4" x2="12" y2="1"/>
           <line x1="19" y1="4" x2="19" y2="1"/>
         </g>
-        <text x="90" y="347" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 · Sicherung / Data Link</text>
+        <text x="90" y="347" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 · <tspan class="begriff" data-begriff="osi.2">Sicherung / Data Link</tspan></text>
         <text x="90" y="364" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Ethernet, ARP · MAC-Adressen · Switch</text>
 
         <rect x="40" y="380" width="600" height="46" rx="6" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
@@ -384,7 +405,7 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
           <circle cx="1" cy="9" r="1.4" fill="#7fae70" stroke="none"/>
           <circle cx="23" cy="9" r="1.4" fill="#7fae70" stroke="none"/>
         </g>
-        <text x="90" y="399" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 · Bitübertragung / Physical</text>
+        <text x="90" y="399" fill="#7fae70" font-size="14" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 · <tspan class="begriff" data-begriff="osi.1">Bitübertragung / Physical</tspan></text>
         <text x="90" y="416" fill="#93a1b8" font-size="11" font-family="IBM Plex Sans, Segoe UI, sans-serif">Hub, Kabel</text>
 
         <text x="340" y="452" fill="#cc9f3f" font-size="12" font-style="italic" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">A - P - S - T - N - D - P · Alle Prüfer Suchen Tests Nach Der Pause</text>
@@ -473,43 +494,43 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
         <text x="440" y="20" fill="#93a1b8" font-size="12" font-weight="600" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP/IP (4 Schichten)</text>
 
         <rect x="60" y="30" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
-        <text x="150" y="51" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 Anwendung</text>
+        <text x="150" y="51" fill="#e3a458" font-size="11" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">7 <tspan class="begriff" data-begriff="osi.7">Anwendung / Application</tspan></text>
         <rect x="60" y="68" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
-        <text x="150" y="89" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 Darstellung</text>
+        <text x="150" y="89" fill="#e3a458" font-size="11" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">6 <tspan class="begriff" data-begriff="osi.6">Darstellung / Presentation</tspan></text>
         <rect x="60" y="106" width="180" height="34" rx="5" fill="#1a222e" stroke="#e3a458" stroke-width="1"/>
-        <text x="150" y="127" fill="#e3a458" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 Sitzung</text>
+        <text x="150" y="127" fill="#e3a458" font-size="11" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">5 <tspan class="begriff" data-begriff="osi.5">Sitzung / Session</tspan></text>
 
         <rect x="60" y="150" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
-        <text x="150" y="171" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 Transport</text>
+        <text x="150" y="171" fill="#7fae70" font-size="11" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">4 <tspan class="begriff" data-begriff="osi.4">Transport</tspan></text>
 
         <rect x="60" y="188" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
-        <text x="150" y="209" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 Vermittlung</text>
+        <text x="150" y="209" fill="#7fae70" font-size="11" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">3 <tspan class="begriff" data-begriff="osi.3">Vermittlung / Network</tspan></text>
 
         <rect x="60" y="226" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
-        <text x="150" y="247" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 Sicherung</text>
+        <text x="150" y="247" fill="#7fae70" font-size="11" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">2 <tspan class="begriff" data-begriff="osi.2">Sicherung / Data Link</tspan></text>
         <rect x="60" y="264" width="180" height="34" rx="5" fill="#1a222e" stroke="#7fae70" stroke-width="1"/>
-        <text x="150" y="285" fill="#7fae70" font-size="12" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 Bitübertragung</text>
+        <text x="150" y="285" fill="#7fae70" font-size="11" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">1 <tspan class="begriff" data-begriff="osi.1">Bitübertragung / Physical</tspan></text>
 
         <path d="M240 47 C 320 47, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
         <path d="M240 85 C 320 85, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
         <path d="M240 123 C 320 123, 320 76, 400 76" fill="none" stroke="#2a3444" stroke-width="1"/>
         <rect x="400" y="30" width="220" height="92" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
-        <text x="510" y="80" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Application</text>
+        <text x="510" y="80" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif"><tspan class="begriff" data-begriff="tcpip.4">Anwendung / Application</tspan></text>
 
         <path d="M240 167 L 400 167" fill="none" stroke="#2a3444" stroke-width="1"/>
         <rect x="400" y="150" width="220" height="34" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
-        <text x="510" y="171" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Transport</text>
+        <text x="510" y="171" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif"><tspan class="begriff" data-begriff="tcpip.3">Transport</tspan></text>
 
         <path d="M240 205 L 400 205" fill="none" stroke="#2a3444" stroke-width="1"/>
         <rect x="400" y="188" width="220" height="34" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
-        <text x="510" y="209" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Internet</text>
+        <text x="510" y="209" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif"><tspan class="begriff" data-begriff="tcpip.2">Internet</tspan></text>
 
         <path d="M240 243 C 320 243, 320 280, 400 280" fill="none" stroke="#2a3444" stroke-width="1"/>
         <path d="M240 281 C 320 281, 320 280, 400 280" fill="none" stroke="#2a3444" stroke-width="1"/>
         <rect x="400" y="226" width="220" height="72" rx="5" fill="#1a222e" stroke="#93a1b8" stroke-width="1"/>
-        <text x="510" y="266" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">Network Access</text>
+        <text x="510" y="266" fill="#e6eaf0" font-size="13" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif"><tspan class="begriff" data-begriff="tcpip.1">Netzzugang / Network Access</tspan></text>
 
-        <text x="340" y="332" fill="#93a1b8" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP/IP fasst OSI-Schicht 5-7 zu "Application" und Schicht 1-2 zu "Network Access" zusammen</text>
+        <text x="340" y="332" fill="#93a1b8" font-size="10" text-anchor="middle" font-family="IBM Plex Sans, Segoe UI, sans-serif">TCP/IP fasst OSI-Schicht 5-7 zu "<tspan class="begriff" data-begriff="tcpip.4">Anwendung / Application</tspan>" und Schicht 1-2 zu "<tspan class="begriff" data-begriff="tcpip.1">Netzzugang / Network Access</tspan>" zusammen</text>
       </svg>
       </div>
       </section>
@@ -553,8 +574,8 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       <div class="group">
         <div class="group-name">Anwendungsorientiert</div>
       <div class="card" data-search="layer 7 anwendung application http ftp smtp dns proxy gateway url hostname">
-        <h4><span class="layer-badge">7</span>Anwendung / Application</h4>
-        <p>TCP/IP-Schicht: Application</p>
+        <h4><span class="layer-badge">7</span><span class="begriff" data-begriff="osi.7">Anwendung / Application</span></h4>
+        <p>TCP/IP-Schicht: <span class="begriff" data-begriff="tcpip.4">Anwendung / Application</span></p>
         <p>Schnittstelle zum Nutzer. Stellt Funktionen für Anwendungen bereit, ermöglicht die Verbindung zu den unteren Schichten. Hier findet die Dateneingabe und -ausgabe statt.</p>
         <p><span class="formel">Protokolle: HTTP, FTP, SMTP, DNS</span></p>
         <p><span class="formel">Adressen: URLs, Hostnamen</span></p>
@@ -562,15 +583,15 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       </div>
 
       <div class="card" data-search="layer 6 darstellung presentation tls ssl jpeg ascii verschlüsselung kompression">
-        <h4><span class="layer-badge">6</span>Darstellung / Presentation</h4>
-        <p>TCP/IP-Schicht: Application</p>
+        <h4><span class="layer-badge">6</span><span class="begriff" data-begriff="osi.6">Darstellung / Presentation</span></h4>
+        <p>TCP/IP-Schicht: <span class="begriff" data-begriff="tcpip.4">Anwendung / Application</span></p>
         <p>Datenformatierung. Bereitet die Daten so auf, dass sie dem Nutzer angezeigt werden können. Zwei Anwendungen verwenden dabei üblicherweise die gleiche Kodierung.</p>
         <p><span class="formel">Protokolle: TLS, SSL, JPEG, ASCII</span></p>
       </div>
 
       <div class="card" data-search="layer 5 sitzung session netbios rpc sitzungsaufbau synchronisation">
-        <h4><span class="layer-badge">5</span>Sitzung / Session</h4>
-        <p>TCP/IP-Schicht: Application</p>
+        <h4><span class="layer-badge">5</span><span class="begriff" data-begriff="osi.5">Sitzung / Session</span></h4>
+        <p>TCP/IP-Schicht: <span class="begriff" data-begriff="tcpip.4">Anwendung / Application</span></p>
         <p>Sitzungssteuerung. Ermöglicht Verbindungen zwischen Endsystemen. Die Zeit zwischen Öffnen und Schließen der Kommunikation wird als Sitzung bezeichnet.</p>
         <p><span class="formel">Protokolle: NetBIOS, RPC</span></p>
       </div>
@@ -578,8 +599,8 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       <div class="group">
         <div class="group-name">Transportorientiert</div>
       <div class="card" data-search="layer 4 transport tcp udp port firewall segmentierung flusskontrolle">
-        <h4><span class="layer-badge">4</span>Transport</h4>
-        <p>TCP/IP-Schicht: Transport</p>
+        <h4><span class="layer-badge">4</span><span class="begriff" data-begriff="osi.4">Transport</span></h4>
+        <p>TCP/IP-Schicht: <span class="begriff" data-begriff="tcpip.3">Transport</span></p>
         <p>Adressierung von Anwendungen und Prozessen. End-to-End-Kommunikation zwischen zwei Geräten, Bindeglied zwischen transportorientierten und anwendungsorientierten Schichten. Zur Übertragung wird das Gesamtpaket in kleinere Bestandteile zerlegt.</p>
         <p><span class="formel">Protokolle: TCP, UDP</span></p>
         <p><span class="formel">Adressen: Ports</span></p>
@@ -587,8 +608,8 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       </div>
 
       <div class="card" data-search="layer 3 vermittlung network ip icmp router routing ip-adresse fragmente">
-        <h4><span class="layer-badge">3</span>Vermittlung / Network</h4>
-        <p>TCP/IP-Schicht: Internet</p>
+        <h4><span class="layer-badge">3</span><span class="begriff" data-begriff="osi.3">Vermittlung / Network</span></h4>
+        <p>TCP/IP-Schicht: <span class="begriff" data-begriff="tcpip.2">Internet</span></p>
         <p>Routing. Reguliert den Datentransfer zwischen zwei verschiedenen Netzwerken - innerhalb eines Netzwerks fällt diese Schicht weg. Segmente aus Layer 4 werden in Fragmente aufgeteilt und beim Empfänger wieder zusammengefügt.</p>
         <p><span class="formel">Protokolle: IP, ICMP</span></p>
         <p><span class="formel">Adressen: IP-Adressen</span></p>
@@ -596,8 +617,8 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       </div>
 
       <div class="card" data-search="layer 2 sicherung datalink ethernet arp switch mac-adresse frames">
-        <h4><span class="layer-badge">2</span>Sicherung / Data Link</h4>
-        <p>TCP/IP-Schicht: Network Access</p>
+        <h4><span class="layer-badge">2</span><span class="begriff" data-begriff="osi.2">Sicherung / Data Link</span></h4>
+        <p>TCP/IP-Schicht: <span class="begriff" data-begriff="tcpip.1">Netzzugang / Network Access</span></p>
         <p>Lokale Adressierung. Ermöglicht eine zuverlässige Verbindung zwischen Endgerät und Übertragungsmedium innerhalb desselben Netzes. Pakete aus Layer 3 werden in kleinere Teile zerlegt, sogenannte Frames.</p>
         <p><span class="formel">Protokolle: Ethernet, ARP</span></p>
         <p><span class="formel">Adressen: MAC-Adressen</span></p>
@@ -605,8 +626,8 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       </div>
 
       <div class="card" data-search="layer 1 bitübertragung physical hub kabel signale hardware">
-        <h4><span class="layer-badge">1</span>Bitübertragung / Physical</h4>
-        <p>TCP/IP-Schicht: Network Access</p>
+        <h4><span class="layer-badge">1</span><span class="begriff" data-begriff="osi.1">Bitübertragung / Physical</span></h4>
+        <p>TCP/IP-Schicht: <span class="begriff" data-begriff="tcpip.1">Netzzugang / Network Access</span></p>
         <p>Physische Übertragung. Elektrische, mechanische und funktionale Schnittstelle zum Übertragungsmedium - beinhaltet die Datenübertragung der beteiligten physischen Geräte wie Kabel und Hub.</p>
         <p><span class="formel">Geräte: Hub, Kabel</span></p>
       </div>
@@ -638,18 +659,19 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       <section class="category-section" id="eselsbruecke" data-nav="Eselsbrücke">
         <div class="category-head"><h2>Eselsbrücke</h2><span class="path">Reihenfolge merken</span></div>
 
-      <div class="card" data-search="eselsbrücke merksatz apstndp alle prüfer suchen tests nach der pause">
+      <div class="card" data-search="eselsbrücke merksatz apstndp alle prüfer suchen tests nach der pause application presentation session transport network data link physical">
         <h4>Alle Prüfer Suchen Tests Nach Der Pause</h4>
-        <p>Erster Buchstabe je Wort = erster Buchstabe der Schicht, von oben (7) nach unten (1):</p>
+        <p>Erster Buchstabe je Wort = erster Buchstabe der <b>englischen</b> Schichtnamen, von oben (7) nach unten (1):</p>
         <p>
-          <span class="formel">A - Anwendung (7)</span>
-          <span class="formel">P - Präsentation (6)</span>
-          <span class="formel">S - Sitzung (5)</span>
+          <span class="formel">A - Application (7)</span>
+          <span class="formel">P - Presentation (6)</span>
+          <span class="formel">S - Session (5)</span>
           <span class="formel">T - Transport (4)</span>
-          <span class="formel">N - Netzwerk/Vermittlung (3)</span>
-          <span class="formel">D - Datensicherung (2)</span>
-          <span class="formel">P - Physikalisch (1)</span>
+          <span class="formel">N - Network (3)</span>
+          <span class="formel">D - Data Link (2)</span>
+          <span class="formel">P - Physical (1)</span>
         </p>
+        <p>Mit den deutschen Namen (Anwendung, Darstellung, Sitzung, Transport, Vermittlung, Sicherung, Bitübertragung) ergeben sich andere Anfangsbuchstaben, der Merksatz passt nur zu den englischen.</p>
         <div class="merksatz">Merksatz: A-P-S-T-N-D-P - jeder Prüfer sucht Tests nach der Pause.</div>
       </div>
       </section>
@@ -685,11 +707,11 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
       </div>
       <div class="card" data-search="tcp/ip osi unterschied verwechslung schichten">
         <h4>OSI und TCP/IP verwechselt</h4>
-        <p>OSI hat 7 Schichten, TCP/IP nur 4. Schicht 5-7 des OSI-Modells entsprechen zusammen der Application-Schicht im TCP/IP-Modell.</p>
+        <p>OSI hat 7 Schichten, TCP/IP nur 4. Schicht 5-7 des OSI-Modells entsprechen zusammen der Schicht <span class="begriff" data-begriff="tcpip.4">Anwendung / Application</span> im TCP/IP-Modell.</p>
       </div>
       <div class="card" data-search="reihenfolge schichten merken oben unten">
         <h4>Reihenfolge der Schichten vergessen</h4>
-        <p>Von oben (7) nach unten (1): Anwendung, Darstellung, Sitzung, Transport, Vermittlung, Sicherung, Bitübertragung.</p>
+        <p>Von oben (7) nach unten (1): <span class="begriff" data-begriff="osi.7">Anwendung / Application</span>, <span class="begriff" data-begriff="osi.6">Darstellung / Presentation</span>, <span class="begriff" data-begriff="osi.5">Sitzung / Session</span>, <span class="begriff" data-begriff="osi.4">Transport</span>, <span class="begriff" data-begriff="osi.3">Vermittlung / Network</span>, <span class="begriff" data-begriff="osi.2">Sicherung / Data Link</span>, <span class="begriff" data-begriff="osi.1">Bitübertragung / Physical</span>.</p>
       </div>
       </section>
       <div class="no-results" id="noResults">Keine Treffer. Versuch's mit einem anderen Begriff.</div>
@@ -746,26 +768,28 @@ mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0
 </div>
 
 <script>
+/* Fachbegriffe aus _vorlage/begriffe.json */
+window.LH_BEGRIFFE = {"sprachen":{"de":{"name":"Deutsch","auf":"auf Deutsch"},"en":{"name":"Englisch","auf":"auf Englisch"}},"standard":["de","en"],"vokabeln":["osi.7.lang","osi.6.lang","osi.5.lang","osi.4.lang","osi.3.lang","osi.2.lang","osi.1.lang","tcpip.2.lang","tcpip.1.lang"],"begriffe":{"osi.1":{"de":"Bitübertragung","en":"Physical"},"osi.1.lang":{"de":"Bitübertragungsschicht","en":"Physical Layer"},"osi.2":{"de":"Sicherung","en":"Data Link"},"osi.2.lang":{"de":"Sicherungsschicht","en":"Data Link Layer"},"osi.3":{"de":"Vermittlung","en":"Network"},"osi.3.lang":{"de":"Vermittlungsschicht","en":"Network Layer"},"osi.4":{"de":"Transport","en":"Transport"},"osi.4.lang":{"de":"Transportschicht","en":"Transport Layer"},"osi.5":{"de":"Sitzung","en":"Session"},"osi.5.lang":{"de":"Sitzungsschicht","en":"Session Layer"},"osi.6":{"de":"Darstellung","en":"Presentation"},"osi.6.lang":{"de":"Darstellungsschicht","en":"Presentation Layer"},"osi.7":{"de":"Anwendung","en":"Application"},"osi.7.lang":{"de":"Anwendungsschicht","en":"Application Layer"},"tcpip.1":{"de":"Netzzugang","en":"Network Access"},"tcpip.1.lang":{"de":"Netzzugangsschicht","en":"Network Access Layer"},"tcpip.2":{"de":"Internet","en":"Internet"},"tcpip.2.lang":{"de":"Internetschicht","en":"Internet Layer"},"tcpip.3":{"de":"Transport","en":"Transport"},"tcpip.4":{"de":"Anwendung","en":"Application"}}};
 /* Lernkarten */
 const KARTEN = [
-  {tag:'Grundlage', vorne:'Aus wie vielen Schichten besteht das OSI-Modell?', hinten:'7 Schichten', zusatz:'Von Anwendung (7) bis Bitübertragung (1)'},
-  {tag:'Grundlage', vorne:'Welche Schichten gelten als anwendungsorientiert?', hinten:'Schicht 5-7', zusatz:'Sitzung, Darstellung, Anwendung'},
-  {tag:'Grundlage', vorne:'Welche Schichten gelten als transportorientiert?', hinten:'Schicht 1-4', zusatz:'Bitübertragung, Sicherung, Vermittlung, Transport'},
-  {tag:'Layer 7', vorne:'Was macht die Anwendungsschicht (Layer 7)?', hinten:'Schnittstelle zum Nutzer', zusatz:'Protokolle: HTTP, FTP, SMTP, DNS - Geräte: Proxy, Gateway'},
-  {tag:'Layer 6', vorne:'Was macht die Darstellungsschicht (Layer 6)?', hinten:'Datenformatierung', zusatz:'z.B. Verschlüsselung, Kompression - TLS, SSL, JPEG, ASCII'},
-  {tag:'Layer 5', vorne:'Was macht die Sitzungsschicht (Layer 5)?', hinten:'Sitzungssteuerung', zusatz:'Auf- und Abbau von Verbindungen - NetBIOS, RPC'},
-  {tag:'Layer 4', vorne:'Was macht die Transportschicht (Layer 4)?', hinten:'Adressierung von Anwendungen/Prozessen', zusatz:'TCP, UDP - Adressen: Ports - Gerät: Firewall'},
-  {tag:'Layer 3', vorne:'Was macht die Vermittlungsschicht (Layer 3)?', hinten:'Routing zwischen Netzwerken', zusatz:'IP, ICMP - Adressen: IP-Adressen - Gerät: Router'},
-  {tag:'Layer 2', vorne:'Was macht die Sicherungsschicht (Layer 2)?', hinten:'Lokale Adressierung', zusatz:'Ethernet, ARP - Adressen: MAC-Adressen - Gerät: Switch'},
-  {tag:'Layer 1', vorne:'Was macht die Bitübertragungsschicht (Layer 1)?', hinten:'Physische Übertragung', zusatz:'Elektrische/mechanische Schnittstelle - Geräte: Hub, Kabel'},
+  {tag:'Grundlage', vorne:'Aus wie vielen Schichten besteht das OSI-Modell?', hinten:'7 Schichten', zusatz:'Von [[osi.7]] (7) bis [[osi.1]] (1)'},
+  {tag:'Grundlage', vorne:'Welche Schichten gelten als anwendungsorientiert?', hinten:'Schicht 5-7', zusatz:'[[osi.5]], [[osi.6]], [[osi.7]]'},
+  {tag:'Grundlage', vorne:'Welche Schichten gelten als transportorientiert?', hinten:'Schicht 1-4', zusatz:'[[osi.1]], [[osi.2]], [[osi.3]], [[osi.4]]'},
+  {tag:'Layer 7', vorne:'Was macht Layer 7 ([[osi.7.lang]])?', hinten:'Schnittstelle zum Nutzer', zusatz:'Protokolle: HTTP, FTP, SMTP, DNS - Geräte: Proxy, Gateway'},
+  {tag:'Layer 6', vorne:'Was macht Layer 6 ([[osi.6.lang]])?', hinten:'Datenformatierung', zusatz:'z.B. Verschlüsselung, Kompression - TLS, SSL, JPEG, ASCII'},
+  {tag:'Layer 5', vorne:'Was macht Layer 5 ([[osi.5.lang]])?', hinten:'Sitzungssteuerung', zusatz:'Auf- und Abbau von Verbindungen - NetBIOS, RPC'},
+  {tag:'Layer 4', vorne:'Was macht Layer 4 ([[osi.4.lang]])?', hinten:'Adressierung von Anwendungen/Prozessen', zusatz:'TCP, UDP - Adressen: Ports - Gerät: Firewall'},
+  {tag:'Layer 3', vorne:'Was macht Layer 3 ([[osi.3.lang]])?', hinten:'Routing zwischen Netzwerken', zusatz:'IP, ICMP - Adressen: IP-Adressen - Gerät: Router'},
+  {tag:'Layer 2', vorne:'Was macht Layer 2 ([[osi.2.lang]])?', hinten:'Lokale Adressierung', zusatz:'Ethernet, ARP - Adressen: MAC-Adressen - Gerät: Switch'},
+  {tag:'Layer 1', vorne:'Was macht Layer 1 ([[osi.1.lang]])?', hinten:'Physische Übertragung', zusatz:'Elektrische/mechanische Schnittstelle - Geräte: Hub, Kabel'},
   {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 4?', hinten:'Segment', zusatz:'Wird auf Layer 3 in Fragmente/Pakete zerlegt'},
   {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 3?', hinten:'Paket', zusatz:'Wird auf Layer 2 in Frames zerlegt'},
   {tag:'Dateneinheit', vorne:'Wie heißt die Dateneinheit auf Layer 2?', hinten:'Frame', zusatz:'Wird auf Layer 1 als Bitfolge übertragen'},
-  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Router?', hinten:'Layer 3 - Vermittlung', zusatz:'Routet anhand von IP-Adressen'},
-  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Switch?', hinten:'Layer 2 - Sicherung', zusatz:'Vermittelt anhand von MAC-Adressen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Router?', hinten:'Layer 3 - [[osi.3]]', zusatz:'Routet anhand von IP-Adressen'},
+  {tag:'Geräte', vorne:'Auf welchem Layer arbeitet ein Switch?', hinten:'Layer 2 - [[osi.2]]', zusatz:'Vermittelt anhand von MAC-Adressen'},
   {tag:'Geräte', vorne:'Auf welchem Layer arbeitet eine klassische Firewall?', hinten:'Layer 3/4', zusatz:'Filtert nach IP-Adressen und Ports; Application-Firewalls arbeiten auf Layer 7'},
-  {tag:'TCP/IP', vorne:'Welche OSI-Schichten entsprechen der Application-Schicht im TCP/IP-Modell?', hinten:'Schicht 5, 6 und 7', zusatz:'Sitzung, Darstellung, Anwendung werden zusammengefasst'},
-  {tag:'Eselsbrücke', vorne:'Wie lautet die Eselsbrücke für die 7 OSI-Schichten (von oben nach unten)?', hinten:'Alle Prüfer Suchen Tests Nach Der Pause', zusatz:'A-P-S-T-N-D-P'},
+  {tag:'TCP/IP', vorne:'Welche OSI-Schichten entsprechen der Schicht [[tcpip.4]] im TCP/IP-Modell?', hinten:'Schicht 5, 6 und 7', zusatz:'[[osi.5]], [[osi.6]], [[osi.7]] werden zusammengefasst'},
+  {tag:'Eselsbrücke', vorne:'Wie lautet die Eselsbrücke für die 7 OSI-Schichten (von oben nach unten)?', hinten:'Alle Prüfer Suchen Tests Nach Der Pause', zusatz:'A-P-S-T-N-D-P = Application, Presentation, Session, Transport, Network, Data Link, Physical'},
   {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt kabelgebundenes Ethernet?', hinten:'IEEE 802.3', zusatz:'Das Standard-Kupfernetzwerk'},
   {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt WLAN?', hinten:'IEEE 802.11', zusatz:'Funknetzwerk (Wi-Fi)'},
   {tag:'IEEE', vorne:'Welcher IEEE-Standard beschreibt VLAN?', hinten:'IEEE 802.1Q', zusatz:'Virtuelle Netzwerke, optional'},
@@ -785,7 +809,8 @@ window.LH = { lernen: { art: 'karten', karten: KARTEN } };
      LH.lernen       { art:'karten', karten:[...] | function, runde:Zahl,
                        einheit:'Karten', hintenMono:bool, zusatzPrompt:bool }
                      { art:'quiz', fragen:[{cat,q,opts,correct}] }
-     Karte:          { tag, vorne, hinten, zusatz }
+     Karte:          { tag, vorne, hinten, zusatz }   Texte dürfen [[begriff]] enthalten
+   Fachbegriffe:     window.LH_BEGRIFFE wird von bauen.py aus _vorlage/begriffe.json eingebettet.
    ========================================================================== */
 (function(){
   'use strict';
@@ -843,14 +868,83 @@ window.LH = { lernen: { art: 'karten', karten: KARTEN } };
   window.addEventListener('resize', aktualisieren);
   aktualisieren();
 
+  /* ---- Fachbegriffe in mehreren Sprachen ---- */
+  var WB = window.LH_BEGRIFFE || null;
+  var SP_KEY = 'lh-sprachen';
+  function sprachenVerfuegbar(){ return WB ? Object.keys(WB.sprachen) : []; }
+  function sprachenGewaehlt(){
+    var av = sprachenVerfuegbar(), sel = null;
+    try { sel = JSON.parse(localStorage.getItem(SP_KEY)); } catch(e) {}
+    if(!Array.isArray(sel)) sel = WB ? WB.standard : [];
+    sel = av.filter(function(c){ return sel.indexOf(c) > -1; });
+    return sel.length ? sel : av.slice(0, 1);
+  }
+  function begriff(key, max){
+    var e = WB && WB.begriffe[key]; if(!e) return key;
+    var out = [];
+    sprachenGewaehlt().forEach(function(c){ var w = e[c]; if(w && out.indexOf(w) < 0) out.push(w); });
+    if(!out.length) out.push(e.de || e[Object.keys(e)[0]]);
+    return out.slice(0, max || 99).join(' / ');
+  }
+  function begriffeText(t){ return String(t == null ? '' : t).replace(/\[\[(?:svg:)?([a-z0-9.]+)\]\]/g, function(_, k){ return begriff(k); }); }
+  function begriffeZeigen(){
+    $$('.begriff').forEach(function(el){ el.textContent = begriff(el.dataset.begriff, el.tagName.toLowerCase() === 'tspan' ? 2 : 0); });
+  }
+  function vokabelKarten(){
+    if(!WB || !WB.vokabeln || !WB.vokabeln.length) return [];
+    var sel = sprachenGewaehlt(); if(sel.length < 2) return [];
+    return WB.vokabeln.map(function(k){
+      var e = WB.begriffe[k], paare = [];
+      sel.forEach(function(a){ sel.forEach(function(b){ if(a !== b && e[a] && e[b] && e[a] !== e[b]) paare.push([a, b]); }); });
+      if(!paare.length) return null;
+      var p = paare[Math.floor(Math.random() * paare.length)];
+      return {tag: 'Vokabel', vorne: 'Wie heißt „' + e[p[0]] + '“ ' + WB.sprachen[p[1]].auf + '?', hinten: e[p[1]],
+              zusatz: sel.filter(function(c){ return e[c]; }).map(function(c){ return c.toUpperCase() + ' ' + e[c]; }).join(' · ')};
+    }).filter(Boolean);
+  }
+  if(WB){
+    // Suche soll Begriffe in allen Sprachen finden, auch ausgeblendete
+    $$('.begriff').forEach(function(el){
+      var e = WB.begriffe[el.dataset.begriff]; if(!e) return;
+      var alle = Object.keys(e).map(function(c){ return e[c]; }).join(' ').toLowerCase();
+      [el.closest('tr'), el.closest('.card'), el.closest('.schaubild')].forEach(function(h){ if(h) h.dataset.search = ((h.dataset.search || '') + ' ' + alle).trim(); });
+    });
+    var sbtn = $('#sprachBtn'), smenu = $('#sprachMenue'), sliste = $('#sprachListe');
+    if(sbtn && smenu && sliste){
+      var sel0 = sprachenGewaehlt();
+      sprachenVerfuegbar().forEach(function(c){
+        var lab = document.createElement('label'); lab.className = 'sprach-option';
+        lab.innerHTML = '<input type="checkbox"><span class="sprach-code"></span><span class="sprach-name"></span>';
+        var cb = $('input', lab); cb.value = c; cb.checked = sel0.indexOf(c) > -1;
+        $('.sprach-code', lab).textContent = c.toUpperCase();
+        $('.sprach-name', lab).textContent = WB.sprachen[c].name;
+        sliste.appendChild(lab);
+      });
+      sliste.addEventListener('change', function(e){
+        var neu = $$('input', sliste).filter(function(x){ return x.checked; }).map(function(x){ return x.value; });
+        if(!neu.length){ e.target.checked = true; return; }
+        try { localStorage.setItem(SP_KEY, JSON.stringify(neu)); } catch(err) {}
+        begriffeZeigen(); statLernen();
+      });
+      var zu = function(fokus){ smenu.classList.add('hidden'); sbtn.setAttribute('aria-expanded', 'false'); if(fokus) sbtn.focus(); };
+      sbtn.addEventListener('click', function(e){ e.stopPropagation(); var auf = smenu.classList.contains('hidden'); smenu.classList.toggle('hidden', !auf); sbtn.setAttribute('aria-expanded', String(auf)); });
+      document.addEventListener('click', function(e){ if(!e.target.closest('.sprachwahl')) zu(false); });
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !smenu.classList.contains('hidden')) zu(true); });
+    }
+    begriffeZeigen();
+  }
+
   /* ---- Kennzahlen im Kopfbereich ---- */
   function lernPool(){
     var l = LH.lernen; if(!l) return [];
     var p = l.art === 'quiz' ? l.fragen : l.karten;
-    return (typeof p === 'function' ? p() : p) || [];
+    p = (typeof p === 'function' ? p() : p) || [];
+    if(l.art === 'quiz') return p.map(function(f){ return {cat: begriffeText(f.cat), q: begriffeText(f.q), opts: f.opts.map(begriffeText), correct: f.correct}; });
+    return p.map(function(k){ var c = {}; for(var x in k) c[x] = k[x]; c.tag = begriffeText(k.tag); c.vorne = begriffeText(k.vorne); c.hinten = begriffeText(k.hinten); c.zusatz = begriffeText(k.zusatz); return c; }).concat(vokabelKarten());
   }
+  function statLernen(){ $$('[data-stat="lernen"]').forEach(function(el){ el.textContent = lernPool().length; }); }
   $$('[data-stat="kapitel"]').forEach(function(el){ el.textContent = sections.length; });
-  $$('[data-stat="lernen"]').forEach(function(el){ el.textContent = lernPool().length; });
+  statLernen();
 
   /* ---- Selbsteinschätzung (nur im eigenen Browser gespeichert) ---- */
   $$('.einschaetzung').forEach(function(box){

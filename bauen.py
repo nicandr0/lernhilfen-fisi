@@ -10,6 +10,8 @@ Aufbau:
     _vorlage/seite.html       Gerüst einer Lernhilfe
     _vorlage/uebersicht.html  Gerüst der Startseite
     _vorlage/lernhilfen.json  Liste aller Lernhilfen (Leiste oben + Startseite)
+    _vorlage/begriffe.json    Fachbegriffe in mehreren Sprachen; im Inhalt [[schluessel]],
+                              in SVG [[svg:schluessel]], in Lernkarten-Texten ebenfalls [[schluessel]]
     _inhalt/<id>.html         Inhalt je Lernhilfe, in Blöcke geteilt:
                               <!--@meta-->{json}  <!--@style-->  <!--@meta-zeile-->
                               <!--@knoepfe-->  <!--@inhalt-->  <!--@skript-->  <!--@fuss-->
@@ -27,6 +29,15 @@ ROOT = Path(__file__).resolve().parent
 VORLAGE = ROOT / '_vorlage'
 INHALT = ROOT / '_inhalt'
 BLOCK = re.compile(r'<!--@([a-z-]+)-->\n?')
+BEGRIFF = re.compile(r'\[\[(svg:)?([a-z0-9.]+)\]\]')
+SPRACHMENUE = """      <div class="sprachwahl">
+        <button class="btn" id="sprachBtn" type="button" aria-expanded="false" aria-controls="sprachMenue" title="Sprachen der Fachbegriffe">Sprachen ▾</button>
+        <div class="sprach-menue hidden" id="sprachMenue">
+          <div class="sprach-titel">Fachbegriffe anzeigen in</div>
+          <div id="sprachListe"></div>
+          <div class="sprach-hinweis">Erklärtexte bleiben deutsch.</div>
+        </div>
+      </div>"""
 
 
 def lesen(p):
@@ -52,6 +63,22 @@ def fuellen(vorlage, werte, name):
     return re.sub(r'\{\{([A-Z_]+)\}\}', ersetzen, vorlage)
 
 
+def begriffe_einsetzen(text, wb, name):
+    """[[schluessel]] -> <span>, [[svg:schluessel]] -> <tspan>; vorbefüllt mit den Standardsprachen."""
+    def ersetzen(m):
+        svg, key = m.group(1), m.group(2)
+        if key not in wb['begriffe']:
+            raise SystemExit(f'{name}: Begriff [[{key}]] fehlt in begriffe.json')
+        werte = []
+        for sp in wb['standard']:
+            w = wb['begriffe'][key].get(sp)
+            if w and w not in werte:
+                werte.append(w)
+        tag = 'tspan' if svg else 'span'
+        return f'<{tag} class="begriff" data-begriff="{key}">{html.escape(" / ".join(werte))}</{tag}>'
+    return BEGRIFF.sub(ersetzen, text)
+
+
 def leiste(liste, aktuell):
     links = ['<a href="index.html"' + (' aria-current="page"' if aktuell == 'index.html' else '') + '>Übersicht</a>']
     for lh in liste:
@@ -66,6 +93,7 @@ def bauen():
     styles = lesen(VORLAGE / 'styles.css').rstrip('\n')
     basis = lesen(VORLAGE / 'basis.js').rstrip('\n')
     seite = lesen(VORLAGE / 'seite.html')
+    wb = json.loads(lesen(VORLAGE / 'begriffe.json'))
     ergebnis = {}
 
     for lh in liste:
@@ -78,6 +106,18 @@ def bauen():
             f'      <span><b data-stat="lernen">0</b> {"Quizfragen" if art == "quiz" else "Lernkarten"}</span>\n'
             '      <span id="statVisible" class="hidden"><b id="statVisibleNum">0</b> Treffer</span>')
         stamm = lh['datei'].rsplit('.', 1)[0]
+        # Fachbegriffe: genutzte Schlüssel einsammeln und nur diese einbetten
+        vokabeln = meta.get('vokabeln', [])
+        genutzt = sorted({m.group(2) for m in BEGRIFF.finditer(b.get('inhalt', '') + b.get('skript', ''))} | set(vokabeln))
+        for key in genutzt:
+            if key not in wb['begriffe']:
+                raise SystemExit(f'{quelle.name}: Begriff [[{key}]] fehlt in begriffe.json')
+        skript = b.get('skript', '')
+        if genutzt:
+            einbett = {'sprachen': wb['sprachen'], 'standard': wb['standard'], 'vokabeln': vokabeln,
+                       'begriffe': {k: wb['begriffe'][k] for k in genutzt}}
+            skript = ('/* Fachbegriffe aus _vorlage/begriffe.json */\nwindow.LH_BEGRIFFE = '
+                      + json.dumps(einbett, ensure_ascii=False, separators=(',', ':')) + ';\n' + skript)
         werte = {
             'TITEL': meta.get('titel', f'{stamm}.sh'),
             'BESCHREIBUNG': html.escape(meta.get('beschreibung', lh['beschreibung']), quote=True),
@@ -91,8 +131,9 @@ def bauen():
             'SUCHE_PLATZHALTER': html.escape(meta.get('suche', 'Suchen …'), quote=True),
             'KNOEPFE': b.get('knoepfe', ''),
             'NAV_TITEL': meta.get('nav_titel', 'kapitel'),
-            'INHALT': b.get('inhalt', ''),
-            'SKRIPT': b.get('skript', ''),
+            'SPRACHEN': SPRACHMENUE if genutzt else '',
+            'INHALT': begriffe_einsetzen(b.get('inhalt', ''), wb, quelle.name),
+            'SKRIPT': skript,
             'BASIS_JS': basis,
             'FUSS': b.get('fuss', ''),
         }

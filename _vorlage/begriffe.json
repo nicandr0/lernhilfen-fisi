@@ -1,0 +1,30 @@
+{
+  "_hinweis": "Fachbegriffe für alle Lernhilfen. Neue Sprache: unter 'sprachen' eintragen und bei jedem Begriff ergänzen. Im Inhalt wird ein Begriff mit [[schluessel]] eingesetzt (in SVG-Schaubildern [[svg:schluessel]]). Begriffe mit '.lang' sind die vollen Bezeichnungen für Vokabelkarten.",
+  "sprachen": {
+    "de": { "name": "Deutsch", "auf": "auf Deutsch" },
+    "en": { "name": "Englisch", "auf": "auf Englisch" }
+  },
+  "standard": ["de", "en"],
+  "begriffe": {
+    "osi.7": { "de": "Anwendung", "en": "Application" },
+    "osi.6": { "de": "Darstellung", "en": "Presentation" },
+    "osi.5": { "de": "Sitzung", "en": "Session" },
+    "osi.4": { "de": "Transport", "en": "Transport" },
+    "osi.3": { "de": "Vermittlung", "en": "Network" },
+    "osi.2": { "de": "Sicherung", "en": "Data Link" },
+    "osi.1": { "de": "Bitübertragung", "en": "Physical" },
+    "osi.7.lang": { "de": "Anwendungsschicht", "en": "Application Layer" },
+    "osi.6.lang": { "de": "Darstellungsschicht", "en": "Presentation Layer" },
+    "osi.5.lang": { "de": "Sitzungsschicht", "en": "Session Layer" },
+    "osi.4.lang": { "de": "Transportschicht", "en": "Transport Layer" },
+    "osi.3.lang": { "de": "Vermittlungsschicht", "en": "Network Layer" },
+    "osi.2.lang": { "de": "Sicherungsschicht", "en": "Data Link Layer" },
+    "osi.1.lang": { "de": "Bitübertragungsschicht", "en": "Physical Layer" },
+    "tcpip.4": { "de": "Anwendung", "en": "Application" },
+    "tcpip.3": { "de": "Transport", "en": "Transport" },
+    "tcpip.2": { "de": "Internet", "en": "Internet" },
+    "tcpip.1": { "de": "Netzzugang", "en": "Network Access" },
+    "tcpip.2.lang": { "de": "Internetschicht", "en": "Internet Layer" },
+    "tcpip.1.lang": { "de": "Netzzugangsschicht", "en": "Network Access Layer" }
+  }
+}

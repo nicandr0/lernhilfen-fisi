@@ -7,7 +7,8 @@
      LH.lernen       { art:'karten', karten:[...] | function, runde:Zahl,
                        einheit:'Karten', hintenMono:bool, zusatzPrompt:bool }
                      { art:'quiz', fragen:[{cat,q,opts,correct}] }
-     Karte:          { tag, vorne, hinten, zusatz }
+     Karte:          { tag, vorne, hinten, zusatz }   Texte dürfen [[begriff]] enthalten
+   Fachbegriffe:     window.LH_BEGRIFFE wird von bauen.py aus _vorlage/begriffe.json eingebettet.
    ========================================================================== */
 (function(){
   'use strict';
@@ -65,14 +66,83 @@
   window.addEventListener('resize', aktualisieren);
   aktualisieren();
 
+  /* ---- Fachbegriffe in mehreren Sprachen ---- */
+  var WB = window.LH_BEGRIFFE || null;
+  var SP_KEY = 'lh-sprachen';
+  function sprachenVerfuegbar(){ return WB ? Object.keys(WB.sprachen) : []; }
+  function sprachenGewaehlt(){
+    var av = sprachenVerfuegbar(), sel = null;
+    try { sel = JSON.parse(localStorage.getItem(SP_KEY)); } catch(e) {}
+    if(!Array.isArray(sel)) sel = WB ? WB.standard : [];
+    sel = av.filter(function(c){ return sel.indexOf(c) > -1; });
+    return sel.length ? sel : av.slice(0, 1);
+  }
+  function begriff(key, max){
+    var e = WB && WB.begriffe[key]; if(!e) return key;
+    var out = [];
+    sprachenGewaehlt().forEach(function(c){ var w = e[c]; if(w && out.indexOf(w) < 0) out.push(w); });
+    if(!out.length) out.push(e.de || e[Object.keys(e)[0]]);
+    return out.slice(0, max || 99).join(' / ');
+  }
+  function begriffeText(t){ return String(t == null ? '' : t).replace(/\[\[(?:svg:)?([a-z0-9.]+)\]\]/g, function(_, k){ return begriff(k); }); }
+  function begriffeZeigen(){
+    $$('.begriff').forEach(function(el){ el.textContent = begriff(el.dataset.begriff, el.tagName.toLowerCase() === 'tspan' ? 2 : 0); });
+  }
+  function vokabelKarten(){
+    if(!WB || !WB.vokabeln || !WB.vokabeln.length) return [];
+    var sel = sprachenGewaehlt(); if(sel.length < 2) return [];
+    return WB.vokabeln.map(function(k){
+      var e = WB.begriffe[k], paare = [];
+      sel.forEach(function(a){ sel.forEach(function(b){ if(a !== b && e[a] && e[b] && e[a] !== e[b]) paare.push([a, b]); }); });
+      if(!paare.length) return null;
+      var p = paare[Math.floor(Math.random() * paare.length)];
+      return {tag: 'Vokabel', vorne: 'Wie heißt „' + e[p[0]] + '“ ' + WB.sprachen[p[1]].auf + '?', hinten: e[p[1]],
+              zusatz: sel.filter(function(c){ return e[c]; }).map(function(c){ return c.toUpperCase() + ' ' + e[c]; }).join(' · ')};
+    }).filter(Boolean);
+  }
+  if(WB){
+    // Suche soll Begriffe in allen Sprachen finden, auch ausgeblendete
+    $$('.begriff').forEach(function(el){
+      var e = WB.begriffe[el.dataset.begriff]; if(!e) return;
+      var alle = Object.keys(e).map(function(c){ return e[c]; }).join(' ').toLowerCase();
+      [el.closest('tr'), el.closest('.card'), el.closest('.schaubild')].forEach(function(h){ if(h) h.dataset.search = ((h.dataset.search || '') + ' ' + alle).trim(); });
+    });
+    var sbtn = $('#sprachBtn'), smenu = $('#sprachMenue'), sliste = $('#sprachListe');
+    if(sbtn && smenu && sliste){
+      var sel0 = sprachenGewaehlt();
+      sprachenVerfuegbar().forEach(function(c){
+        var lab = document.createElement('label'); lab.className = 'sprach-option';
+        lab.innerHTML = '<input type="checkbox"><span class="sprach-code"></span><span class="sprach-name"></span>';
+        var cb = $('input', lab); cb.value = c; cb.checked = sel0.indexOf(c) > -1;
+        $('.sprach-code', lab).textContent = c.toUpperCase();
+        $('.sprach-name', lab).textContent = WB.sprachen[c].name;
+        sliste.appendChild(lab);
+      });
+      sliste.addEventListener('change', function(e){
+        var neu = $$('input', sliste).filter(function(x){ return x.checked; }).map(function(x){ return x.value; });
+        if(!neu.length){ e.target.checked = true; return; }
+        try { localStorage.setItem(SP_KEY, JSON.stringify(neu)); } catch(err) {}
+        begriffeZeigen(); statLernen();
+      });
+      var zu = function(fokus){ smenu.classList.add('hidden'); sbtn.setAttribute('aria-expanded', 'false'); if(fokus) sbtn.focus(); };
+      sbtn.addEventListener('click', function(e){ e.stopPropagation(); var auf = smenu.classList.contains('hidden'); smenu.classList.toggle('hidden', !auf); sbtn.setAttribute('aria-expanded', String(auf)); });
+      document.addEventListener('click', function(e){ if(!e.target.closest('.sprachwahl')) zu(false); });
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !smenu.classList.contains('hidden')) zu(true); });
+    }
+    begriffeZeigen();
+  }
+
   /* ---- Kennzahlen im Kopfbereich ---- */
   function lernPool(){
     var l = LH.lernen; if(!l) return [];
     var p = l.art === 'quiz' ? l.fragen : l.karten;
-    return (typeof p === 'function' ? p() : p) || [];
+    p = (typeof p === 'function' ? p() : p) || [];
+    if(l.art === 'quiz') return p.map(function(f){ return {cat: begriffeText(f.cat), q: begriffeText(f.q), opts: f.opts.map(begriffeText), correct: f.correct}; });
+    return p.map(function(k){ var c = {}; for(var x in k) c[x] = k[x]; c.tag = begriffeText(k.tag); c.vorne = begriffeText(k.vorne); c.hinten = begriffeText(k.hinten); c.zusatz = begriffeText(k.zusatz); return c; }).concat(vokabelKarten());
   }
+  function statLernen(){ $$('[data-stat="lernen"]').forEach(function(el){ el.textContent = lernPool().length; }); }
   $$('[data-stat="kapitel"]').forEach(function(el){ el.textContent = sections.length; });
-  $$('[data-stat="lernen"]').forEach(function(el){ el.textContent = lernPool().length; });
+  statLernen();
 
   /* ---- Selbsteinschätzung (nur im eigenen Browser gespeichert) ---- */
   $$('.einschaetzung').forEach(function(box){
