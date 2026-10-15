@@ -6,8 +6,9 @@ Interaktive Lernhilfen aus meiner Umschulung zum Fachinformatiker Systemintegrat
 
 | Lernhilfe | Inhalt | Grundlage |
 |---|---|---|
-| [Linux auf einem Blatt](linux-auf-einem-blatt.html) | 232 Befehle und wichtige Pfade mit Beispielen und Tipps, Lernmodus, Filter **LPI 010** für die Prüfung Linux Essentials (010-160) | Befehlsauswahl angelehnt an [„Linux auf einem Blatt“](https://helmbold.de/artikel/linux-blatt/) von Christian Helmbold (2012); Beschreibungen, Beispiele, Tipps und Gruppierung in eigener Formulierung |
+| [Linux auf einem Blatt](linux-auf-einem-blatt.html) | 272 Befehle und wichtige Pfade mit Beispielen und Tipps, Lernmodus, Filter **LPI 010** für die Prüfung Linux Essentials (010-160), Kategorie für Fortgeschrittene (Docker, LXD) | Befehlsauswahl angelehnt an [„Linux auf einem Blatt“](https://helmbold.de/artikel/linux-blatt/) von Christian Helmbold (2012), ergänzt um Befehle aus dem Ubuntu CLI cheat sheet (Canonical, 2025); Beschreibungen, Beispiele, Tipps und Gruppierung in eigener Formulierung |
 | [Subnetting & VLSM](subnetting-vlsm-auf-einem-blatt.html) | IPv4-Grundlagen, klassisches Subnetting, VLSM, Rechenrezepte, Glossar, Lernkarten | eigene Zusammenfassung nach Unterricht und Übungsaufgaben |
+| [OSI-Modell](osi-modell-auf-einem-blatt.html) | 7 Schichten mit Aufgaben, Protokollen, Adressen und Geräten, Vergleich mit TCP/IP, Kapselung, Lernkarten | eigene Zusammenfassung nach dem im Unterricht erarbeiteten Miro-Board |
 | [Routing](routing-auf-einem-blatt.html) | ANDing, Default Route, Routing-Tabelle, statisch vs. dynamisch, Fehlerbilder, Quiz | eigene Zusammenfassung nach Unterricht |
 | [Switching](switching-auf-einem-blatt.html) | VLANs, Access/Trunk, STP, LAG, LACP, MLAG, Fehlerbilder, Lernkarten | eigene Zusammenfassung nach Unterricht |
 
