@@ -51,13 +51,15 @@
     links.forEach(function(l){ var on = l.dataset.target === id; l.classList.toggle('active', on); if(on) hit = l; });
     followActive(hit);
   }
-  // aktives Kapitel: das letzte, dessen Anfang im oberen Drittel liegt; ganz unten immer das letzte
+  // aktives Kapitel: das letzte, dessen Anfang die Linie direkt unter den Leisten erreicht hat
+  // (dort landet ein angesprungenes Kapitel; so werden auch kurze Kapitel richtig markiert); ganz unten immer das letzte
   var aktiv = null, geplant = false;
   function aktualisieren(){
     geplant = false;
     var sichtbar = sections.filter(function(s){ return !s.classList.contains('hidden'); });
     if(!sichtbar.length) return;
-    var grenze = window.innerHeight * 0.3, act = sichtbar[0];
+    var rand = parseFloat(getComputedStyle(sichtbar[0]).scrollMarginTop) || 0;
+    var grenze = Math.min(window.innerHeight * 0.3, rand + 40), act = sichtbar[0];
     sichtbar.forEach(function(s){ if(s.getBoundingClientRect().top <= grenze) act = s; });
     if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) act = sichtbar[sichtbar.length - 1];
     if(act.id !== aktiv){ aktiv = act.id; setActive(act.id); }
